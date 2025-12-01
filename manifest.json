@@ -1,0 +1,21 @@
+{
+  "name": "Font Scanner",
+  "id": "1572876536313092401",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "documentAccess": "dynamic-page",
+  "editorType": [
+    "figma"
+  ],
+  "networkAccess": {
+    "allowedDomains": [
+      "https://fonts.google.com",
+      "https://fonts.gstatic.com",
+      "https://gwfh.mranftl.com",
+      "https://www.googleapis.com"
+    ]
+  }
+}

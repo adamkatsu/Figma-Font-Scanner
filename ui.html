@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: https://fonts.google.com https://fonts.gstatic.com https://gwfh.mranftl.com https://www.googleapis.com;">
+
+  <style>
+    body { font-family: Inter, sans-serif; padding: 12px; color: #333; font-size: 12px; padding-bottom: 100px; }
+    h2 { margin-top: 0; font-size: 16px; margin-bottom: 15px;}
+    
+    /* Global Buttons */
+    button { cursor: pointer; border: none; border-radius: 6px; font-weight: 600; transition: all 0.2s;}
+    
+    .primary-btn {
+      background: #18A0FB; color: white; padding: 10px 16px; width: 100%; margin-bottom: 20px;
+    }
+    .primary-btn:hover { background: #0D86D7; }
+    
+    /* Headers */
+    .section-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin: 20px 0 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px;
+    }
+    h3 { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; }
+    
+    /* Disclaimers for sections */
+    .header-disclaimer {
+      font-size: 10px; color: #999; margin-top: 4px; font-weight: normal;
+    }
+
+    /* List Items */
+    .list { list-style: none; padding: 0; margin: 0; }
+    .item-wrapper { border-bottom: 1px solid #f0f0f0; }
+    
+    .item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; 
+    }
+
+    .font-name { font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px;}
+    .badge-missing { background: #FCECEC; color: #C92A2A; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+    
+    /* Action Buttons Row */
+    .actions { display: flex; gap: 8px; align-items: center; }
+    
+    .icon-btn {
+      background: transparent; border: 1px solid #ddd; color: #555;
+      padding: 4px 8px; font-size: 11px; border-radius: 4px;
+    }
+    .icon-btn:hover { background: #f5f5f5; border-color: #bbb; }
+    .icon-btn.active { background: #e6f3ff; border-color: #18A0FB; color: #18A0FB; }
+
+    /* External Links */
+    .link-group { display: flex; gap: 8px; margin-left: 8px; padding-left: 8px; border-left: 1px solid #eee; }
+    .ext-link { text-decoration: none; color: #18A0FB; font-weight: 600; font-size: 11px; }
+    .ext-link:hover { text-decoration: underline; color: #0048a7 }
+
+    /* REPLACEMENT DRAWER & CUSTOM DROPDOWN CSS */
+    .replace-drawer {
+      display: none; background: #FAFAFA; padding: 10px; border-radius: 6px; margin-bottom: 10px;
+    }
+    .replace-drawer.open { display: block; }
+    
+    .replace-row { display: flex; gap: 8px; margin-top: 5px; position: relative; }
+    
+    .input-wrapper { position: relative; flex-grow: 1; }
+
+    .replace-input {
+      width: 100%; box-sizing: border-box;
+      padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px;
+    }
+
+    /* CUSTOM SCROLLABLE LIST */
+    .suggestions-list {
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: white; border: 1px solid #ccc; border-top: none;
+      border-radius: 0 0 4px 4px;
+      max-height: 200px; overflow-y: auto;
+      z-index: 1000; display: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .suggestions-list.show { display: block; }
+    
+    .suggestion-item { padding: 8px; cursor: pointer; border-bottom: 1px solid #f5f5f5; }
+    .suggestion-item:hover { background: #E6F3FF; }
+
+    .apply-btn { background: #333; color: white; padding: 6px 12px; white-space: nowrap;}
+    .apply-btn:hover { background: #000; }
+
+    .loader { display: none; text-align: center; margin-top: 20px; color: #888; }
+  </style>
+</head>
+<body>
+
+  <h2>Font Scanner</h2>
+  <button id="scanBtn" class="primary-btn">Scan Page Fonts</button>
+  <div id="loader" class="loader">Scanning...</div>
+  <div id="resultsContainer"></div>
+
+  <script>
+    const API_KEY = 'AIzaSyBZqOric7hC8x6zLV-Xt-X6VS0g6NsoA6k'; 
+    let systemFontsGlobal = []; 
+
+    // KEYWORDS TO DETECT ICON FONTS
+    const ICON_KEYWORDS = [
+      'awesome', 'icon', 'symbol', 'glyph', 'icomoon', 'entypo', 'dingbat', 'ionicons', 'material icons', 'material symbols'
+    ];
+
+    document.getElementById('scanBtn').onclick = () => {
+      document.getElementById('resultsContainer').innerHTML = '';
+      document.getElementById('loader').style.display = 'block';
+      parent.postMessage({ pluginMessage: { type: 'scan-layers' } }, '*');
+    }
+
+    onmessage = async (event) => {
+      const msg = event.data.pluginMessage;
+      
+      if (msg.type === 'scan-result') {
+        if (msg.systemFonts) systemFontsGlobal = msg.systemFonts;
+        await processFonts(msg.fonts || [], msg.missingFonts || []);
+      }
+    };
+
+    async function processFonts(figmaFonts, missingFonts) {
+      try {
+        const response = await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${API_KEY}`);
+        const data = await response.json();
+        const googleFontNames = new Set(data.items.map(f => f.family.toLowerCase()));
+
+        document.getElementById('loader').style.display = 'none';
+        const container = document.getElementById('resultsContainer');
+        container.innerHTML = '';
+
+        if(figmaFonts.length === 0 && missingFonts.length === 0) {
+            container.innerHTML = '<p style="margin-top:20px; color:#888;">No text layers found.</p>';
+            return;
+        }
+
+        // 1. Separate Missing Fonts
+        const missingSet = new Set(missingFonts);
+        const installedFonts = figmaFonts.filter(f => !missingSet.has(f));
+
+        if (missingFonts.length > 0) renderSection(container, 'Missing Fonts', missingFonts, googleFontNames, true);
+
+        // 2. Separate Installed Fonts into: Icons, Google, Local
+        const iconMatches = [];
+        const googleMatches = [];
+        const localMatches = [];
+
+        installedFonts.forEach(font => {
+            const lowerName = font.toLowerCase();
+            
+            // Check logic: Is it an Icon? -> Is it Google? -> Else Local
+            const isIcon = ICON_KEYWORDS.some(keyword => lowerName.includes(keyword));
+            
+            if (isIcon) {
+                iconMatches.push(font);
+            } else if (googleFontNames.has(lowerName)) {
+                googleMatches.push(font);
+            } else {
+                localMatches.push(font);
+            }
+        });
+
+        // 3. Render Sections
+        if (iconMatches.length > 0) renderSection(container, 'Icon / Symbol Fonts', iconMatches, googleFontNames, false);
+        if (googleMatches.length > 0) renderSection(container, 'Google Fonts', googleMatches, googleFontNames, false);
+        if (localMatches.length > 0) renderSection(container, 'Local / System Fonts', localMatches, googleFontNames, false);
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    function renderSection(container, title, fonts, googleSet, isMissing) {
+      const header = document.createElement('div');
+      header.className = 'section-header';
+      
+      let headerHTML = `<h3>${title}(${fonts.length})</h3>`;
+      
+      // ADD THE DISCLAIMER FOR MISSING FONTS HERE
+      if (isMissing) {
+        headerHTML += `<span class="header-disclaimer">(Download links only available for Google Fonts)</span>`;
+        header.style.flexDirection = 'column';
+        header.style.alignItems = 'flex-start';
+      }
+
+      header.innerHTML = headerHTML;
+      
+      // Add Download All button (Only if missing AND exists in Google)
+      if (isMissing) {
+        const downloadable = fonts.filter(f => googleSet.has(f.toLowerCase()));
+        if(downloadable.length > 0) {
+          const dlBtn = document.createElement('button');
+          dlBtn.className = 'icon-btn';
+          dlBtn.innerText = 'Download All';
+          dlBtn.onclick = () => {
+             if(confirm('Download ' + downloadable.length + ' fonts? You may need to allow popups.')) {
+                 downloadable.forEach((f, i) => {
+                     setTimeout(() => {
+                        window.open(`https://fonts.google.com/download?family=${f.replace(/\s+/g, '+')}`);
+                     }, i * 500);
+                 });
+             }
+          };
+          header.appendChild(dlBtn);
+        }
+      }
+      container.appendChild(header);
+
+      const ul = document.createElement('ul');
+      ul.className = 'list';
+      fonts.forEach(font => ul.appendChild(createRow(font, googleSet.has(font.toLowerCase()), isMissing)));
+      container.appendChild(ul);
+    }
+
+    function createRow(fontName, isGoogle, isMissing) {
+      const wrapper = document.createElement('li');
+      wrapper.className = 'item-wrapper';
+
+      const mainRow = document.createElement('div');
+      mainRow.className = 'item';
+
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'font-name';
+      nameDiv.innerHTML = `${fontName} ${isMissing ? '<span class="badge-missing">Missing</span>' : ''}`;
+
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'actions';
+
+      const selectBtn = document.createElement('button');
+      selectBtn.className = 'icon-btn';
+      selectBtn.innerText = 'Select';
+      selectBtn.onclick = () => {
+        parent.postMessage({ pluginMessage: { type: 'select-font', font: fontName } }, '*');
+      };
+
+      const replaceBtn = document.createElement('button');
+      replaceBtn.className = 'icon-btn';
+      replaceBtn.innerText = 'Replace';
+      replaceBtn.onclick = () => {
+        const drawer = wrapper.querySelector('.replace-drawer');
+        const isOpen = drawer.classList.contains('open');
+        document.querySelectorAll('.replace-drawer').forEach(d => d.classList.remove('open'));
+        document.querySelectorAll('.icon-btn').forEach(b => b.classList.remove('active'));
+
+        if (!isOpen) {
+          drawer.classList.add('open');
+          replaceBtn.classList.add('active');
+        }
+      };
+
+      actionsDiv.appendChild(selectBtn);
+      actionsDiv.appendChild(replaceBtn);
+
+      const linkGroup = document.createElement('div');
+      linkGroup.className = 'link-group';
+      const encoded = fontName.replace(/\s+/g, '+');
+      
+      if (isGoogle) {
+        linkGroup.innerHTML = `
+          <a href="https://fonts.google.com/download?family=${encoded}" class="ext-link" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.99999 10.6667L4.66666 7.33341L5.59999 6.36675L7.33332 8.10008V2.66675H8.66666V8.10008L10.4 6.36675L11.3333 7.33341L7.99999 10.6667ZM3.99999 13.3334C3.63332 13.3334 3.31955 13.203 3.05866 12.9421C2.79777 12.6812 2.6671 12.3672 2.66666 12.0001V10.0001H3.99999V12.0001H12V10.0001H13.3333V12.0001C13.3333 12.3667 13.2029 12.6807 12.942 12.9421C12.6811 13.2034 12.3671 13.3339 12 13.3334H3.99999Z" fill="currentColor"/>
+            </svg>
+          </a>
+          <a href="https://fonts.google.com/specimen/${encoded}" class="ext-link" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.0667 14L8.86667 9.8C8.53333 10.0667 8.15 10.2778 7.71667 10.4333C7.28333 10.5889 6.82222 10.6667 6.33333 10.6667C5.12222 10.6667 4.09733 10.2471 3.25867 9.408C2.42 8.56889 2.00044 7.544 2 6.33333C1.99956 5.12267 2.41911 4.09778 3.25867 3.25867C4.09822 2.41956 5.12311 2 6.33333 2C7.54356 2 8.56867 2.41956 9.40867 3.25867C10.2487 4.09778 10.668 5.12267 10.6667 6.33333C10.6667 6.82222 10.5889 7.28333 10.4333 7.71667C10.2778 8.15 10.0667 8.53333 9.8 8.86667L14 13.0667L13.0667 14ZM6.33333 9.33333C7.16667 9.33333 7.87511 9.04178 8.45867 8.45867C9.04222 7.87556 9.33378 7.16711 9.33333 6.33333C9.33289 5.49956 9.04133 4.79133 8.45867 4.20867C7.876 3.626 7.16756 3.33422 6.33333 3.33333C5.49911 3.33244 4.79089 3.62422 4.20867 4.20867C3.62644 4.79311 3.33467 5.50133 3.33333 6.33333C3.332 7.16533 3.62378 7.87378 4.20867 8.45867C4.79356 9.04356 5.50178 9.33511 6.33333 9.33333Z" fill="currentColor"/>
+            </svg>
+          </a>
+        `;
+      } else {
+        linkGroup.innerHTML = `
+          <a href="https://www.google.com/search?q=${encoded}+font" class="ext-link" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.0667 14L8.86667 9.8C8.53333 10.0667 8.15 10.2778 7.71667 10.4333C7.28333 10.5889 6.82222 10.6667 6.33333 10.6667C5.12222 10.6667 4.09733 10.2471 3.25867 9.408C2.42 8.56889 2.00044 7.544 2 6.33333C1.99956 5.12267 2.41911 4.09778 3.25867 3.25867C4.09822 2.41956 5.12311 2 6.33333 2C7.54356 2 8.56867 2.41956 9.40867 3.25867C10.2487 4.09778 10.668 5.12267 10.6667 6.33333C10.6667 6.82222 10.5889 7.28333 10.4333 7.71667C10.2778 8.15 10.0667 8.53333 9.8 8.86667L14 13.0667L13.0667 14ZM6.33333 9.33333C7.16667 9.33333 7.87511 9.04178 8.45867 8.45867C9.04222 7.87556 9.33378 7.16711 9.33333 6.33333C9.33289 5.49956 9.04133 4.79133 8.45867 4.20867C7.876 3.626 7.16756 3.33422 6.33333 3.33333C5.49911 3.33244 4.79089 3.62422 4.20867 4.20867C3.62644 4.79311 3.33467 5.50133 3.33333 6.33333C3.332 7.16533 3.62378 7.87378 4.20867 8.45867C4.79356 9.04356 5.50178 9.33511 6.33333 9.33333Z" fill="currentColor"/>
+            </svg>
+          </a>
+        `;
+      }
+      actionsDiv.appendChild(linkGroup);
+
+      mainRow.appendChild(nameDiv);
+      mainRow.appendChild(actionsDiv);
+
+      // --- DRAWER ---
+      const drawer = document.createElement('div');
+      drawer.className = 'replace-drawer';
+      
+      const drawerDesc = document.createElement('div');
+      drawerDesc.style.color = '#666'; drawerDesc.style.marginBottom = '5px';
+      drawerDesc.innerText = `Replace "${fontName}" with:`;
+      
+      const drawerRow = document.createElement('div');
+      drawerRow.className = 'replace-row';
+
+      const inputWrapper = document.createElement('div');
+      inputWrapper.className = 'input-wrapper';
+
+      const input = document.createElement('input');
+      input.className = 'replace-input';
+      input.placeholder = 'Type system font name...';
+      input.autocomplete = "off";
+
+      const suggestionsBox = document.createElement('div');
+      suggestionsBox.className = 'suggestions-list';
+
+      // --- NEW LOGIC START ---
+      
+      // Helper function to render the list
+      const renderSuggestions = (query) => {
+        suggestionsBox.innerHTML = '';
+        const val = query.toLowerCase();
+
+        // If empty, show ALL system fonts (limit 50). If typing, filter them.
+        const matches = val 
+            ? systemFontsGlobal.filter(f => f.toLowerCase().includes(val)) 
+            : systemFontsGlobal;
+
+        if (matches.length > 0) {
+            suggestionsBox.classList.add('show');
+            // Show top 50 to avoid performance lag
+            matches.slice(0, 50).forEach(match => {
+                const item = document.createElement('div');
+                item.className = 'suggestion-item';
+                item.textContent = match;
+                item.onclick = () => { 
+                    input.value = match; 
+                    suggestionsBox.classList.remove('show'); 
+                };
+                suggestionsBox.appendChild(item);
+            });
+        } else {
+            suggestionsBox.classList.remove('show');
+        }
+      };
+
+      // 1. Show list immediately when clicked/focused
+      input.addEventListener('focus', () => {
+         renderSuggestions(input.value);
+      });
+
+      // 2. Filter list when typing
+      input.addEventListener('input', () => {
+         renderSuggestions(input.value);
+      });
+
+      // --- NEW LOGIC END ---
+
+      document.addEventListener('click', (e) => {
+        if (!inputWrapper.contains(e.target)) suggestionsBox.classList.remove('show');
+      });
+
+      inputWrapper.appendChild(input);
+      inputWrapper.appendChild(suggestionsBox);
+
+      const applyBtn = document.createElement('button');
+      applyBtn.className = 'apply-btn';
+      applyBtn.innerText = 'Apply';
+      applyBtn.onclick = () => {
+        if(input.value) {
+          document.getElementById('loader').style.display = 'block';
+          document.getElementById('loader').innerText = 'Replacing...';
+          parent.postMessage({ pluginMessage: { type: 'replace-font', oldFont: fontName, newFont: input.value } }, '*');
+        }
+      };
+
+      drawerRow.appendChild(inputWrapper);
+      drawerRow.appendChild(applyBtn);
+      drawer.appendChild(drawerDesc);
+      drawer.appendChild(drawerRow);
+      wrapper.appendChild(mainRow);
+      wrapper.appendChild(drawer);
+
+      return wrapper;
+    }
+  </script>
+</body>
+</html>
