@@ -5,7 +5,7 @@ figma.showUI(__html__, { width: 420, height: 600 });
 // --- 1. SCANNING LOGIC ---
 
 async function getFontsFromPage() {
-  const fontFamilies = new Set<string>();
+  const fontFamilies = new Map<string, number>(); // Map to count occurrences
   const missingFontFamilies = new Set<string>();
 
   // Get all available system fonts for the dropdown
@@ -21,18 +21,40 @@ async function getFontsFromPage() {
   const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
 
   textNodes.forEach(node => {
-    const nodeFonts = extractFontFamilies(node);
-    nodeFonts.forEach(family => {
-      fontFamilies.add(family);
-      if (!availableFamilies.has(family.toLowerCase())) {
-        missingFontFamilies.add(family);
+    try {
+      if (node.fontName === figma.mixed) {
+        // For mixed text, count each segment separately
+        const segments = node.getStyledTextSegments(['fontName']);
+        segments.forEach(segment => {
+          const family = segment.fontName.family;
+          fontFamilies.set(family, (fontFamilies.get(family) || 0) + 1);
+          if (!availableFamilies.has(family.toLowerCase())) {
+            missingFontFamilies.add(family);
+          }
+        });
+      } else {
+        // For single font text, count once
+        const fontName = node.fontName as FontName;
+        const family = fontName.family;
+        fontFamilies.set(family, (fontFamilies.get(family) || 0) + 1);
+        if (!availableFamilies.has(family.toLowerCase())) {
+          missingFontFamilies.add(family);
+        }
       }
-    });
+    } catch (error) {
+      // Ignore nodes we can't read
+    }
   });
+
+  // Convert Map to array of objects with name and count
+  const fontsWithCount = Array.from(fontFamilies.entries())
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   figma.ui.postMessage({
     type: 'scan-result',
-    fonts: Array.from(fontFamilies).sort(),
+    fonts: fontsWithCount.map(f => f.name), // Keep for backward compatibility
+    fontCounts: fontsWithCount, // New: includes counts
     missingFonts: Array.from(missingFontFamilies).sort(),
     systemFonts: systemFonts // <--- Send list of installed fonts to UI
   });
