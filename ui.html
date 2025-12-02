@@ -22,7 +22,28 @@
       padding: 24px 20px;
       margin: 8;
       border-radius: 8px;
-      background-color: #F5F5F5;
+      background-color: #f2f6ff;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header-section::before {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 200px;
+      background: radial-gradient(ellipse at center top, rgba(100, 150, 255, 0.5) 0%, rgba(100, 150, 255, 0.15) 40%, transparent 100%);
+      filter: blur(40px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .header-section > * {
+      position: relative;
+      z-index: 1;
     }
     
     h2 { 
@@ -175,7 +196,6 @@
     }
     
     .item:hover .font-name {
-      color: #333;
       padding-left: 16px;
     }
     
@@ -362,11 +382,12 @@
       border-radius: 8px;
       padding: 24px;
       width: 90%;
-      max-width: 400px;
+      max-width: 320px;
       position: relative;
       transform: scale(0.95);
       transition: transform 0.2s ease;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      margin: auto;
     }
     
     .modal-overlay.show .modal-container {
@@ -375,7 +396,7 @@
     
     .modal-header {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       margin-bottom: 16px;
     }
@@ -385,10 +406,14 @@
       font-weight: 600;
       color: #000;
       margin: 0;
+      text-align: center;
       text-transform: none;
     }
     
     .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
       background: transparent;
       border: none;
       cursor: pointer;
@@ -413,8 +438,35 @@
     
     .replace-row { 
       display: flex; 
-      gap: 8px; 
+      flex-direction: column;
+      gap: 16px; 
       position: relative; 
+    }
+    
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .input-group:first-child {
+      padding-bottom: 16px;
+      border-bottom: 1px solid #E5E5E5;
+      position: relative;
+    }
+    
+    .replace-divider-label {
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 0 8px;
+      font-size: 10px;
+      color: #999;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
     }
     
     .input-wrapper { 
@@ -443,6 +495,23 @@
     
     .replace-input::placeholder {
       color: #999;
+    }
+    
+    .replace-input.readonly {
+      background: #F9F9F9;
+      color: #666;
+      cursor: default;
+      border-color: #E5E5E5;
+    }
+    
+    .replace-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 6px;
+      display: block;
     }
 
     /* CUSTOM SCROLLABLE LIST */
@@ -924,19 +993,39 @@
       const modalTitle = document.getElementById('modalTitle');
       const modalContent = document.getElementById('modalContent');
       
-      modalTitle.textContent = `Replace "${fontName}" font`;
+      modalTitle.textContent = `Replace Font`;
       modalContent.innerHTML = '';
       
       // Create input row
       const inputRow = document.createElement('div');
       inputRow.className = 'replace-row';
 
+      // Create "Before" input group (read-only)
+      const beforeGroup = document.createElement('div');
+      beforeGroup.className = 'input-group';
+      
+      const beforeInput = document.createElement('input');
+      beforeInput.className = 'replace-input readonly';
+      beforeInput.value = fontName;
+      beforeInput.readOnly = true;
+      
+      const dividerLabel = document.createElement('span');
+      dividerLabel.className = 'replace-divider-label';
+      dividerLabel.textContent = 'Replace with';
+      
+      beforeGroup.appendChild(beforeInput);
+      beforeGroup.appendChild(dividerLabel);
+      
+      // Create "After" input group (editable)
+      const afterGroup = document.createElement('div');
+      afterGroup.className = 'input-group';
+      
       const inputWrapper = document.createElement('div');
       inputWrapper.className = 'input-wrapper';
 
       const input = document.createElement('input');
       input.className = 'replace-input';
-      input.placeholder = 'Type system font name...';
+      input.placeholder = 'Type font name...';
       input.autocomplete = 'off';
 
       const suggestionsBox = document.createElement('div');
@@ -985,6 +1074,8 @@
 
       inputWrapper.appendChild(input);
       inputWrapper.appendChild(suggestionsBox);
+      
+      afterGroup.appendChild(inputWrapper);
 
       const applyBtn = document.createElement('button');
       applyBtn.className = 'apply-btn';
@@ -998,7 +1089,8 @@
         }
       };
 
-      inputRow.appendChild(inputWrapper);
+      inputRow.appendChild(beforeGroup);
+      inputRow.appendChild(afterGroup);
       inputRow.appendChild(applyBtn);
       modalContent.appendChild(inputRow);
       
