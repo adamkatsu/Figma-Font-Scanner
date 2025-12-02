@@ -171,11 +171,16 @@
       letter-spacing: -0.2px;
       position: relative;
       padding-left: 12px;
-      transition: color 0.15s ease;
+      transition: color 0.15s ease, padding-left 0.2s ease;
     }
     
-    .font-name:hover {
+    .item:hover .font-name {
       color: #333;
+      padding-left: 16px;
+    }
+    
+    .item.selected .font-name {
+      padding-left: 16px;
     }
     
     .font-name::before {
@@ -202,7 +207,14 @@
     .actions { 
       display: flex; 
       gap: 6px; 
-      align-items: center; 
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    
+    .item:hover .actions,
+    .item.selected .actions {
+      opacity: 1;
     }
     
     .icon-btn {
@@ -760,9 +772,9 @@
         });
 
         // 3. Render Sections
-        if (iconMatches.length > 0) renderSection(container, 'Icon Fonts', iconMatches, googleFontNames, false, countMap);
         if (googleMatches.length > 0) renderSection(container, 'Google Fonts', googleMatches, googleFontNames, false, countMap);
         if (localMatches.length > 0) renderSection(container, 'Local / System Fonts', localMatches, googleFontNames, false, countMap);
+        if (iconMatches.length > 0) renderSection(container, 'Icon Fonts', iconMatches, googleFontNames, false, countMap);
 
       } catch (error) {
         console.error(error);
