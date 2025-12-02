@@ -1,6 +1,6 @@
 // code.ts
 
-figma.showUI(__html__, { width: 420, height: 600 });
+figma.showUI(__html__, { width: 420, height: 520 });
 
 // --- 1. SCANNING LOGIC ---
 
@@ -94,7 +94,11 @@ async function replaceFontFamily(oldFamily: string, newFamily: string) {
   }
 
   if (nodesToUpdate.length === 0) {
-    figma.notify(`No layers found using ${oldFamily}`);
+    figma.ui.postMessage({
+      type: 'notification',
+      message: `No layers found using "${oldFamily}".`,
+      count: 0
+    });
     return;
   }
 
@@ -128,7 +132,12 @@ async function replaceFontFamily(oldFamily: string, newFamily: string) {
     }
   }
 
-  figma.notify(`Replaced font in ${updateCount} layers.`);
+  figma.ui.postMessage({
+    type: 'notification',
+    message: `Replaced "${oldFamily}" with "${newFamily}" in ${updateCount} layer${updateCount === 1 ? '' : 's'}.`,
+    count: updateCount,
+    fontName: newFamily
+  });
   // Re-scan to update UI
   await getFontsFromPage();
 }
@@ -185,8 +194,18 @@ async function selectTextNodesByFont(fontFamily: string) {
   figma.currentPage.selection = matches;
   if (matches.length > 0) {
     figma.viewport.scrollAndZoomIntoView(matches);
+    figma.ui.postMessage({
+      type: 'notification',
+      message: `All "${fontFamily}" font${matches.length === 1 ? '' : 's'} selected!`,
+      count: matches.length,
+      fontName: fontFamily
+    });
   } else {
-    figma.notify("No layers found on this page.");
+    figma.ui.postMessage({
+      type: 'notification',
+      message: 'No layers found on this page.',
+      count: 0
+    });
   }
 }
 
