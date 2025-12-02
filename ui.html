@@ -4,89 +4,324 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: https://fonts.google.com https://fonts.gstatic.com https://gwfh.mranftl.com https://www.googleapis.com;">
 
   <style>
-    body { font-family: Inter, sans-serif; padding: 12px; color: #333; font-size: 12px; padding-bottom: 100px; }
-    h2 { margin-top: 0; font-size: 16px; margin-bottom: 15px;}
+    * { box-sizing: border-box; }
+    
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif; 
+      padding: 0; 
+      margin: 0;
+      color: #000; 
+      font-size: 13px; 
+      background: #fff;
+      line-height: 1.5;
+    }
+    
+    h2 { 
+      margin: 0 0 24px 0; 
+      font-size: 20px; 
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: #000;
+    }
     
     /* Global Buttons */
-    button { cursor: pointer; border: none; border-radius: 6px; font-weight: 600; transition: all 0.2s;}
+    button { 
+      cursor: pointer; 
+      border: none; 
+      border-radius: 8px; 
+      font-weight: 500; 
+      transition: all 0.15s ease;
+      font-family: inherit;
+      font-size: 13px;
+    }
     
     .primary-btn {
-      background: #18A0FB; color: white; padding: 10px 16px; width: 100%; margin-bottom: 20px;
+      background: #000; 
+      color: #fff; 
+      padding: 12px; 
+      width: 100%; 
+      font-weight: 500;
+      letter-spacing: -0.1px;
     }
-    .primary-btn:hover { background: #0D86D7; }
+    .primary-btn:hover { 
+      background: #333; 
+      transform: translateY(-1px);
+    }
+    .primary-btn:active {
+      transform: translateY(0);
+    }
     
     /* Headers */
     .section-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin: 20px 0 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      margin: 32px 0 16px 0; 
+      padding-bottom: 12px;
+      border-bottom: 1px solid #E5E5E5;
     }
-    h3 { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; }
+    
+    h3 { 
+      margin: 0; 
+      font-size: 11px; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px; 
+      color: #666;
+      font-weight: 600;
+    }
     
     /* Disclaimers for sections */
     .header-disclaimer {
-      font-size: 10px; color: #999; margin-top: 4px; font-weight: normal;
+      font-size: 11px; 
+      color: #999; 
+      margin-top: 6px; 
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
     }
 
     /* List Items */
-    .list { list-style: none; padding: 0; margin: 0; }
-    .item-wrapper { border-bottom: 1px solid #f0f0f0; }
+    .list { 
+      list-style: none; 
+      padding: 0; 
+      margin: 0 0 24px 0;
+    }
+    
+    .item-wrapper { 
+      border-bottom: 1px solid #F5F5F5; 
+      transition: background 0.15s ease;
+    }
+    
+    .item-wrapper:hover {
+      background: #FAFAFA;
+    }
+    
+    .item-wrapper:last-child {
+      border-bottom: none;
+    }
     
     .item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 0; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      padding: 14px 16px; 
     }
 
-    .font-name { font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px;}
-    .badge-missing { background: #FCECEC; color: #C92A2A; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+    .font-name { 
+      font-weight: 500; 
+      font-size: 14px; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+      color: #000;
+      letter-spacing: -0.2px;
+    }
+    
+    .badge-missing { 
+      background: #000; 
+      color: #fff; 
+      font-size: 10px; 
+      padding: 3px 8px; 
+      border-radius: 4px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
     
     /* Action Buttons Row */
-    .actions { display: flex; gap: 8px; align-items: center; }
+    .actions { 
+      display: flex; 
+      gap: 6px; 
+      align-items: center; 
+    }
     
     .icon-btn {
-      background: transparent; border: 1px solid #ddd; color: #555;
-      padding: 4px 8px; font-size: 11px; border-radius: 4px;
+      background: transparent; 
+      border: 1px solid #E5E5E5; 
+      color: #000;
+      padding: 6px 12px; 
+      font-size: 12px; 
+      border-radius: 6px;
+      font-weight: 500;
     }
-    .icon-btn:hover { background: #f5f5f5; border-color: #bbb; }
-    .icon-btn.active { background: #e6f3ff; border-color: #18A0FB; color: #18A0FB; }
+    
+    .icon-btn:hover { 
+      background: #000; 
+      color: #fff;
+      border-color: #000;
+    }
+    
+    .icon-btn.active { 
+      background: #000; 
+      border-color: #000; 
+      color: #fff; 
+    }
 
     /* External Links */
-    .link-group { display: flex; gap: 8px; margin-left: 8px; padding-left: 8px; border-left: 1px solid #eee; }
-    .ext-link { text-decoration: none; color: #18A0FB; font-weight: 600; font-size: 11px; }
-    .ext-link:hover { text-decoration: underline; color: #0048a7 }
+    .link-group { 
+      display: flex; 
+      gap: 4px; 
+      margin-left: 8px; 
+      padding-left: 12px; 
+      border-left: 1px solid #E5E5E5; 
+    }
+    
+    .ext-link { 
+      text-decoration: none; 
+      color: #666; 
+      font-weight: 400; 
+      font-size: 12px;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+    }
+    
+    .ext-link:hover { 
+      color: #000;
+      background: #F5F5F5;
+    }
+    
+    .ext-link svg {
+      width: 14px;
+      height: 14px;
+    }
 
     /* REPLACEMENT DRAWER & CUSTOM DROPDOWN CSS */
     .replace-drawer {
-      display: none; background: #FAFAFA; padding: 10px; border-radius: 6px; margin-bottom: 10px;
+      display: none; 
+      background: #FAFAFA; 
+      padding: 16px; 
+      border-radius: 8px; 
+      margin: 12px 0 16px 0;
+      border: 1px solid #E5E5E5;
     }
-    .replace-drawer.open { display: block; }
     
-    .replace-row { display: flex; gap: 8px; margin-top: 5px; position: relative; }
+    .replace-drawer.open { 
+      display: block; 
+    }
     
-    .input-wrapper { position: relative; flex-grow: 1; }
+    .replace-row { 
+      display: flex; 
+      gap: 8px; 
+      margin-top: 12px; 
+      position: relative; 
+    }
+    
+    .input-wrapper { 
+      position: relative; 
+      flex-grow: 1; 
+    }
 
     .replace-input {
-      width: 100%; box-sizing: border-box;
-      padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px;
+      width: 100%; 
+      box-sizing: border-box;
+      padding: 10px 12px; 
+      border: 1px solid #E5E5E5; 
+      border-radius: 6px; 
+      font-size: 13px;
+      background: #fff;
+      color: #000;
+      font-family: inherit;
+      transition: all 0.15s ease;
+    }
+    
+    .replace-input:focus {
+      outline: none;
+      border-color: #000;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+    }
+    
+    .replace-input::placeholder {
+      color: #999;
     }
 
     /* CUSTOM SCROLLABLE LIST */
     .suggestions-list {
-      position: absolute; top: 100%; left: 0; right: 0;
-      background: white; border: 1px solid #ccc; border-top: none;
-      border-radius: 0 0 4px 4px;
-      max-height: 200px; overflow-y: auto;
-      z-index: 1000; display: none;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: absolute; 
+      top: 100%; 
+      left: 0; 
+      right: 0;
+      background: #fff; 
+      border: 1px solid #E5E5E5; 
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      max-height: 200px; 
+      overflow-y: auto;
+      z-index: 1000; 
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-top: -1px;
     }
-    .suggestions-list.show { display: block; }
     
-    .suggestion-item { padding: 8px; cursor: pointer; border-bottom: 1px solid #f5f5f5; }
-    .suggestion-item:hover { background: #E6F3FF; }
+    .suggestions-list.show { 
+      display: block; 
+    }
+    
+    .suggestion-item { 
+      padding: 10px 12px; 
+      cursor: pointer; 
+      border-bottom: 1px solid #F5F5F5;
+      color: #000;
+      font-size: 13px;
+      transition: background 0.1s ease;
+    }
+    
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+    
+    .suggestion-item:hover { 
+      background: #FAFAFA; 
+    }
 
-    .apply-btn { background: #333; color: white; padding: 6px 12px; white-space: nowrap;}
-    .apply-btn:hover { background: #000; }
+    .apply-btn { 
+      background: #000; 
+      color: #fff; 
+      padding: 10px 20px; 
+      white-space: nowrap;
+      font-weight: 500;
+    }
+    
+    .apply-btn:hover { 
+      background: #333; 
+    }
+    
+    .apply-btn:active {
+      transform: scale(0.98);
+    }
 
-    .loader { display: none; text-align: center; margin-top: 20px; color: #888; }
+    .loader { 
+      display: none; 
+      text-align: center; 
+      margin: 24px 0; 
+      color: #666;
+      font-size: 13px;
+    }
+    
+    /* Container */
+    #resultsContainer {
+      padding-bottom: 24px;
+    }
+    
+    /* Empty state */
+    #resultsContainer p {
+      margin: 8px 0;
+      color: #999;
+      font-size: 13px;
+      text-align: center;
+    }
+    
+    /* Main container padding */
+    body > *:not(script) {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+    
+    body > h2 {
+      padding-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -131,7 +366,7 @@
         container.innerHTML = '';
 
         if(figmaFonts.length === 0 && missingFonts.length === 0) {
-            container.innerHTML = '<p style="margin-top:20px; color:#888;">No text layers found.</p>';
+            container.innerHTML = '<p style="margin-top:24px; color:#999; font-size:13px; text-align:center;">No text layers found.</p>';
             return;
         }
 
@@ -175,7 +410,7 @@
       const header = document.createElement('div');
       header.className = 'section-header';
       
-      let headerHTML = `<h3>${title}(${fonts.length})</h3>`;
+      let headerHTML = `<h3>${title} <span style="color: #999; font-weight: 400;">(${fonts.length})</span></h3>`;
       
       // ADD THE DISCLAIMER FOR MISSING FONTS HERE
       if (isMissing) {
@@ -288,7 +523,9 @@
       drawer.className = 'replace-drawer';
       
       const drawerDesc = document.createElement('div');
-      drawerDesc.style.color = '#666'; drawerDesc.style.marginBottom = '5px';
+      drawerDesc.style.color = '#666'; 
+      drawerDesc.style.marginBottom = '8px';
+      drawerDesc.style.fontSize = '12px';
       drawerDesc.innerText = `Replace "${fontName}" with:`;
       
       const drawerRow = document.createElement('div');
