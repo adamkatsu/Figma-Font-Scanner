@@ -75,16 +75,24 @@
     .primary-btn {
       background: #000; 
       color: #fff; 
-      padding: 14px 32px; 
+      padding: 12px 32px; 
       font-weight: 600;
       letter-spacing: -0.1px;
       border-radius: 8px;
       font-size: 14px;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       min-width: 200px;
     }
+    
+    .primary-btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
     .primary-btn:hover { 
-      background: #333; 
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
@@ -691,7 +699,16 @@
   <div class="header-section">
   <h2>Font Scanner</h2>
     <p class="header-subtitle">Scan and manage fonts in your Figma designs</p>
-    <button id="scanBtn" class="primary-btn">Scan Fonts</button>
+    <button id="scanBtn" class="primary-btn">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 4C2 2.89543 2.89543 2 4 2H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 2H12C13.1046 2 14 2.89543 14 4V6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 10V12C14 13.1046 13.1046 14 12 14H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M6 14H4C2.89543 14 2 13.1046 2 12V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="5" y="5" width="6" height="6" stroke="currentColor" stroke-width="1.5" fill="none"/>
+      </svg>
+      Scan Fonts
+    </button>
   </div>
   
   <div class="content-wrapper">
