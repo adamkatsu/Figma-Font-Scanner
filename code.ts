@@ -209,12 +209,61 @@ async function selectTextNodesByFont(fontFamily: string) {
   }
 }
 
+// --- 4. SELECTION CHANGE TRACKING ---
+
+let lastSelectedFont: string | null = null;
+
+// Listen for selection changes in Figma
+figma.on('selectionchange', () => {
+  const selection = figma.currentPage.selection;
+  
+  // If nothing is selected, clear the UI selection
+  if (selection.length === 0) {
+    if (lastSelectedFont) {
+      figma.ui.postMessage({
+        type: 'deselect-font'
+      });
+      lastSelectedFont = null;
+    }
+    return;
+  }
+  
+  // Check if any selected nodes match the last selected font
+  if (lastSelectedFont) {
+    const targetFamily = lastSelectedFont.toLowerCase();
+    let hasMatchingFont = false;
+    
+    for (const node of selection) {
+      if (node.type === 'TEXT') {
+        try {
+          const nodeFonts = extractFontFamilies(node as TextNode);
+          if (Array.from(nodeFonts).some(f => f.toLowerCase() === targetFamily)) {
+            hasMatchingFont = true;
+            break;
+          }
+        } catch (e) {
+          // Ignore nodes we can't read
+        }
+      }
+    }
+    
+    // If no matching fonts in selection, deselect in UI
+    if (!hasMatchingFont) {
+      figma.ui.postMessage({
+        type: 'deselect-font'
+      });
+      lastSelectedFont = null;
+    }
+  }
+});
+
 // --- MESSAGE HANDLER ---
 
 figma.ui.onmessage = async msg => {
   if (msg.type === 'scan-layers') {
     await getFontsFromPage();
   } else if (msg.type === 'select-font') {
+    lastSelectedFont = msg.font;
     await selectTextNodesByFont(msg.font);
   } else if (msg.type === 'replace-font') {
     await replaceFontFamily(msg.oldFont, msg.newFont);
