@@ -177,8 +177,8 @@
     }
     
     .item.selected .badge-missing {
-      background: #ffffff;
-      color: #000000;
+      background: #fff;
+      color: #000;
     }
     
     .item.selected .ext-link {
@@ -221,11 +221,10 @@
     }
     
     .badge-missing { 
-      background: rgba(255, 67, 67, 0.1); 
-      color: #ff4343; 
+      background: #000; 
+      color: #fff; 
       font-size: 10px; 
       padding: 3px 8px; 
-      margin-left: 5px;
       border-radius: 4px;
       font-weight: 500;
       letter-spacing: 0.3px;
@@ -1100,6 +1099,7 @@
       
       // ADD THE DISCLAIMER FOR MISSING FONTS HERE
       if (isMissing) {
+        headerHTML += `<span class="header-disclaimer">(Download links only available for Google Fonts)</span>`;
         header.style.flexDirection = 'column';
         header.style.alignItems = 'flex-start';
       }
