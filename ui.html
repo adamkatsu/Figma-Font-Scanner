@@ -401,6 +401,8 @@
     
     .modal-overlay.show .modal-container {
       transform: scale(1);
+      max-height: 85vh;
+      overflow-y: auto;
     }
     
     .modal-header {
@@ -511,6 +513,116 @@
       color: #666;
       cursor: default;
       border-color: #E5E5E5;
+    }
+
+    .detail-section {
+      margin-bottom: 20px;
+    }
+
+    .detail-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 6px;
+    }
+
+    .detail-list {
+      border: 1px solid #E5E5E5;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #FBFBFB;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #000;
+    }
+
+    .detail-value {
+      font-weight: 500;
+    }
+
+    .detail-count {
+      color: #777;
+    }
+
+    .detail-subtitle {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+      margin: 12px 0 6px;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .detail-actions {
+      display: flex;
+      gap: 6px;
+      margin-left: 8px;
+    }
+
+    .detail-action-btn {
+      border: 1px solid #E5E5E5;
+      border-radius: 4px;
+      background: #fff;
+      font-size: 11px;
+      padding: 4px 8px;
+      cursor: pointer;
+      color: #000;
+    }
+
+    .detail-action-btn:hover {
+      background: #000;
+      color: #fff;
+      border-color: #000;
+    }
+
+    .weight-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .weight-picker-btn {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #E5E5E5;
+      background: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .weight-picker-btn:hover {
+      border-color: #000;
+      background: #000;
+      color: #fff;
+    }
+
+    .weight-picker-btn.current {
+      background: #000;
+      color: #fff;
+      border-color: #000;
+      cursor: default;
+    }
+
+    .detail-empty {
+      text-align: center;
+      color: #999;
+      font-size: 13px;
+      margin: 12px 0;
     }
     
     .replace-label {
@@ -693,6 +805,44 @@
       font-weight: 600;
       margin-right: 4px;
     }
+
+    .detail-action-btn:disabled,
+    .detail-action-btn.disabled,
+    .weight-picker-btn:disabled,
+    .weight-picker-btn.disabled,
+    .apply-btn:disabled,
+    .apply-btn.disabled {
+      background: #f4f4f4 !important;
+      color: #bbb !important;
+      border-color: #e0e0e0 !important;
+      opacity: 0.7;
+      cursor: not-allowed !important;
+      box-shadow: none;
+    }
+
+    .detail-action-btn:disabled:hover,
+    .weight-picker-btn:disabled:hover,
+    .apply-btn:disabled:hover {
+      background: #f4f4f4 !important;
+      color: #bbb !important;
+    }
+    .detail-action-btn[data-tooltip]:disabled:hover::after,
+    .weight-picker-btn[data-tooltip]:disabled:hover::after,
+    .apply-btn[data-tooltip]:disabled:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      top: -28px;
+      transform: translateX(-50%);
+      background: #222; color: #fff;
+      padding: 5px 10px; border-radius: 5px; font-size: 11px;
+      white-space: nowrap; z-index: 2000;
+      pointer-events: none;
+      opacity: 1;
+    }
+    .button-group, .detail-actions, .weight-picker {
+      position: relative;
+    }
   </style>
 </head>
 <body>
@@ -746,11 +896,72 @@
     const API_KEY = 'AIzaSyBZqOric7hC8x6zLV-Xt-X6VS0g6NsoA6k'; 
     let systemFontsGlobal = []; 
     let selectedFontItem = null; 
+    let fontDetailsGlobal = {};
+    let familyStylesGlobal = {};
 
     // KEYWORDS TO DETECT ICON FONTS
     const ICON_KEYWORDS = [
       'awesome', 'icon', 'symbol', 'glyph', 'icomoon', 'entypo', 'dingbat', 'ionicons', 'material icons', 'material symbols'
     ];
+
+    const WEIGHT_KEYWORDS = [
+      { weight: 100, tokens: ['thin', 'hairline'] },
+      { weight: 200, tokens: ['extra light', 'extralight', 'ultra light', 'ultralight'] },
+      { weight: 300, tokens: ['light'] },
+      { weight: 350, tokens: ['book'] },
+      { weight: 400, tokens: ['regular', 'normal', 'roman'] },
+      { weight: 500, tokens: ['medium'] },
+      { weight: 600, tokens: ['semibold', 'semi bold', 'demibold', 'demi bold'] },
+      { weight: 700, tokens: ['bold'] },
+      { weight: 800, tokens: ['extra bold', 'extrabold', 'ultra bold', 'ultrabold'] },
+      { weight: 900, tokens: ['black', 'heavy'] }
+    ];
+
+    function getWeightMeta(style) {
+      const value = (style || '').toString();
+      const lower = value.toLowerCase();
+      const isItalic = lower.includes('italic') || lower.includes('oblique');
+      const numericMatch = lower.match(/(\d{3})/);
+      let weight = numericMatch ? parseInt(numericMatch[1], 10) : null;
+      if (!weight) {
+        for (const entry of WEIGHT_KEYWORDS) {
+          if (entry.tokens.some(token => lower.includes(token))) {
+            weight = entry.weight;
+            break;
+          }
+        }
+      }
+      return {
+        weight: weight ?? 400,
+        isItalic
+      };
+    }
+
+    function splitWeightGroups(items, accessor = item => item) {
+      const enriched = items.map(item => {
+        const value = accessor(item);
+        return {
+          item,
+          value,
+          meta: getWeightMeta(value)
+        };
+      });
+
+      enriched.sort((a, b) => {
+        if (a.meta.weight !== b.meta.weight) {
+          return a.meta.weight - b.meta.weight;
+        }
+        if (a.meta.isItalic !== b.meta.isItalic) {
+          return Number(a.meta.isItalic) - Number(b.meta.isItalic);
+        }
+        return a.value.localeCompare(b.value);
+      });
+
+      return {
+        normal: enriched.filter(entry => !entry.meta.isItalic),
+        italic: enriched.filter(entry => entry.meta.isItalic)
+      };
+    }
 
     function performScan() {
       document.getElementById('resultsContainer').innerHTML = '';
@@ -773,7 +984,14 @@
       
       if (msg.type === 'scan-result') {
         if (msg.systemFonts) systemFontsGlobal = msg.systemFonts;
-        await processFonts(msg.fonts || [], msg.missingFonts || [], msg.fontCounts || []);
+        fontDetailsGlobal = msg.fontDetails || {};
+        familyStylesGlobal = msg.familyStyles || {};
+        await processFonts(
+          msg.fonts || [],
+          msg.missingFonts || [],
+          msg.fontCounts || [],
+          fontDetailsGlobal
+        );
       } else if (msg.type === 'notification') {
         showNotification(msg.message, msg.count, msg.fontName);
       } else if (msg.type === 'deselect-font') {
@@ -805,7 +1023,7 @@
       }, 3000);
     }
 
-    async function processFonts(figmaFonts, missingFonts, fontCounts) {
+    async function processFonts(figmaFonts, missingFonts, fontCounts, fontDetails = {}) {
       try {
         const response = await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${API_KEY}`);
         const data = await response.json();
@@ -826,6 +1044,7 @@
         document.getElementById('loader').style.display = 'none';
         const container = document.getElementById('resultsContainer');
         container.innerHTML = '';
+        fontDetailsGlobal = fontDetails || {};
 
         if(figmaFonts.length === 0 && missingFonts.length === 0) {
             container.innerHTML = '<p style="margin-top:24px; color:#999; font-size:13px; text-align:center;">No text layers found.</p>';
@@ -866,6 +1085,11 @@
       } catch (error) {
         console.error(error);
       }
+    }
+
+    // helper to determine if renderSection is rendering 'Missing Fonts'
+    function isMissingGroup(title) {
+      return /missing fonts/i.test(title);
     }
 
     function renderSection(container, title, fonts, googleSet, isMissing, countMap) {
@@ -909,12 +1133,12 @@
         const count = countMap.get(font);
         // If count is undefined, it means the font wasn't in the countMap - this shouldn't happen but fallback to 1
         const finalCount = count !== undefined && count !== null ? count : 1;
-        ul.appendChild(createRow(font, googleSet.has(font.toLowerCase()), isMissing, finalCount));
+        ul.appendChild(createRow(font, googleSet.has(font.toLowerCase()), isMissing, finalCount, title));
       });
       container.appendChild(ul);
     }
 
-    function createRow(fontName, isGoogle, isMissing, count) {
+    function createRow(fontName, isGoogle, isMissing, count, parentTitle) {
       const wrapper = document.createElement('li');
       wrapper.className = 'item-wrapper';
 
@@ -933,10 +1157,63 @@
       const linkGroup = document.createElement('div');
       linkGroup.className = 'link-group';
       const encoded = fontName.replace(/\s+/g, '+');
-      
-      // Add replace button to link group
+
+      const appendLink = (href, tooltip, svgMarkup) => {
+        const anchor = document.createElement('a');
+        anchor.href = href;
+        anchor.className = 'ext-link';
+        anchor.setAttribute('data-tooltip', tooltip);
+        anchor.target = '_blank';
+        anchor.innerHTML = svgMarkup;
+        linkGroup.appendChild(anchor);
+      };
+
+      if (isGoogle) {
+        appendLink(
+          `https://fonts.google.com/download?family=${encoded}`,
+          'Download font',
+          `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.99999 10.6667L4.66666 7.33341L5.59999 6.36675L7.33332 8.10008V2.66675H8.66666V8.10008L10.4 6.36675L11.3333 7.33341L7.99999 10.6667ZM3.99999 13.3334C3.63332 13.3334 3.31955 13.203 3.05866 12.9421C2.79777 12.6812 2.6671 12.3672 2.66666 12.0001V10.0001H3.99999V12.0001H12V10.0001H13.3333V12.0001C13.3333 12.3667 13.2029 12.6807 12.942 12.9421C12.6811 13.2034 12.3671 13.3339 12 13.3334H3.99999Z" fill="currentColor"/>
+          </svg>`
+        );
+        appendLink(
+          `https://fonts.google.com/specimen/${encoded}`,
+          'View in browser',
+          `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.0667 14L8.86667 9.8C8.53333 10.0667 8.15 10.2778 7.71667 10.4333C7.28333 10.5889 6.82222 10.6667 6.33333 10.6667C5.12222 10.6667 4.09733 10.2471 3.25867 9.408C2.42 8.56889 2.00044 7.544 2 6.33333C1.99956 5.12267 2.41911 4.09778 3.25867 3.25867C4.09822 2.41956 5.12311 2 6.33333 2C7.54356 2 8.56867 2.41956 9.40867 3.25867C10.2487 4.09778 10.668 5.12267 10.6667 6.33333C10.6667 6.82222 10.5889 7.28333 10.4333 7.71667C10.2778 8.15 10.0667 8.53333 9.8 8.86667L14 13.0667L13.0667 14ZM6.33333 9.33333C7.16667 9.33333 7.87511 9.04178 8.45867 8.45867C9.04222 7.87556 9.33378 7.16711 9.33333 6.33333C9.33289 5.49956 9.04133 4.79133 8.45867 4.20867C7.876 3.626 7.16756 3.33422 6.33333 3.33333C5.49911 3.33244 4.79089 3.62422 4.20867 4.20867C3.62644 4.79311 3.33467 5.50133 3.33333 6.33333C3.332 7.16533 3.62378 7.87378 4.20867 8.45867C4.79356 9.04356 5.50178 9.33511 6.33333 9.33333Z" fill="currentColor"/>
+          </svg>`
+        );
+      } else {
+        appendLink(
+          `https://www.google.com/search?q=${encoded}+font`,
+          'Search in browser',
+          `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.0667 14L8.86667 9.8C8.53333 10.0667 8.15 10.2778 7.71667 10.4333C7.28333 10.5889 6.82222 10.6667 6.33333 10.6667C5.12222 10.6667 4.09733 10.2471 3.25867 9.408C2.42 8.56889 2.00044 7.544 2 6.33333C1.99956 5.12267 2.41911 4.09778 3.25867 3.25867C4.09822 2.41956 5.12311 2 6.33333 2C7.54356 2 8.56867 2.41956 9.40867 3.25867C10.2487 4.09778 10.668 5.12267 10.6667 6.33333C10.6667 6.82222 10.5889 7.28333 10.4333 7.71667C10.2778 8.15 10.0667 8.53333 9.8 8.86667L14 13.0667L13.0667 14ZM6.33333 9.33333C7.16667 9.33333 7.87511 9.04178 8.45867 8.45867C9.04222 7.87556 9.33378 7.16711 9.33333 6.33333C9.33289 5.49956 9.04133 4.79133 8.45867 4.20867C7.876 3.626 7.16756 3.33422 6.33333 3.33333C5.49911 3.33244 4.79089 3.62422 4.20867 4.20867C3.62644 4.79311 3.33467 5.50133 3.33333 6.33333C3.332 7.16533 3.62378 7.87378 4.20867 8.45867C4.79356 9.04356 5.50178 9.33511 6.33333 9.33333Z" fill="currentColor"/>
+          </svg>`
+        );
+      }
+
+      const detailsBtn = document.createElement('button');
+      detailsBtn.className = 'ext-link';
+      detailsBtn.type = 'button';
+      detailsBtn.setAttribute('data-tooltip', 'View weights & sizes');
+      detailsBtn.style.border = 'none';
+      detailsBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 5.33331H8.00667" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7.33334 7.33331H8.00001V10.6666" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      `;
+      detailsBtn.onclick = (event) => {
+        event.stopPropagation();
+        showFontDetailsModal(fontName, isMissing);
+      };
+      linkGroup.appendChild(detailsBtn);
+
       const replaceBtn = document.createElement('button');
       replaceBtn.className = 'ext-link';
+      replaceBtn.type = 'button';
       replaceBtn.setAttribute('data-tooltip', 'Replace font');
       replaceBtn.style.cursor = 'pointer';
       replaceBtn.style.border = 'none';
@@ -948,34 +1225,12 @@
           <path d="M13.3333 11.3333H2.66667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       `;
-      replaceBtn.onclick = () => {
-        showReplaceModal(fontName);
+      replaceBtn.onclick = (event) => {
+        event.stopPropagation();
+        showReplaceModal(fontName, isMissing);
       };
-      
-      if (isGoogle) {
-        linkGroup.innerHTML = `
-          <a href="https://fonts.google.com/download?family=${encoded}" class="ext-link" data-tooltip="Download font" target="_blank">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7.99999 10.6667L4.66666 7.33341L5.59999 6.36675L7.33332 8.10008V2.66675H8.66666V8.10008L10.4 6.36675L11.3333 7.33341L7.99999 10.6667ZM3.99999 13.3334C3.63332 13.3334 3.31955 13.203 3.05866 12.9421C2.79777 12.6812 2.6671 12.3672 2.66666 12.0001V10.0001H3.99999V12.0001H12V10.0001H13.3333V12.0001C13.3333 12.3667 13.2029 12.6807 12.942 12.9421C12.6811 13.2034 12.3671 13.3339 12 13.3334H3.99999Z" fill="currentColor"/>
-            </svg>
-          </a>
-          <a href="https://fonts.google.com/specimen/${encoded}" class="ext-link" data-tooltip="View in browser" target="_blank">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M13.0667 14L8.86667 9.8C8.53333 10.0667 8.15 10.2778 7.71667 10.4333C7.28333 10.5889 6.82222 10.6667 6.33333 10.6667C5.12222 10.6667 4.09733 10.2471 3.25867 9.408C2.42 8.56889 2.00044 7.544 2 6.33333C1.99956 5.12267 2.41911 4.09778 3.25867 3.25867C4.09822 2.41956 5.12311 2 6.33333 2C7.54356 2 8.56867 2.41956 9.40867 3.25867C10.2487 4.09778 10.668 5.12267 10.6667 6.33333C10.6667 6.82222 10.5889 7.28333 10.4333 7.71667C10.2778 8.15 10.0667 8.53333 9.8 8.86667L14 13.0667L13.0667 14ZM6.33333 9.33333C7.16667 9.33333 7.87511 9.04178 8.45867 8.45867C9.04222 7.87556 9.33378 7.16711 9.33333 6.33333C9.33289 5.49956 9.04133 4.79133 8.45867 4.20867C7.876 3.626 7.16756 3.33422 6.33333 3.33333C5.49911 3.33244 4.79089 3.62422 4.20867 4.20867C3.62644 4.79311 3.33467 5.50133 3.33333 6.33333C3.332 7.16533 3.62378 7.87378 4.20867 8.45867C4.79356 9.04356 5.50178 9.33511 6.33333 9.33333Z" fill="currentColor"/>
-            </svg>
-          </a>
-        `;
-      } else {
-        linkGroup.innerHTML = `
-          <a href="https://www.google.com/search?q=${encoded}+font" class="ext-link" data-tooltip="Search in browser" target="_blank">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M13.0667 14L8.86667 9.8C8.53333 10.0667 8.15 10.2778 7.71667 10.4333C7.28333 10.5889 6.82222 10.6667 6.33333 10.6667C5.12222 10.6667 4.09733 10.2471 3.25867 9.408C2.42 8.56889 2.00044 7.544 2 6.33333C1.99956 5.12267 2.41911 4.09778 3.25867 3.25867C4.09822 2.41956 5.12311 2 6.33333 2C7.54356 2 8.56867 2.41956 9.40867 3.25867C10.2487 4.09778 10.668 5.12267 10.6667 6.33333C10.6667 6.82222 10.5889 7.28333 10.4333 7.71667C10.2778 8.15 10.0667 8.53333 9.8 8.86667L14 13.0667L13.0667 14ZM6.33333 9.33333C7.16667 9.33333 7.87511 9.04178 8.45867 8.45867C9.04222 7.87556 9.33378 7.16711 9.33333 6.33333C9.33289 5.49956 9.04133 4.79133 8.45867 4.20867C7.876 3.626 7.16756 3.33422 6.33333 3.33333C5.49911 3.33244 4.79089 3.62422 4.20867 4.20867C3.62644 4.79311 3.33467 5.50133 3.33333 6.33333C3.332 7.16533 3.62378 7.87378 4.20867 8.45867C4.79356 9.04356 5.50178 9.33511 6.33333 9.33333Z" fill="currentColor"/>
-            </svg>
-          </a>
-        `;
-      }
-      // Add replace button after setting innerHTML
       linkGroup.appendChild(replaceBtn);
+
       actionsDiv.appendChild(linkGroup);
 
       mainRow.appendChild(nameDiv);
@@ -1005,12 +1260,134 @@
     }
     
     // Modal Functions
-    function showReplaceModal(fontName) {
+    function showFontDetailsModal(fontName, isMissing = false) {
+      const modal = document.getElementById('replaceModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalContent = document.getElementById('modalContent');
+      const details = fontDetailsGlobal[fontName];
+
+      modalTitle.textContent = `Font usage: ${fontName}`;
+      modalContent.innerHTML = '';
+
+      if (!details) {
+        modalContent.innerHTML = '<p class="detail-empty">No additional usage data available yet.</p>';
+        modal.classList.add('show');
+        return;
+      }
+
+      const createSection = (title, items, formatter, type) => {
+        const section = document.createElement('div');
+        section.className = 'detail-section';
+
+        const header = document.createElement('div');
+        header.className = 'detail-title';
+        header.textContent = title;
+        section.appendChild(header);
+
+        if (!items || items.length === 0) {
+          const emptyState = document.createElement('div');
+          emptyState.className = 'detail-empty';
+          emptyState.textContent = 'Not detected on this page.';
+          section.appendChild(emptyState);
+          return section;
+        }
+
+        const buildList = subset => {
+          const list = document.createElement('div');
+          list.className = 'detail-list';
+
+          subset.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'detail-item';
+            const info = document.createElement('div');
+            info.style.display = 'flex';
+            info.style.flexDirection = 'column';
+
+            const valueSpan = document.createElement('span');
+            valueSpan.className = 'detail-value';
+            valueSpan.textContent = formatter(item.value);
+
+            const countSpan = document.createElement('span');
+            countSpan.className = 'detail-count';
+            countSpan.textContent = `${item.count} layer${item.count === 1 ? '' : 's'}`;
+
+            info.appendChild(valueSpan);
+            info.appendChild(countSpan);
+            row.appendChild(info);
+
+            const actions = document.createElement('div');
+            actions.className = 'detail-actions';
+            const replaceBtn = document.createElement('button');
+            replaceBtn.className = 'detail-action-btn';
+            replaceBtn.textContent = 'Replace';
+            replaceBtn.onclick = () => {
+              if (type === 'weight') {
+                showReplaceWeightModal(fontName, item.value, isMissing);
+              } else if (type === 'size') {
+                showReplaceSizeModal(fontName, item.value, isMissing);
+              }
+            };
+            replaceBtn.disabled = !!isMissing;
+            replaceBtn.title = isMissing ? 'Replacement not available for missing fonts' : '';
+            actions.appendChild(replaceBtn);
+            row.appendChild(actions);
+            list.appendChild(row);
+          });
+
+          return list;
+        };
+
+        if (type === 'weight') {
+          const groups = splitWeightGroups(items, item => item.value);
+          if (groups.normal.length > 0) {
+            const normalHeader = document.createElement('div');
+            normalHeader.className = 'detail-subtitle';
+            normalHeader.textContent = 'Normal';
+            section.appendChild(normalHeader);
+            section.appendChild(buildList(groups.normal.map(entry => entry.item)));
+          }
+          if (groups.italic.length > 0) {
+            const italicHeader = document.createElement('div');
+            italicHeader.className = 'detail-subtitle';
+            italicHeader.textContent = 'Italic';
+            section.appendChild(italicHeader);
+            section.appendChild(buildList(groups.italic.map(entry => entry.item)));
+          }
+        } else {
+          section.appendChild(buildList(items));
+        }
+
+        return section;
+      };
+
+      modalContent.appendChild(createSection('Font weights', details.styles || [], value => value, 'weight', isMissing));
+      modalContent.appendChild(createSection('Font sizes', details.sizes || [], value => `${value}px`, 'size', isMissing));
+      modal.classList.add('show');
+    }
+
+    function showLoader(message) {
+      const loader = document.getElementById('loader');
+      if (!loader) return;
+      loader.style.display = 'block';
+      loader.innerText = message || 'Processing...';
+    }
+
+    function openValueReplaceModal(options) {
+      const {
+        title,
+        currentLabel,
+        placeholder,
+        inputType = 'text',
+        loadingText = 'Updating...',
+        suggestions = null,
+        onSubmit
+      } = options;
+
       const modal = document.getElementById('replaceModal');
       const modalTitle = document.getElementById('modalTitle');
       const modalContent = document.getElementById('modalContent');
       
-      modalTitle.textContent = `Replace Font`;
+      modalTitle.textContent = title || 'Replace';
       modalContent.innerHTML = '';
       
       // Create input row
@@ -1023,7 +1400,7 @@
       
       const beforeInput = document.createElement('input');
       beforeInput.className = 'replace-input readonly';
-      beforeInput.value = fontName;
+      beforeInput.value = currentLabel || '';
       beforeInput.readOnly = true;
       
       const dividerLabel = document.createElement('span');
@@ -1042,55 +1419,54 @@
 
       const input = document.createElement('input');
       input.className = 'replace-input';
-      input.placeholder = 'Type font name...';
+      input.placeholder = placeholder || 'Enter value...';
       input.autocomplete = 'off';
-
-      const suggestionsBox = document.createElement('div');
-      suggestionsBox.className = 'suggestions-list';
-
-      // Helper function to render suggestions
-      const renderSuggestions = (query) => {
-        suggestionsBox.innerHTML = '';
-        const val = query.toLowerCase();
-
-        const matches = val 
-            ? systemFontsGlobal.filter(f => f.toLowerCase().includes(val)) 
-            : systemFontsGlobal;
-
-        if (matches.length > 0) {
-            suggestionsBox.classList.add('show');
-            matches.slice(0, 50).forEach(match => {
-                const item = document.createElement('div');
-                item.className = 'suggestion-item';
-                item.textContent = match;
-                item.onclick = () => { 
-                    input.value = match; 
-                    suggestionsBox.classList.remove('show'); 
-                };
-                suggestionsBox.appendChild(item);
-            });
-        } else {
-            suggestionsBox.classList.remove('show');
-        }
-      };
-
-      input.addEventListener('focus', () => {
-         renderSuggestions(input.value);
-      });
-
-      input.addEventListener('input', () => {
-         renderSuggestions(input.value);
-      });
-
-      // Close suggestions when clicking outside
-      document.addEventListener('click', function closeSuggestions(e) {
-        if (!inputWrapper.contains(e.target)) {
-          suggestionsBox.classList.remove('show');
-        }
-      });
+      input.type = inputType;
 
       inputWrapper.appendChild(input);
-      inputWrapper.appendChild(suggestionsBox);
+
+      const suggestionSource = typeof suggestions === 'function' ? suggestions() : suggestions;
+      if (Array.isArray(suggestionSource) && suggestionSource.length > 0) {
+        const suggestionsBox = document.createElement('div');
+        suggestionsBox.className = 'suggestions-list';
+
+        const renderSuggestions = (query) => {
+          suggestionsBox.innerHTML = '';
+          const val = (query || '').toLowerCase();
+
+          const matches = val
+            ? suggestionSource.filter(f => f.toLowerCase().includes(val))
+            : suggestionSource;
+
+          if (matches.length > 0) {
+            suggestionsBox.classList.add('show');
+            matches.slice(0, 50).forEach(match => {
+              const item = document.createElement('div');
+              item.className = 'suggestion-item';
+              item.textContent = match;
+              item.onclick = () => {
+                input.value = match;
+                suggestionsBox.classList.remove('show');
+              };
+              suggestionsBox.appendChild(item);
+            });
+          } else {
+            suggestionsBox.classList.remove('show');
+          }
+        };
+
+        input.addEventListener('focus', () => renderSuggestions(input.value));
+        input.addEventListener('input', () => renderSuggestions(input.value));
+
+        const closeSuggestions = (e) => {
+          if (!inputWrapper.contains(e.target)) {
+            suggestionsBox.classList.remove('show');
+            document.removeEventListener('click', closeSuggestions);
+          }
+        };
+        document.addEventListener('click', closeSuggestions);
+        inputWrapper.appendChild(suggestionsBox);
+      }
       
       afterGroup.appendChild(inputWrapper);
 
@@ -1098,11 +1474,18 @@
       applyBtn.className = 'apply-btn';
       applyBtn.textContent = 'Apply';
       applyBtn.onclick = () => {
-        if (input.value) {
-          closeReplaceModal();
-          document.getElementById('loader').style.display = 'block';
-          document.getElementById('loader').innerText = 'Replacing...';
-          parent.postMessage({ pluginMessage: { type: 'replace-font', oldFont: fontName, newFont: input.value } }, '*');
+        const value = input.value.trim();
+        if (!value) {
+          input.focus();
+          return;
+        }
+        const shouldClose = onSubmit ? onSubmit(value) : true;
+        if (shouldClose === false) {
+          return;
+        }
+        closeReplaceModal();
+        if (loadingText) {
+          showLoader(loadingText);
         }
       };
 
@@ -1113,6 +1496,161 @@
       
       // Show modal
       modal.classList.add('show');
+    }
+
+    function showReplaceModal(fontName, isMissing) {
+      if (isMissing) {
+        const modal = document.getElementById('replaceModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        modalTitle.textContent = 'Replacement Disabled';
+        modalContent.innerHTML = '<div style="color:#c00;text-align:center;margin:24px 0;font-size:14px;">Replacement is not available for missing fonts. Try installing this font or replacing it via Figma first.</div>';
+        modal.classList.add('show');
+        return;
+      }
+      openValueReplaceModal({
+        title: 'Replace Font',
+        currentLabel: fontName,
+        placeholder: 'Type font name...',
+        loadingText: 'Replacing...',
+        suggestions: () => systemFontsGlobal,
+        onSubmit: (value) => {
+          parent.postMessage({ pluginMessage: { type: 'replace-font', oldFont: fontName, newFont: value } }, '*');
+          return true;
+        }
+      });
+    }
+
+    function showReplaceWeightModal(fontName, weightValue, isMissing) {
+      if (isMissing) {
+        const modal = document.getElementById('replaceModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        modalTitle.textContent = 'Replacement Disabled';
+        modalContent.innerHTML = '<div style="color:#c00;text-align:center;margin:24px 0;font-size:14px;">Replacement is not available for missing fonts. Try installing this font or replacing it via Figma first.</div>';
+        modal.classList.add('show');
+        return;
+      }
+      const availableStyles = familyStylesGlobal[fontName];
+      if (!availableStyles || availableStyles.length === 0) {
+        openValueReplaceModal({
+          title: `Replace "${fontName}" weight`,
+          currentLabel: weightValue,
+          placeholder: 'e.g. Regular, Medium, Bold',
+          loadingText: 'Updating weight...',
+          onSubmit: (value) => {
+            parent.postMessage({
+              pluginMessage: {
+                type: 'replace-font-weight',
+                family: fontName,
+                oldStyle: weightValue,
+                newStyle: value
+              }
+            }, '*');
+            return true;
+          }
+        });
+        return;
+      }
+
+      const modal = document.getElementById('replaceModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalContent = document.getElementById('modalContent');
+
+      modalTitle.textContent = `Choose a weight for ${fontName}`;
+      modalContent.innerHTML = '';
+
+      const info = document.createElement('p');
+      info.style.fontSize = '13px';
+      info.style.color = '#555';
+      info.style.margin = '0 0 12px 0';
+      info.textContent = 'Select an available style to replace the current weight.';
+      modalContent.appendChild(info);
+
+      const groups = splitWeightGroups(availableStyles, value => value);
+      const currentLower = String(weightValue || '').toLowerCase();
+
+      const renderGroup = (title, entries) => {
+        if (entries.length === 0) return;
+        const groupWrapper = document.createElement('div');
+        groupWrapper.style.marginBottom = '16px';
+
+        const subtitle = document.createElement('div');
+        subtitle.className = 'detail-subtitle';
+        subtitle.textContent = title;
+        groupWrapper.appendChild(subtitle);
+
+        const buttonRow = document.createElement('div');
+        buttonRow.className = 'weight-picker';
+
+        entries.forEach(entry => {
+          const style = entry.value;
+          const btn = document.createElement('button');
+          btn.className = 'weight-picker-btn';
+          if (style.toLowerCase() === currentLower) {
+            btn.classList.add('current');
+            btn.disabled = true;
+          }
+          btn.textContent = style;
+          btn.onclick = () => {
+            if (btn.disabled) return;
+            closeReplaceModal();
+            showLoader('Updating weight...');
+            parent.postMessage({
+              pluginMessage: {
+                type: 'replace-font-weight',
+                family: fontName,
+                oldStyle: weightValue,
+                newStyle: style
+              }
+            }, '*');
+          };
+          buttonRow.appendChild(btn);
+        });
+
+        groupWrapper.appendChild(buttonRow);
+        modalContent.appendChild(groupWrapper);
+      };
+
+      renderGroup('Normal', groups.normal);
+      renderGroup('Italic', groups.italic);
+
+      modal.classList.add('show');
+    }
+
+    function showReplaceSizeModal(fontName, sizeValue, isMissing) {
+      if (isMissing) {
+        const modal = document.getElementById('replaceModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        modalTitle.textContent = 'Replacement Disabled';
+        modalContent.innerHTML = '<div style="color:#c00;text-align:center;margin:24px 0;font-size:14px;">Replacement is not available for missing fonts. Try installing this font or replacing it via Figma first.</div>';
+        modal.classList.add('show');
+        return;
+      }
+      openValueReplaceModal({
+        title: `Replace "${fontName}" size`,
+        currentLabel: `${sizeValue}px`,
+        placeholder: 'Enter new size (px)',
+        inputType: 'number',
+        loadingText: 'Updating size...',
+        onSubmit: (value) => {
+          const parsed = parseFloat(value);
+          if (Number.isNaN(parsed) || parsed <= 0) {
+            alert('Enter a size greater than 0.');
+            return false;
+          }
+          parent.postMessage({
+            pluginMessage: {
+              type: 'replace-font-size',
+              family: fontName,
+              oldSize: sizeValue,
+              newSize: parsed
+            }
+          }, '*');
+          return true;
+        }
+      });
     }
     
     function closeReplaceModal() {

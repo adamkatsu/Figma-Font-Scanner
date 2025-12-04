@@ -1,18 +1,33 @@
 // code.ts
 
-figma.showUI(__html__, { width: 370, height: 520 });
+figma.showUI(__html__, { width: 400, height: 600 });
 
 // --- 1. SCANNING LOGIC ---
+
+type FontUsageDetails = {
+  styles: Map<string, number>;
+  sizes: Map<number, number>;
+};
 
 async function getFontsFromPage() {
   const fontFamilies = new Map<string, number>(); // Map to count occurrences
   const missingFontFamilies = new Set<string>();
+  const fontDetails = new Map<string, FontUsageDetails>();
+  const familyStyleMap = new Map<string, Set<string>>();
 
   // Get all available system fonts for the dropdown
   const availableFontsList = await figma.listAvailableFontsAsync();
   
   // Create a unique list of family names for the UI dropdown
-  const systemFonts = Array.from(new Set(availableFontsList.map(f => f.fontName.family))).sort();
+  const systemFonts = Array.from(new Set(availableFontsList.map(f => {
+    const family = f.fontName.family;
+    const style = f.fontName.style;
+    if (!familyStyleMap.has(family)) {
+      familyStyleMap.set(family, new Set<string>());
+    }
+    familyStyleMap.get(family)!.add(style);
+    return family;
+  }))).sort();
 
   // Create a lookup for fast checking
   const availableFamilies = new Set(systemFonts.map(f => f.toLowerCase()));
@@ -20,14 +35,32 @@ async function getFontsFromPage() {
   // Find all Text Nodes
   const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
 
+  const ensureFontDetail = (family: string): FontUsageDetails => {
+    if (!fontDetails.has(family)) {
+      fontDetails.set(family, {
+        styles: new Map<string, number>(),
+        sizes: new Map<number, number>()
+      });
+    }
+    return fontDetails.get(family)!;
+  };
+
   textNodes.forEach(node => {
     try {
-      if (node.fontName === figma.mixed) {
+      if (node.fontName === figma.mixed || node.fontSize === figma.mixed) {
         // For mixed text, count each segment separately
-        const segments = node.getStyledTextSegments(['fontName']);
+        const segments = node.getStyledTextSegments(['fontName', 'fontSize']);
         segments.forEach(segment => {
           const family = segment.fontName.family;
           fontFamilies.set(family, (fontFamilies.get(family) || 0) + 1);
+          const detail = ensureFontDetail(family);
+          const style = segment.fontName.style;
+          if (style) {
+            detail.styles.set(style, (detail.styles.get(style) || 0) + 1);
+          }
+          if (typeof segment.fontSize === 'number') {
+            detail.sizes.set(segment.fontSize, (detail.sizes.get(segment.fontSize) || 0) + 1);
+          }
           if (!availableFamilies.has(family.toLowerCase())) {
             missingFontFamilies.add(family);
           }
@@ -37,6 +70,15 @@ async function getFontsFromPage() {
         const fontName = node.fontName as FontName;
         const family = fontName.family;
         fontFamilies.set(family, (fontFamilies.get(family) || 0) + 1);
+        const detail = ensureFontDetail(family);
+        const style = fontName.style;
+        if (style) {
+          detail.styles.set(style, (detail.styles.get(style) || 0) + 1);
+        }
+        if (typeof node.fontSize === 'number') {
+          const sizeValue = node.fontSize as number;
+          detail.sizes.set(sizeValue, (detail.sizes.get(sizeValue) || 0) + 1);
+        }
         if (!availableFamilies.has(family.toLowerCase())) {
           missingFontFamilies.add(family);
         }
@@ -51,12 +93,38 @@ async function getFontsFromPage() {
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  const fontDetailsPayload: Record<
+    string,
+    {
+      styles: { value: string; count: number }[];
+      sizes: { value: number; count: number }[];
+    }
+  > = {};
+
+  fontDetails.forEach((detail, family) => {
+    fontDetailsPayload[family] = {
+      styles: Array.from(detail.styles.entries())
+        .map(([value, count]) => ({ value, count }))
+        .sort((a, b) => a.value.localeCompare(b.value)),
+      sizes: Array.from(detail.sizes.entries())
+        .map(([value, count]) => ({ value, count }))
+        .sort((a, b) => a.value - b.value)
+    };
+  });
+
+  const familyStylesPayload: Record<string, string[]> = {};
+  familyStyleMap.forEach((styles, family) => {
+    familyStylesPayload[family] = Array.from(styles).sort((a, b) => a.localeCompare(b));
+  });
+
   figma.ui.postMessage({
     type: 'scan-result',
     fonts: fontsWithCount.map(f => f.name), // Keep for backward compatibility
     fontCounts: fontsWithCount, // New: includes counts
     missingFonts: Array.from(missingFontFamilies).sort(),
-    systemFonts: systemFonts // <--- Send list of installed fonts to UI
+    systemFonts: systemFonts, // <--- Send list of installed fonts to UI
+    fontDetails: fontDetailsPayload,
+    familyStyles: familyStylesPayload
   });
 }
 
@@ -177,6 +245,164 @@ async function applyFontToRange(node: TextNode, start: number, end: number, styl
   }
 }
 
+async function loadFontWithCache(font: FontName, cache: Set<string>) {
+  const key = `${font.family}__${font.style}`;
+  if (cache.has(key)) {
+    return;
+  }
+  await figma.loadFontAsync(font);
+  cache.add(key);
+}
+
+async function replaceFontStyleForFamily(family: string, oldStyle: string, newStyle: string) {
+  const targetFamily = family.trim().toLowerCase();
+  const targetStyle = oldStyle.trim().toLowerCase();
+  const replacementStyle = newStyle.trim();
+
+  if (!targetFamily || !targetStyle || !replacementStyle) {
+    return;
+  }
+
+  const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
+  const fontLoadCache = new Set<string>();
+  let updateCount = 0;
+
+  for (const node of textNodes) {
+    let nodeUpdated = false;
+    try {
+      if (node.fontName === figma.mixed) {
+        const segments = node.getStyledTextSegments(['fontName']);
+        for (const segment of segments) {
+          const segFont = segment.fontName;
+          if (
+            segFont.family.toLowerCase() === targetFamily &&
+            segFont.style.toLowerCase() === targetStyle
+          ) {
+            const newFont: FontName = {
+              family: segFont.family,
+              style: replacementStyle
+            };
+            try {
+              await loadFontWithCache(newFont, fontLoadCache);
+              node.setRangeFontName(segment.start, segment.end, newFont);
+              nodeUpdated = true;
+            } catch (err) {
+              console.error(`Failed to load "${replacementStyle}" for ${segFont.family}`, err);
+            }
+          }
+        }
+      } else {
+        const currentFont = node.fontName as FontName;
+        if (
+          currentFont.family.toLowerCase() === targetFamily &&
+          currentFont.style.toLowerCase() === targetStyle
+        ) {
+          const newFont: FontName = {
+            family: currentFont.family,
+            style: replacementStyle
+          };
+          try {
+            await loadFontWithCache(newFont, fontLoadCache);
+            node.fontName = newFont;
+            nodeUpdated = true;
+          } catch (err) {
+            console.error(`Failed to load "${replacementStyle}" for ${currentFont.family}`, err);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to process node for style replacement', error);
+    }
+
+    if (nodeUpdated) {
+      updateCount++;
+    }
+  }
+
+  figma.ui.postMessage({
+    type: 'notification',
+    message:
+      updateCount === 0
+        ? `No "${family}" layers with "${oldStyle}" weight found.`
+        : `Updated ${family} ${oldStyle} → ${replacementStyle} in ${updateCount} layer${updateCount === 1 ? '' : 's'}.`,
+    count: updateCount,
+    fontName: family
+  });
+
+  if (updateCount > 0) {
+    await getFontsFromPage();
+  }
+}
+
+async function replaceFontSizeForFamily(family: string, oldSize: number, newSize: number) {
+  const targetFamily = family.trim().toLowerCase();
+  if (!targetFamily || Number.isNaN(newSize) || newSize <= 0) {
+    return;
+  }
+
+  const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
+  const fontLoadCache = new Set<string>();
+  let updateCount = 0;
+
+  for (const node of textNodes) {
+    let nodeUpdated = false;
+    try {
+      if (node.fontSize === figma.mixed || node.fontName === figma.mixed) {
+        const segments = node.getStyledTextSegments(['fontName', 'fontSize']);
+        for (const segment of segments) {
+          const segFont = segment.fontName;
+          if (
+            segFont.family.toLowerCase() === targetFamily &&
+            segment.fontSize === oldSize
+          ) {
+            try {
+              await loadFontWithCache(segFont, fontLoadCache);
+              node.setRangeFontSize(segment.start, segment.end, newSize);
+              nodeUpdated = true;
+            } catch (err) {
+              console.error('Failed to update font size for segment', err);
+            }
+          }
+        }
+      } else {
+        const currentFont = node.fontName as FontName;
+        if (
+          currentFont.family.toLowerCase() === targetFamily &&
+          (node.fontSize as number) === oldSize
+        ) {
+          try {
+            await loadFontWithCache(currentFont, fontLoadCache);
+            node.fontSize = newSize;
+            nodeUpdated = true;
+          } catch (err) {
+            console.error('Failed to update font size for node', err);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to process node for size replacement', error);
+    }
+
+    if (nodeUpdated) {
+      updateCount++;
+    }
+  }
+
+  figma.ui.postMessage({
+    type: 'notification',
+    message:
+      updateCount === 0
+        ? `No ${family} layers found with ${oldSize}px text.`
+        : `Updated ${family} text ${oldSize}px → ${newSize}px in ${updateCount} layer${updateCount === 1 ? '' : 's'}.`,
+    count: updateCount,
+    fontName: family
+  });
+
+  if (updateCount > 0) {
+    await getFontsFromPage();
+  }
+}
+
 // --- 3. SELECTION LOGIC ---
 
 async function selectTextNodesByFont(fontFamily: string) {
@@ -267,5 +493,9 @@ figma.ui.onmessage = async msg => {
     await selectTextNodesByFont(msg.font);
   } else if (msg.type === 'replace-font') {
     await replaceFontFamily(msg.oldFont, msg.newFont);
+  } else if (msg.type === 'replace-font-weight') {
+    await replaceFontStyleForFamily(msg.family, msg.oldStyle, msg.newStyle);
+  } else if (msg.type === 'replace-font-size') {
+    await replaceFontSizeForFamily(msg.family, msg.oldSize, msg.newSize);
   }
 };
