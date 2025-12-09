@@ -1164,7 +1164,8 @@
       `;
       detailsBtn.onclick = (event) => {
         event.stopPropagation();
-        showFontDetailsModal(fontName);
+        // Pass isMissing flag to the modal function
+        showFontDetailsModal(fontName, isMissing);
       };
       linkGroup.appendChild(detailsBtn);
 
@@ -1217,7 +1218,8 @@
     }
     
     // Modal Functions
-    function showFontDetailsModal(fontName) {
+    // 1. Update arguments to accept isMissing
+    function showFontDetailsModal(fontName, isMissing) {
       const modal = document.getElementById('replaceModal');
       const modalTitle = document.getElementById('modalTitle');
       const modalContent = document.getElementById('modalContent');
@@ -1274,16 +1276,28 @@
 
             const actions = document.createElement('div');
             actions.className = 'detail-actions';
+            
             const replaceBtn = document.createElement('button');
             replaceBtn.className = 'detail-action-btn';
             replaceBtn.textContent = 'Replace';
-            replaceBtn.onclick = () => {
-              if (type === 'weight') {
-                showReplaceWeightModal(fontName, item.value);
-              } else if (type === 'size') {
-                showReplaceSizeModal(fontName, item.value);
-              }
-            };
+
+            // 2. CHECK IF MISSING: DISABLE THE BUTTON
+            if (isMissing) {
+                replaceBtn.disabled = true;
+                replaceBtn.style.opacity = '0.4';
+                replaceBtn.style.cursor = 'not-allowed';
+                replaceBtn.title = "Cannot adjust properties of a missing font";
+            } else {
+                // Only attach the click handler if the font exists
+                replaceBtn.onclick = () => {
+                  if (type === 'weight') {
+                    showReplaceWeightModal(fontName, item.value);
+                  } else if (type === 'size') {
+                    showReplaceSizeModal(fontName, item.value);
+                  }
+                };
+            }
+
             actions.appendChild(replaceBtn);
             row.appendChild(actions);
             list.appendChild(row);
@@ -1319,7 +1333,6 @@
       modalContent.appendChild(createSection('Font sizes', details.sizes || [], value => `${value}px`, 'size'));
       modal.classList.add('show');
     }
-
     function showLoader(message) {
       const loader = document.getElementById('loader');
       if (!loader) return;
