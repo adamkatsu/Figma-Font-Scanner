@@ -217,56 +217,117 @@ async function replaceFontFamily(oldFamily: string, newFamily: string) {
   for (let i = 0; i < nodesToUpdate.length; i++) {
     const node = nodesToUpdate[i];
     try {
-      if (node.fontName === figma.mixed) {
-        // Handle Mixed Text - CRITICAL: Load ALL existing fonts first!
-        const segments = node.getStyledTextSegments(['fontName']);
+      // Check if this node has missing fonts - handle separately!
+      const hasMissingFont = node.hasMissingFont;
+      
+      if (hasMissingFont) {
+        // === SEPARATE PATH FOR MISSING FONTS ===
+        console.log('Detected missing font in node, using special handling');
         
-        // STEP 1: Load ALL existing fonts in this text node (even if we won't change them)
-        // This is required by Figma before we can modify any segment
-        const allFontsInNode = new Set<string>();
-        for (const segment of segments) {
-          const fontKey = `${segment.fontName.family}::${segment.fontName.style}`;
-          allFontsInNode.add(fontKey);
-        }
-        
-        for (const fontKey of allFontsInNode) {
-          const [family, style] = fontKey.split('::');
-          try {
-            await figma.loadFontAsync({ family, style });
-          } catch (e) {
-            console.log(`Cannot load existing font ${family} ${style}`);
+        if (node.fontName === figma.mixed) {
+          // Mixed text with missing fonts
+          const segments = node.getStyledTextSegments(['fontName']);
+          let hasChanges = false;
+          
+          // For missing fonts, we try a more direct approach
+          for (const segment of segments) {
+            if (segment.fontName.family.toLowerCase() === targetOld) {
+              const newFont = findBestStyle(segment.fontName.style);
+              
+              try {
+                // Load the new font and try to apply directly
+                await figma.loadFontAsync(newFont);
+                
+                // Try to set the range
+                try {
+                  node.setRangeFontName(segment.start, segment.end, newFont);
+                  hasChanges = true;
+                } catch (rangeError) {
+                  // If range fails, try replacing the entire node as last resort
+                  console.log('Range replacement failed, trying full node replacement');
+                  try {
+                    node.fontName = newFont;
+                    hasChanges = true;
+                    break; // Exit loop if we replaced the entire node
+                  } catch (nodeError) {
+                    console.error(`Failed to replace entire node`, nodeError);
+                  }
+                }
+              } catch (e) {
+                console.error(`Failed to load new font ${newFont.family} ${newFont.style}`, e);
+              }
+            }
           }
-        }
-        
-        // STEP 2: Now we can safely modify segments
-        let hasChanges = false;
-        for (const segment of segments) {
-          if (segment.fontName.family.toLowerCase() === targetOld) {
-            const newFont = findBestStyle(segment.fontName.style);
+          
+          if (hasChanges) updateCount++;
+        } else {
+          // Single text with missing font
+          const currentFont = node.fontName as FontName;
+          if (currentFont.family.toLowerCase() === targetOld) {
+            const newFont = findBestStyle(currentFont.style);
             
             try {
               await figma.loadFontAsync(newFont);
-              node.setRangeFontName(segment.start, segment.end, newFont);
-              hasChanges = true;
+              node.fontName = newFont;
+              updateCount++;
             } catch (e) {
               console.error(`Failed to apply ${newFont.family} ${newFont.style}`, e);
             }
           }
         }
-        
-        if (hasChanges) updateCount++;
       } else {
-        // Handle Single Text
-        const currentFont = node.fontName as FontName;
-        if (currentFont.family.toLowerCase() === targetOld) {
-          const newFont = findBestStyle(currentFont.style);
+        // === EXISTING LOGIC FOR NON-MISSING FONTS (WORKING) ===
+        if (node.fontName === figma.mixed) {
+          // Handle Mixed Text - CRITICAL: Load ALL existing fonts first!
+          const segments = node.getStyledTextSegments(['fontName']);
           
-          try {
-            await figma.loadFontAsync(newFont);
-            node.fontName = newFont;
-            updateCount++;
-          } catch (e) {
-            console.error(`Failed to apply ${newFont.family} ${newFont.style}`, e);
+          // STEP 1: Load ALL existing fonts in this text node (even if we won't change them)
+          // This is required by Figma before we can modify any segment
+          const allFontsInNode = new Set<string>();
+          for (const segment of segments) {
+            const fontKey = `${segment.fontName.family}::${segment.fontName.style}`;
+            allFontsInNode.add(fontKey);
+          }
+          
+          for (const fontKey of allFontsInNode) {
+            const [family, style] = fontKey.split('::');
+            try {
+              await figma.loadFontAsync({ family, style });
+            } catch (e) {
+              console.log(`Cannot load existing font ${family} ${style}`);
+            }
+          }
+          
+          // STEP 2: Now we can safely modify segments
+          let hasChanges = false;
+          for (const segment of segments) {
+            if (segment.fontName.family.toLowerCase() === targetOld) {
+              const newFont = findBestStyle(segment.fontName.style);
+              
+              try {
+                await figma.loadFontAsync(newFont);
+                node.setRangeFontName(segment.start, segment.end, newFont);
+                hasChanges = true;
+              } catch (e) {
+                console.error(`Failed to apply ${newFont.family} ${newFont.style}`, e);
+              }
+            }
+          }
+          
+          if (hasChanges) updateCount++;
+        } else {
+          // Handle Single Text
+          const currentFont = node.fontName as FontName;
+          if (currentFont.family.toLowerCase() === targetOld) {
+            const newFont = findBestStyle(currentFont.style);
+            
+            try {
+              await figma.loadFontAsync(newFont);
+              node.fontName = newFont;
+              updateCount++;
+            } catch (e) {
+              console.error(`Failed to apply ${newFont.family} ${newFont.style}`, e);
+            }
           }
         }
       }
@@ -319,61 +380,124 @@ async function replaceFontStyleForFamily(family: string, oldStyle: string, newSt
   for (const node of textNodes) {
     let nodeUpdated = false;
     try {
-      if (node.fontName === figma.mixed) {
-        const segments = node.getStyledTextSegments(['fontName']);
+      const hasMissingFont = node.hasMissingFont;
+      
+      if (hasMissingFont) {
+        // === SEPARATE PATH FOR MISSING FONTS ===
+        console.log('Detected missing font in node (style change), using special handling');
         
-        // CRITICAL: Load ALL existing fonts first before modifying any segment
-        const allFontsInNode = new Set<string>();
-        for (const segment of segments) {
-          const fontKey = `${segment.fontName.family}::${segment.fontName.style}`;
-          allFontsInNode.add(fontKey);
-        }
-        
-        for (const fontKey of allFontsInNode) {
-          const [family, style] = fontKey.split('::');
-          try {
-            await figma.loadFontAsync({ family, style });
-          } catch (e) {
-            // Font might be missing, that's ok
+        if (node.fontName === figma.mixed) {
+          const segments = node.getStyledTextSegments(['fontName']);
+          
+          for (const segment of segments) {
+            const segFont = segment.fontName;
+            if (
+              segFont.family.toLowerCase() === targetFamily &&
+              segFont.style.toLowerCase() === targetStyle
+            ) {
+              const newFont: FontName = {
+                family: segFont.family,
+                style: replacementStyle
+              };
+              try {
+                await loadFontWithCache(newFont, fontLoadCache);
+                
+                try {
+                  node.setRangeFontName(segment.start, segment.end, newFont);
+                  nodeUpdated = true;
+                } catch (rangeError) {
+                  // Try full node replacement as fallback
+                  console.log('Range replacement failed, trying full node replacement');
+                  try {
+                    node.fontName = newFont;
+                    nodeUpdated = true;
+                    break;
+                  } catch (nodeError) {
+                    console.error(`Failed to replace entire node`, nodeError);
+                  }
+                }
+              } catch (err) {
+                console.error(`Failed to load "${replacementStyle}" for ${segFont.family}`, err);
+              }
+            }
           }
-        }
-        
-        // Now we can safely modify segments
-        for (const segment of segments) {
-          const segFont = segment.fontName;
+        } else {
+          const currentFont = node.fontName as FontName;
           if (
-            segFont.family.toLowerCase() === targetFamily &&
-            segFont.style.toLowerCase() === targetStyle
+            currentFont.family.toLowerCase() === targetFamily &&
+            currentFont.style.toLowerCase() === targetStyle
           ) {
             const newFont: FontName = {
-              family: segFont.family,
+              family: currentFont.family,
               style: replacementStyle
             };
             try {
               await loadFontWithCache(newFont, fontLoadCache);
-              node.setRangeFontName(segment.start, segment.end, newFont);
+              node.fontName = newFont;
               nodeUpdated = true;
             } catch (err) {
-              console.error(`Failed to load "${replacementStyle}" for ${segFont.family}`, err);
+              console.error(`Failed to load "${replacementStyle}" for ${currentFont.family}`, err);
             }
           }
         }
       } else {
-        const currentFont = node.fontName as FontName;
-        if (
-          currentFont.family.toLowerCase() === targetFamily &&
-          currentFont.style.toLowerCase() === targetStyle
-        ) {
-          const newFont: FontName = {
-            family: currentFont.family,
-            style: replacementStyle
-          };
-          try {
-            await loadFontWithCache(newFont, fontLoadCache);
-            node.fontName = newFont;
-            nodeUpdated = true;
-          } catch (err) {
-            console.error(`Failed to load "${replacementStyle}" for ${currentFont.family}`, err);
+        // === EXISTING LOGIC FOR NON-MISSING FONTS (WORKING) ===
+        if (node.fontName === figma.mixed) {
+          const segments = node.getStyledTextSegments(['fontName']);
+          
+          // CRITICAL: Load ALL existing fonts first before modifying any segment
+          const allFontsInNode = new Set<string>();
+          for (const segment of segments) {
+            const fontKey = `${segment.fontName.family}::${segment.fontName.style}`;
+            allFontsInNode.add(fontKey);
+          }
+          
+          for (const fontKey of allFontsInNode) {
+            const [family, style] = fontKey.split('::');
+            try {
+              await figma.loadFontAsync({ family, style });
+            } catch (e) {
+              // Font might be missing, that's ok
+            }
+          }
+          
+          // Now we can safely modify segments
+          for (const segment of segments) {
+            const segFont = segment.fontName;
+            if (
+              segFont.family.toLowerCase() === targetFamily &&
+              segFont.style.toLowerCase() === targetStyle
+            ) {
+              const newFont: FontName = {
+                family: segFont.family,
+                style: replacementStyle
+              };
+              try {
+                await loadFontWithCache(newFont, fontLoadCache);
+                node.setRangeFontName(segment.start, segment.end, newFont);
+                nodeUpdated = true;
+              } catch (err) {
+                console.error(`Failed to load "${replacementStyle}" for ${segFont.family}`, err);
+              }
+            }
+          }
+        } else {
+          const currentFont = node.fontName as FontName;
+          if (
+            currentFont.family.toLowerCase() === targetFamily &&
+            currentFont.style.toLowerCase() === targetStyle
+          ) {
+            const newFont: FontName = {
+              family: currentFont.family,
+              style: replacementStyle
+            };
+            try {
+              await loadFontWithCache(newFont, fontLoadCache);
+              node.fontName = newFont;
+              nodeUpdated = true;
+            } catch (err) {
+              console.error(`Failed to load "${replacementStyle}" for ${currentFont.family}`, err);
+            }
           }
         }
       }
@@ -414,53 +538,108 @@ async function replaceFontSizeForFamily(family: string, oldSize: number, newSize
   for (const node of textNodes) {
     let nodeUpdated = false;
     try {
-      if (node.fontSize === figma.mixed || node.fontName === figma.mixed) {
-        const segments = node.getStyledTextSegments(['fontName', 'fontSize']);
+      const hasMissingFont = node.hasMissingFont;
+      
+      if (hasMissingFont) {
+        // === SEPARATE PATH FOR MISSING FONTS ===
+        console.log('Detected missing font in node (size change), using special handling');
         
-        // CRITICAL: Load ALL existing fonts first before modifying any segment
-        const allFontsInNode = new Set<string>();
-        for (const segment of segments) {
-          const fontKey = `${segment.fontName.family}::${segment.fontName.style}`;
-          allFontsInNode.add(fontKey);
-        }
-        
-        for (const fontKey of allFontsInNode) {
-          const [family, style] = fontKey.split('::');
-          try {
-            await figma.loadFontAsync({ family, style });
-          } catch (e) {
-            // Font might be missing, that's ok
+        if (node.fontSize === figma.mixed || node.fontName === figma.mixed) {
+          const segments = node.getStyledTextSegments(['fontName', 'fontSize']);
+          
+          for (const segment of segments) {
+            const segFont = segment.fontName;
+            if (
+              segFont.family.toLowerCase() === targetFamily &&
+              segment.fontSize === oldSize
+            ) {
+              try {
+                await loadFontWithCache(segFont, fontLoadCache);
+                
+                try {
+                  node.setRangeFontSize(segment.start, segment.end, newSize);
+                  nodeUpdated = true;
+                } catch (rangeError) {
+                  // Try full node replacement as fallback
+                  console.log('Range size change failed, trying full node size change');
+                  try {
+                    node.fontSize = newSize;
+                    nodeUpdated = true;
+                    break;
+                  } catch (nodeError) {
+                    console.error(`Failed to change entire node size`, nodeError);
+                  }
+                }
+              } catch (err) {
+                console.error('Failed to load font for size change', err);
+              }
+            }
           }
-        }
-        
-        // Now we can safely modify segments
-        for (const segment of segments) {
-          const segFont = segment.fontName;
+        } else {
+          const currentFont = node.fontName as FontName;
           if (
-            segFont.family.toLowerCase() === targetFamily &&
-            segment.fontSize === oldSize
+            currentFont.family.toLowerCase() === targetFamily &&
+            (node.fontSize as number) === oldSize
           ) {
             try {
-              await loadFontWithCache(segFont, fontLoadCache);
-              node.setRangeFontSize(segment.start, segment.end, newSize);
+              await loadFontWithCache(currentFont, fontLoadCache);
+              node.fontSize = newSize;
               nodeUpdated = true;
             } catch (err) {
-              console.error('Failed to update font size for segment', err);
+              console.error('Failed to update font size for node', err);
             }
           }
         }
       } else {
-        const currentFont = node.fontName as FontName;
-        if (
-          currentFont.family.toLowerCase() === targetFamily &&
-          (node.fontSize as number) === oldSize
-        ) {
-          try {
-            await loadFontWithCache(currentFont, fontLoadCache);
-            node.fontSize = newSize;
-            nodeUpdated = true;
-          } catch (err) {
-            console.error('Failed to update font size for node', err);
+        // === EXISTING LOGIC FOR NON-MISSING FONTS (WORKING) ===
+        if (node.fontSize === figma.mixed || node.fontName === figma.mixed) {
+          const segments = node.getStyledTextSegments(['fontName', 'fontSize']);
+          
+          // CRITICAL: Load ALL existing fonts first before modifying any segment
+          const allFontsInNode = new Set<string>();
+          for (const segment of segments) {
+            const fontKey = `${segment.fontName.family}::${segment.fontName.style}`;
+            allFontsInNode.add(fontKey);
+          }
+          
+          for (const fontKey of allFontsInNode) {
+            const [family, style] = fontKey.split('::');
+            try {
+              await figma.loadFontAsync({ family, style });
+            } catch (e) {
+              // Font might be missing, that's ok
+            }
+          }
+          
+          // Now we can safely modify segments
+          for (const segment of segments) {
+            const segFont = segment.fontName;
+            if (
+              segFont.family.toLowerCase() === targetFamily &&
+              segment.fontSize === oldSize
+            ) {
+              try {
+                await loadFontWithCache(segFont, fontLoadCache);
+                node.setRangeFontSize(segment.start, segment.end, newSize);
+                nodeUpdated = true;
+              } catch (err) {
+                console.error('Failed to update font size for segment', err);
+              }
+            }
+          }
+        } else {
+          const currentFont = node.fontName as FontName;
+          if (
+            currentFont.family.toLowerCase() === targetFamily &&
+            (node.fontSize as number) === oldSize
+          ) {
+            try {
+              await loadFontWithCache(currentFont, fontLoadCache);
+              node.fontSize = newSize;
+              nodeUpdated = true;
+            } catch (err) {
+              console.error('Failed to update font size for node', err);
+            }
           }
         }
       }
