@@ -170,6 +170,7 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
+      cursor: pointer;
     }
     
     .item.selected {
@@ -184,11 +185,11 @@
       font-size: 14px; 
       display: flex; 
       align-items: center; 
-      gap: 0px;
+      gap: 8px;
       color: #000;
       letter-spacing: -0.2px;
       position: relative;
-      padding-left: 12px;
+      padding-left: 4px;
       transition: color 0.15s ease, padding-left 0.2s ease;
       flex: 1;
     }
@@ -304,21 +305,25 @@
       margin: 0 0 4px 0;
     }
     
-    .item:hover .font-name {
-      padding-left: 16px;
+    .dropdown-icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      transition: transform 0.2s ease, color 0.15s ease;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
     }
     
-    .item.selected .font-name {
-      padding-left: 16px;
-    }
-    
-    .font-name::before {
-      content: '•';
-      position: absolute;
-      left: 0;
+    .item-main-row:hover .dropdown-icon {
       color: #000;
-      font-size: 16px;
-      line-height: 1;
+    }
+    
+    .dropdown-icon.open {
+      transform: rotate(90deg);
+      color: #000;
     }
     
     .badge-missing { 
@@ -778,6 +783,91 @@
       margin: 12px 0;
     }
     
+    /* Font Size Pills */
+    .size-pills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 0px;
+    }
+    
+    .size-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0px;
+      padding: 6px 12px;
+      background: #fff;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+      color: #000;
+    }
+    
+    .size-pill:hover {
+      background: #000000;
+      color: #fff !important;
+    }
+    
+    .size-pill.editing {
+      background: #000000;
+      color: #ffffff;
+      cursor: default;
+    }
+    
+    .size-pill.updating {
+      opacity: 0.2;
+      pointer-events: none;
+    }
+    
+    .size-pill-value {
+      font-weight: 500;
+    }
+    
+    .size-pill-unit {
+      font-weight: 500;
+    }
+    
+    .size-pill-value[contenteditable="true"] {
+      outline: none;
+      cursor: text;
+      user-select: text;
+      padding: 0;
+      color: #fff;
+    }
+    
+    .size-pill-value[contenteditable="true"]:focus {
+      background: transparent;
+    }
+    
+    .size-pill-count {
+      color: #999;
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    
+    .size-pill-apply {
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-left: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+    }
+    
+    .size-pill-apply svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .size-pill-apply:hover {
+      opacity: 0.7;
+    }
+    
     .replace-label {
       font-size: 11px;
       font-weight: 500;
@@ -1099,6 +1189,10 @@
           selectedFontItem = item;
           selectedFontName = fontName;
           
+          // Open the dropdown icon
+          const dropdownIcon = item.querySelector('.dropdown-icon');
+          if (dropdownIcon) dropdownIcon.classList.add('open');
+          
           // Get isMissing status from the badge
           const isMissing = item.querySelector('.badge-missing') !== null;
           setInlineDetailsVisible(item, true, fontName, isMissing);
@@ -1126,6 +1220,8 @@
       if (!e.target.closest('.item') && !e.target.closest('.modal-overlay') && selectedFontItem) {
         setInlineDetailsVisible(selectedFontItem, false);
         selectedFontItem.classList.remove('selected');
+        const dropdownIcon = selectedFontItem.querySelector('.dropdown-icon');
+        if (dropdownIcon) dropdownIcon.classList.remove('open');
         selectedFontItem = null;
         selectedFontName = null;
         parent.postMessage({ pluginMessage: { type: 'deselect-font' } }, '*');
@@ -1166,6 +1262,8 @@
         if (selectedFontItem) {
           setInlineDetailsVisible(selectedFontItem, false);
           selectedFontItem.classList.remove('selected');
+          const dropdownIcon = selectedFontItem.querySelector('.dropdown-icon');
+          if (dropdownIcon) dropdownIcon.classList.remove('open');
           selectedFontItem = null;
           selectedFontName = null;
         }
@@ -1337,7 +1435,21 @@
       nameDiv.className = 'font-name';
       const displayCount = count || 0;
       const countBadge = `<span style="color: #999; font-weight: 400; font-size: 12px; margin-left: 4px;">(${displayCount})</span>`;
-      nameDiv.innerHTML = `${fontName}${countBadge} ${isMissing ? '<span class="badge-missing">Missing</span>' : ''}`;
+      
+      // Create dropdown triangle icon
+      const dropdownIcon = document.createElement('div');
+      dropdownIcon.className = 'dropdown-icon';
+      dropdownIcon.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 3.5L8.5 7L5 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+      
+      nameDiv.appendChild(dropdownIcon);
+      
+      const nameText = document.createElement('span');
+      nameText.innerHTML = `${fontName}${countBadge} ${isMissing ? '<span class="badge-missing">Missing</span>' : ''}`;
+      nameDiv.appendChild(nameText);
 
       const actionsDiv = document.createElement('div');
       actionsDiv.className = 'actions';
@@ -1415,37 +1527,46 @@
       mainRow.appendChild(itemMainRow);
       mainRow.appendChild(detailsDiv);
 
-      // Make the entire item clickable to select all fonts (but not when clicking action buttons)
-      mainRow.onclick = (e) => {
-        // Don't trigger if:
-        // - Clicking on action buttons or links
-        // - Clicking inside font-details (dropdowns, inputs, etc.)
-        // - Item is already selected
-        if (
-          e.target.closest('.actions') || 
-          e.target.closest('.ext-link') || 
-          e.target.closest('a') ||
-          e.target.closest('.font-details') ||
-          mainRow.classList.contains('selected')
-        ) {
+      // Make action buttons stop propagation to prevent triggering the dropdown
+      actionsDiv.onclick = (e) => {
+        e.stopPropagation();
+      };
+      
+      // Handle item-main-row click to toggle details
+      itemMainRow.onclick = (e) => {
+        // Don't trigger if clicking on actions or links
+        if (e.target.closest('.actions') || e.target.closest('.ext-link') || e.target.closest('a')) {
           return;
         }
         
-          // Remove selected state from previous item
+        const isCurrentlySelected = mainRow.classList.contains('selected');
+        
+        if (isCurrentlySelected) {
+          // Close details if already open
+          setInlineDetailsVisible(mainRow, false);
+          mainRow.classList.remove('selected');
+          dropdownIcon.classList.remove('open');
+          selectedFontItem = null;
+          selectedFontName = null;
+          parent.postMessage({ pluginMessage: { type: 'deselect-font' } }, '*');
+        } else {
+          // Close previous item if any
           if (selectedFontItem) {
-          setInlineDetailsVisible(selectedFontItem, false);
+            setInlineDetailsVisible(selectedFontItem, false);
             selectedFontItem.classList.remove('selected');
+            const prevIcon = selectedFontItem.querySelector('.dropdown-icon');
+            if (prevIcon) prevIcon.classList.remove('open');
           }
           
-          // Add selected state to current item
+          // Open details for this item
           mainRow.classList.add('selected');
+          dropdownIcon.classList.add('open');
           selectedFontItem = mainRow;
           selectedFontName = fontName;
-        setInlineDetailsVisible(mainRow, true, fontName, isMissing);
-          
+          setInlineDetailsVisible(mainRow, true, fontName, isMissing);
           parent.postMessage({ pluginMessage: { type: 'select-font', font: fontName } }, '*');
+        }
       };
-      mainRow.style.cursor = 'pointer';
       
       wrapper.appendChild(mainRow);
 
@@ -1564,72 +1685,185 @@
         sizesTitle.textContent = 'Sizes';
         details.appendChild(sizesTitle);
         
+        const pillsContainer = document.createElement('div');
+        pillsContainer.className = 'size-pills-container';
+        
         sizes.forEach(item => {
-          const itemDiv = document.createElement('div');
-          itemDiv.className = 'font-detail-item';
-          
-          const labelDiv = document.createElement('div');
-          labelDiv.className = 'font-detail-label';
-          
           // Format size to 2 decimal places if it has decimals
           const size = typeof item.value === 'number' ? 
             (Number.isInteger(item.value) ? item.value : parseFloat(item.value.toFixed(2))) : 
             item.value;
           
-          const valueSpan = document.createElement('div');
-          valueSpan.className = 'font-detail-value';
-          valueSpan.textContent = `${size}px`;
+          const pill = document.createElement('div');
+          pill.className = 'size-pill';
           
-          const countSpan = document.createElement('div');
-          countSpan.className = 'font-detail-count';
-          countSpan.textContent = `${item.count} layer${item.count === 1 ? '' : 's'}`;
+          const valueSpan = document.createElement('span');
+          valueSpan.className = 'size-pill-value';
+          valueSpan.textContent = size;
           
-          labelDiv.appendChild(valueSpan);
-          labelDiv.appendChild(countSpan);
+          const unitText = document.createElement('span');
+          unitText.className = 'size-pill-unit';
+          unitText.textContent = 'px';
           
-          const controlDiv = document.createElement('div');
-          controlDiv.className = 'font-detail-control';
+          const countSpan = document.createElement('span');
+          countSpan.className = 'size-pill-count';
+          countSpan.textContent = `(${item.count})`;
           
-          // Create input for size
-          const input = document.createElement('input');
-          input.type = 'number';
-          input.className = 'font-detail-input';
-          input.placeholder = 'New size';
-          input.step = '0.01';
-          input.min = '1';
+          const applySpan = document.createElement('span');
+          applySpan.className = 'size-pill-apply';
+          applySpan.innerHTML = `
+            <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13.3333 4L6 11.3333L2.66667 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          `;
+          applySpan.style.display = 'none';
           
-          const applyBtn = document.createElement('button');
-          applyBtn.className = 'font-detail-btn';
-          applyBtn.textContent = 'Apply';
-          applyBtn.onclick = () => {
-            const newSize = parseFloat(input.value);
-            if (!isNaN(newSize) && newSize > 0 && newSize !== item.value) {
-              // Disable button and show loading state
-              applyBtn.disabled = true;
-              applyBtn.textContent = 'Applying...';
-              applyBtn.style.opacity = '0.6';
+          pill.appendChild(valueSpan);
+          pill.appendChild(unitText);
+          pill.appendChild(countSpan);
+          pill.appendChild(applySpan);
+          
+          let isEditing = false;
+          let originalValue = size;
+          
+          // Click handler to enable editing
+          pill.onclick = (e) => {
+            e.stopPropagation();
+            
+            if (!isEditing) {
+              isEditing = true;
+              pill.classList.add('editing');
               
-              // Show toast notification
-              showNotification(`Updating ${fontName} ${item.value}px → ${newSize}px...`, 0);
+              // Make value editable
+              valueSpan.contentEditable = 'true';
+              valueSpan.textContent = size.toString();
+              
+              // Show apply, hide count and unit
+              unitText.style.display = 'none';
+              countSpan.style.display = 'none';
+              applySpan.style.display = 'inline';
+              
+              // Focus and select text
+              valueSpan.focus();
+              const range = document.createRange();
+              range.selectNodeContents(valueSpan);
+              const sel = window.getSelection();
+              sel.removeAllRanges();
+              sel.addRange(range);
+            }
+          };
+          
+          // Apply the change
+          const applyChange = () => {
+            const newValue = parseFloat(valueSpan.textContent);
+            
+            if (isNaN(newValue) || newValue <= 0) {
+              // Invalid value, reset
+              valueSpan.textContent = originalValue;
+              cancelEdit();
+              return;
+            }
+            
+            if (newValue !== item.value) {
+              // Update display immediately with new value
+              isEditing = false;
+              pill.classList.remove('editing');
+              pill.classList.add('updating');
+              valueSpan.contentEditable = 'false';
+              
+              // Format the new value for display
+              const formattedNewValue = Number.isInteger(newValue) ? newValue : parseFloat(newValue.toFixed(2));
+              valueSpan.textContent = formattedNewValue;
+              originalValue = formattedNewValue;
+              
+              // Restore view mode UI
+              unitText.style.display = 'inline';
+              countSpan.style.display = 'inline';
+              applySpan.style.display = 'none';
+              
+              // Send update message
+              showNotification(`Updating ${fontName} ${item.value}px → ${newValue}px...`, 0);
               
               parent.postMessage({
                 pluginMessage: {
                   type: 'replace-font-size',
                   family: fontName,
                   oldSize: item.value,
-                  newSize: newSize
+                  newSize: newValue
                 }
               }, '*');
+              
+              // Remove updating state after a brief moment (scan will update the UI)
+              setTimeout(() => {
+                pill.classList.remove('updating');
+              }, 500);
+            } else {
+              // No change, just cancel
+              cancelEdit();
             }
           };
           
-          controlDiv.appendChild(input);
-          controlDiv.appendChild(applyBtn);
+          const cancelEdit = () => {
+            if (!isEditing) return;
+            
+            isEditing = false;
+            pill.classList.remove('editing');
+            valueSpan.contentEditable = 'false';
+            valueSpan.textContent = originalValue;
+            
+            // Restore view mode
+            unitText.style.display = 'inline';
+            countSpan.style.display = 'inline';
+            applySpan.style.display = 'none';
+          };
           
-          itemDiv.appendChild(labelDiv);
-          itemDiv.appendChild(controlDiv);
-          details.appendChild(itemDiv);
+          // Handle Enter key to apply
+          valueSpan.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              applyChange();
+            } else if (e.key === 'Escape') {
+              e.preventDefault();
+              cancelEdit();
+            }
+          });
+          
+          // Only allow numbers and decimal point
+          valueSpan.addEventListener('input', (e) => {
+            const text = valueSpan.textContent;
+            const cleaned = text.replace(/[^\d.]/g, '');
+            if (text !== cleaned) {
+              valueSpan.textContent = cleaned;
+              // Move cursor to end
+              const range = document.createRange();
+              const sel = window.getSelection();
+              range.selectNodeContents(valueSpan);
+              range.collapse(false);
+              sel.removeAllRanges();
+              sel.addRange(range);
+            }
+          });
+          
+          // Apply button click handler
+          applySpan.onclick = (e) => {
+            e.stopPropagation();
+            applyChange();
+          };
+          
+          // Cancel on blur (but not if clicking apply)
+          valueSpan.addEventListener('blur', (e) => {
+            // Small delay to allow apply click to register
+            setTimeout(() => {
+              if (isEditing && !e.relatedTarget) {
+                cancelEdit();
+              }
+            }, 150);
+          });
+          
+          pillsContainer.appendChild(pill);
         });
+        
+        details.appendChild(pillsContainer);
       }
       
       if (weights.length === 0 && sizes.length === 0) {
@@ -1875,29 +2109,97 @@
     }
 
     function showReplaceSizeModal(fontName, sizeValue) {
-      openValueReplaceModal({
-        title: `Replace "${fontName}" size`,
-        currentLabel: `${sizeValue}px`,
-        placeholder: 'Enter new size (px)',
-        inputType: 'number',
-        loadingText: 'Updating size...',
-        onSubmit: (value) => {
-          const parsed = parseFloat(value);
-          if (Number.isNaN(parsed) || parsed <= 0) {
-            alert('Enter a size greater than 0.');
-            return false;
+      const modal = document.getElementById('replaceModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalContent = document.getElementById('modalContent');
+      
+      // Format size for display
+      const formattedSize = typeof sizeValue === 'number' ? 
+        (Number.isInteger(sizeValue) ? sizeValue : parseFloat(sizeValue.toFixed(2))) : 
+        sizeValue;
+      
+      modalTitle.textContent = 'Change Font Size';
+      modalContent.innerHTML = '';
+      
+      // Create input row
+      const inputRow = document.createElement('div');
+      inputRow.className = 'replace-row';
+      
+      // Current size display
+      const beforeGroup = document.createElement('div');
+      beforeGroup.className = 'input-group';
+      
+      const beforeInput = document.createElement('input');
+      beforeInput.className = 'replace-input readonly';
+      beforeInput.value = `${formattedSize}px`;
+      beforeInput.readOnly = true;
+      
+      const dividerLabel = document.createElement('span');
+      dividerLabel.className = 'replace-divider-label';
+      dividerLabel.textContent = 'Change to';
+      
+      beforeGroup.appendChild(beforeInput);
+      beforeGroup.appendChild(dividerLabel);
+      
+      // New size input
+      const afterGroup = document.createElement('div');
+      afterGroup.className = 'input-group';
+      
+      const input = document.createElement('input');
+      input.className = 'replace-input';
+      input.type = 'number';
+      input.placeholder = 'Enter new size';
+      input.step = '0.01';
+      input.min = '1';
+      input.autocomplete = 'off';
+      
+      afterGroup.appendChild(input);
+      
+      // Apply button
+      const applyBtn = document.createElement('button');
+      applyBtn.className = 'apply-btn';
+      applyBtn.textContent = 'Apply';
+      applyBtn.onclick = () => {
+        const newSize = parseFloat(input.value);
+        if (isNaN(newSize) || newSize <= 0) {
+          alert('Please enter a size greater than 0.');
+          input.focus();
+          return;
+        }
+        if (newSize === sizeValue) {
+          alert('New size is the same as current size.');
+          input.focus();
+          return;
+        }
+        
+        closeReplaceModal();
+        showNotification(`Updating ${fontName} ${formattedSize}px → ${newSize}px...`, 0);
+        
+        parent.postMessage({
+          pluginMessage: {
+            type: 'replace-font-size',
+            family: fontName,
+            oldSize: sizeValue,
+            newSize: newSize
           }
-          parent.postMessage({
-            pluginMessage: {
-              type: 'replace-font-size',
-              family: fontName,
-              oldSize: sizeValue,
-              newSize: parsed
-            }
-          }, '*');
-          return true;
+        }, '*');
+      };
+      
+      // Allow Enter key to submit
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          applyBtn.click();
         }
       });
+      
+      inputRow.appendChild(beforeGroup);
+      inputRow.appendChild(afterGroup);
+      inputRow.appendChild(applyBtn);
+      modalContent.appendChild(inputRow);
+      
+      // Show modal and focus input
+      modal.classList.add('show');
+      setTimeout(() => input.focus(), 100);
     }
     
     function closeReplaceModal() {
