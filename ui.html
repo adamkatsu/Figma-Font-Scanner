@@ -133,10 +133,12 @@
       list-style: none; 
       padding: 0; 
       margin: 0 0 24px 0;
+      overflow: visible;
     }
     
     .item-wrapper { 
       transition: background 0.15s ease;
+      overflow: visible;
     }
     
     .item-wrapper:hover {
@@ -149,45 +151,32 @@
     
     .item {
       display: flex; 
-      justify-content: space-between; 
-      align-items: center;
+      flex-direction: column;
       padding: 8px 8px; 
       border: 1px solid #F7F7F7;
       border-radius: 8px;
       margin-top: 4px;
       background-color: #ffffff;
       transition: all 0.15s ease;
+      overflow: visible;
     }
 
     .item:hover {
       background-color: #f7f7f7;
     }
+
+    .item-main-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
     
     .item.selected {
-      background-color: #000;
-      border-color: #000;
-    }
-    
-    .item.selected .font-name {
-      color: #fff;
-    }
-    
-    .item.selected .font-name::before {
-      color: #fff;
-    }
-    
-    .item.selected .badge-missing {
-      background: #ffffff;
-      color: #000000;
-    }
-    
-    .item.selected .ext-link {
-      color: #fff;
-    }
-    
-    .item.selected .ext-link:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.2);
+      cursor: default;
+      background-color: #f7f7f7;
+      position: relative;
+      z-index: 100;
     }
 
     .font-name { 
@@ -201,6 +190,118 @@
       position: relative;
       padding-left: 12px;
       transition: color 0.15s ease, padding-left 0.2s ease;
+      flex: 1;
+    }
+
+    .font-details {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11px;
+      color: #777;
+      letter-spacing: 0;
+      padding: 12px 0 0 0;
+      margin-top: 12px;
+      border-top: 1px solid #F0F0F0;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    .font-details.show {
+      display: flex;
+    }
+
+    .font-detail-section-title:not(:first-child) {
+      margin-top: 16px;
+    }
+
+    .font-detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #fff;
+      border: none;
+      border-radius: 6px;
+      overflow: visible;
+      position: relative;
+    }
+
+    .font-detail-label {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .font-detail-value {
+      font-weight: 500; 
+      color: #000;
+      font-size: 13px;
+    }
+
+    .font-detail-count {
+      font-size: 11px;
+      color: #999;
+    }
+
+    .font-detail-control {
+      display: flex; 
+      gap: 6px;
+      align-items: center; 
+    }
+
+    .font-detail-input,
+    .font-detail-select {
+      padding: 6px 10px;
+      border: 1px solid #E5E5E5;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: inherit;
+      background: #fff;
+      color: #000;
+      min-width: 100px;
+    }
+
+    .font-detail-input:focus,
+    .font-detail-select:focus {
+      outline: none;
+      border-color: #000;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+    }
+
+    .font-detail-input {
+      width: 80px;
+    }
+
+    .font-detail-btn {
+      padding: 6px 12px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .font-detail-btn:hover {
+      background: #333;
+    }
+
+    .font-detail-btn:active {
+      transform: scale(0.95);
+    }
+
+    .font-detail-section-title {
+      font-size: 10px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 0 4px 0;
     }
     
     .item:hover .font-name {
@@ -237,13 +338,9 @@
       display: flex; 
       gap: 6px; 
       align-items: center;
-      opacity: 0;
-      transition: opacity 0.15s ease;
-    }
-    
-    .item:hover .actions,
-    .item.selected .actions {
       opacity: 1;
+      transition: opacity 0.15s ease;
+      padding-top: 2px;
     }
     
     .icon-btn {
@@ -402,7 +499,60 @@
     .modal-overlay.show .modal-container {
       transform: scale(1);
       max-height: 85vh;
-      overflow-y: auto;
+      overflow: visible;
+    }
+    
+    /* LOADING OVERLAY CSS */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      z-index: 20000;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    
+    .loading-overlay.show {
+      display: flex;
+      opacity: 1;
+    }
+    
+    .loading-content {
+      text-align: center;
+      padding: 32px;
+    }
+    
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #f0f0f0;
+      border-top: 4px solid #0066FF;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 8px;
+    }
+    
+    .loading-progress {
+      font-size: 13px;
+      color: #666;
     }
     
     .modal-header {
@@ -452,12 +602,14 @@
       flex-direction: column;
       gap: 16px; 
       position: relative; 
+      overflow: visible;
     }
     
     .input-group {
       display: flex;
       flex-direction: column;
       gap: 6px;
+      overflow: visible;
     }
     
     .input-group:first-child {
@@ -483,6 +635,7 @@
     .input-wrapper { 
       position: relative; 
       flex-grow: 1; 
+      overflow: visible;
     }
 
     .replace-input {
@@ -809,6 +962,15 @@
 </head>
 <body>
 
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <div class="loading-title">Replacing fonts...</div>
+      <div class="loading-progress" id="loadingProgress">0/0</div>
+    </div>
+  </div>
+
   <div class="header-section">
   <h2>Font Scanner</h2>
     <p class="header-subtitle">Scan and manage fonts in your Figma designs</p>
@@ -858,6 +1020,7 @@
     const API_KEY = 'AIzaSyBZqOric7hC8x6zLV-Xt-X6VS0g6NsoA6k'; 
     let systemFontsGlobal = []; 
     let selectedFontItem = null; 
+    let selectedFontName = null;
     let fontDetailsGlobal = {};
     let familyStylesGlobal = {};
 
@@ -925,18 +1088,49 @@
       };
     }
 
+    function restoreFontSelection(fontName) {
+      // Find all font items and select the one matching the font name
+      const allItems = document.querySelectorAll('.item');
+      allItems.forEach(item => {
+        const nameElement = item.querySelector('.font-name');
+        if (nameElement && nameElement.textContent.includes(fontName)) {
+          // Found the matching item
+          item.classList.add('selected');
+          selectedFontItem = item;
+          selectedFontName = fontName;
+          
+          // Get isMissing status from the badge
+          const isMissing = item.querySelector('.badge-missing') !== null;
+          setInlineDetailsVisible(item, true, fontName, isMissing);
+        }
+      });
+    }
+
     function performScan() {
       document.getElementById('resultsContainer').innerHTML = '';
       document.getElementById('loader').style.display = 'block';
-      // Clear selected state
+      // Don't clear selected state - preserve the font name for restoration
       if (selectedFontItem) {
         selectedFontItem.classList.remove('selected');
         selectedFontItem = null;
+        // Keep selectedFontName so it can be restored
       }
       parent.postMessage({ pluginMessage: { type: 'scan-layers' } }, '*');
     }
     
     document.getElementById('scanBtn').onclick = performScan;
+    
+    // Click outside to deselect font
+    document.addEventListener('click', (e) => {
+      // Check if click is outside of any .item
+      if (!e.target.closest('.item') && !e.target.closest('.modal-overlay') && selectedFontItem) {
+        setInlineDetailsVisible(selectedFontItem, false);
+        selectedFontItem.classList.remove('selected');
+        selectedFontItem = null;
+        selectedFontName = null;
+        parent.postMessage({ pluginMessage: { type: 'deselect-font' } }, '*');
+      }
+    });
     
     // Automatically scan on plugin open
     performScan();
@@ -948,19 +1142,32 @@
         if (msg.systemFonts) systemFontsGlobal = msg.systemFonts;
         fontDetailsGlobal = msg.fontDetails || {};
         familyStylesGlobal = msg.familyStyles || {};
+        
+        // Store the currently selected font name before rebuilding
+        const previouslySelectedFont = selectedFontName;
+        
         await processFonts(
           msg.fonts || [],
           msg.missingFonts || [],
           msg.fontCounts || [],
           fontDetailsGlobal
         );
+        
+        // Restore selection if there was one
+        if (previouslySelectedFont) {
+          restoreFontSelection(previouslySelectedFont);
+        }
       } else if (msg.type === 'notification') {
         showNotification(msg.message, msg.count, msg.fontName);
+      } else if (msg.type === 'replacement-progress') {
+        handleReplacementProgress(msg.current, msg.total, msg.fontName);
       } else if (msg.type === 'deselect-font') {
         // Clear selected state when deselected in Figma
         if (selectedFontItem) {
+          setInlineDetailsVisible(selectedFontItem, false);
           selectedFontItem.classList.remove('selected');
           selectedFontItem = null;
+          selectedFontName = null;
         }
       }
     };
@@ -983,6 +1190,26 @@
       setTimeout(() => {
         toast.classList.remove('show');
       }, 3000);
+    }
+    
+    function handleReplacementProgress(current, total, fontName) {
+      const overlay = document.getElementById('loadingOverlay');
+      const progress = document.getElementById('loadingProgress');
+      
+      if (current === 0) {
+        // Starting replacement - show overlay
+        overlay.classList.add('show');
+        progress.textContent = `0/${total}`;
+      } else if (current >= total) {
+        // Finished - hide overlay after a brief moment
+        progress.textContent = `${total}/${total}`;
+        setTimeout(() => {
+          overlay.classList.remove('show');
+        }, 500);
+      } else {
+        // Update progress
+        progress.textContent = `${current}/${total}`;
+      }
     }
 
     async function processFonts(figmaFonts, missingFonts, fontCounts, fontDetails = {}) {
@@ -1097,10 +1324,14 @@
 
     function createRow(fontName, isGoogle, isMissing, count) {
       const wrapper = document.createElement('li');
-      wrapper.className = 'item-wrapper';
+      wrapper.className = 'c';
 
       const mainRow = document.createElement('div');
       mainRow.className = 'item';
+
+      // Create main row container for font name and actions
+      const itemMainRow = document.createElement('div');
+      itemMainRow.className = 'item-main-row';
 
       const nameDiv = document.createElement('div');
       nameDiv.className = 'font-name';
@@ -1150,25 +1381,6 @@
         );
       }
 
-      const detailsBtn = document.createElement('button');
-      detailsBtn.className = 'ext-link';
-      detailsBtn.type = 'button';
-      detailsBtn.setAttribute('data-tooltip', 'View weights & sizes');
-      detailsBtn.style.border = 'none';
-      detailsBtn.innerHTML = `
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M8 5.33331H8.00667" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M7.33334 7.33331H8.00001V10.6666" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      `;
-      detailsBtn.onclick = (event) => {
-        event.stopPropagation();
-        // Pass isMissing flag to the modal function
-        showFontDetailsModal(fontName, isMissing);
-      };
-      linkGroup.appendChild(detailsBtn);
-
       const replaceBtn = document.createElement('button');
       replaceBtn.className = 'ext-link';
       replaceBtn.type = 'button';
@@ -1191,24 +1403,47 @@
 
       actionsDiv.appendChild(linkGroup);
 
-      mainRow.appendChild(nameDiv);
-      mainRow.appendChild(actionsDiv);
+      // Assemble the main row
+      itemMainRow.appendChild(nameDiv);
+      itemMainRow.appendChild(actionsDiv);
+
+      // Create details section
+      const detailsDiv = document.createElement('div');
+      detailsDiv.className = 'font-details';
+
+      // Append to main row
+      mainRow.appendChild(itemMainRow);
+      mainRow.appendChild(detailsDiv);
 
       // Make the entire item clickable to select all fonts (but not when clicking action buttons)
       mainRow.onclick = (e) => {
-        // Don't trigger if clicking on action buttons or links
-        if (!e.target.closest('.actions') && !e.target.closest('.ext-link') && !e.target.closest('a')) {
+        // Don't trigger if:
+        // - Clicking on action buttons or links
+        // - Clicking inside font-details (dropdowns, inputs, etc.)
+        // - Item is already selected
+        if (
+          e.target.closest('.actions') || 
+          e.target.closest('.ext-link') || 
+          e.target.closest('a') ||
+          e.target.closest('.font-details') ||
+          mainRow.classList.contains('selected')
+        ) {
+          return;
+        }
+        
           // Remove selected state from previous item
           if (selectedFontItem) {
+          setInlineDetailsVisible(selectedFontItem, false);
             selectedFontItem.classList.remove('selected');
           }
           
           // Add selected state to current item
           mainRow.classList.add('selected');
           selectedFontItem = mainRow;
+          selectedFontName = fontName;
+        setInlineDetailsVisible(mainRow, true, fontName, isMissing);
           
           parent.postMessage({ pluginMessage: { type: 'select-font', font: fontName } }, '*');
-        }
       };
       mainRow.style.cursor = 'pointer';
       
@@ -1217,122 +1452,193 @@
       return wrapper;
     }
     
-    // Modal Functions
-    // 1. Update arguments to accept isMissing
-    function showFontDetailsModal(fontName, isMissing) {
-      const modal = document.getElementById('replaceModal');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalContent = document.getElementById('modalContent');
-      const details = fontDetailsGlobal[fontName];
-
-      modalTitle.textContent = `Font usage: ${fontName}`;
-      modalContent.innerHTML = '';
-
-      if (!details) {
-        modalContent.innerHTML = '<p class="detail-empty">No additional usage data available yet.</p>';
-        modal.classList.add('show');
+    function setInlineDetailsVisible(row, shouldShow, fontName, isMissing) {
+      const details = row.querySelector('.font-details');
+      if (!details) return;
+      if (!shouldShow) {
+        details.classList.remove('show');
+        details.innerHTML = '';
+        return;
+      }
+      const fontData = fontDetailsGlobal[fontName];
+      if (!fontData) {
+        details.innerHTML = '<div style="color: #999; font-size: 12px; padding: 8px 0;">No usage data yet.</div>';
+        details.classList.add('show');
+        return;
+      }
+      if (isMissing) {
+        details.innerHTML = '<div style="color: #999; font-size: 12px; padding: 0 0 8px 0;">Missing font - no details available.</div>';
+        details.classList.add('show');
         return;
       }
 
-      const createSection = (title, items, formatter, type) => {
-        const section = document.createElement('div');
-        section.className = 'detail-section';
-
-        const header = document.createElement('div');
-        header.className = 'detail-title';
-        header.textContent = title;
-        section.appendChild(header);
-
-        if (!items || items.length === 0) {
-          const emptyState = document.createElement('div');
-          emptyState.className = 'detail-empty';
-          emptyState.textContent = 'Not detected on this page.';
-          section.appendChild(emptyState);
-          return section;
-        }
-
-        const buildList = subset => {
-          const list = document.createElement('div');
-          list.className = 'detail-list';
-
-          subset.forEach(item => {
-            const row = document.createElement('div');
-            row.className = 'detail-item';
-            const info = document.createElement('div');
-            info.style.display = 'flex';
-            info.style.flexDirection = 'column';
-
-            const valueSpan = document.createElement('span');
-            valueSpan.className = 'detail-value';
-            valueSpan.textContent = formatter(item.value);
-
-            const countSpan = document.createElement('span');
-            countSpan.className = 'detail-count';
+      // Clear previous content
+      details.innerHTML = '';
+      
+      // Get available styles for this font
+      const availableStyles = familyStylesGlobal[fontName] || [];
+      
+      // Weights section
+      const weights = fontData.styles || [];
+      if (weights.length > 0) {
+        const weightsTitle = document.createElement('div');
+        weightsTitle.className = 'font-detail-section-title';
+        weightsTitle.textContent = 'Weights';
+        details.appendChild(weightsTitle);
+        
+        weights.forEach(item => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'font-detail-item';
+          
+          const labelDiv = document.createElement('div');
+          labelDiv.className = 'font-detail-label';
+          
+          const valueSpan = document.createElement('div');
+          valueSpan.className = 'font-detail-value';
+          valueSpan.textContent = item.value;
+          
+          const countSpan = document.createElement('div');
+          countSpan.className = 'font-detail-count';
             countSpan.textContent = `${item.count} layer${item.count === 1 ? '' : 's'}`;
 
-            info.appendChild(valueSpan);
-            info.appendChild(countSpan);
-            row.appendChild(info);
-
-            const actions = document.createElement('div');
-            actions.className = 'detail-actions';
+          labelDiv.appendChild(valueSpan);
+          labelDiv.appendChild(countSpan);
+          
+          const controlDiv = document.createElement('div');
+          controlDiv.className = 'font-detail-control';
+          
+          // Create dropdown for weight selection
+          if (availableStyles.length > 0) {
+            const select = document.createElement('select');
+            select.className = 'font-detail-select';
+            availableStyles.forEach(style => {
+              const option = document.createElement('option');
+              option.value = style;
+              option.textContent = style;
+              select.appendChild(option);
+            });
             
-            const replaceBtn = document.createElement('button');
-            replaceBtn.className = 'detail-action-btn';
-            replaceBtn.textContent = 'Replace';
-
-            // 2. CHECK IF MISSING: DISABLE THE BUTTON
-            if (isMissing) {
-                replaceBtn.disabled = true;
-                replaceBtn.style.opacity = '0.4';
-                replaceBtn.style.cursor = 'not-allowed';
-                replaceBtn.title = "Cannot adjust properties of a missing font";
-            } else {
-                // Only attach the click handler if the font exists
-                replaceBtn.onclick = () => {
-                  if (type === 'weight') {
-                    showReplaceWeightModal(fontName, item.value);
-                  } else if (type === 'size') {
-                    showReplaceSizeModal(fontName, item.value);
+            // Set the current weight as the selected value
+            select.value = item.value;
+            
+            const applyBtn = document.createElement('button');
+            applyBtn.className = 'font-detail-btn';
+            applyBtn.textContent = 'Apply';
+            applyBtn.onclick = () => {
+              const newStyle = select.value;
+              if (newStyle && newStyle !== item.value) {
+                // Disable button and show loading state
+                applyBtn.disabled = true;
+                applyBtn.textContent = 'Applying...';
+                applyBtn.style.opacity = '0.6';
+                
+                // Show toast notification
+                showNotification(`Updating ${fontName} ${item.value} → ${newStyle}...`, 0);
+                
+                parent.postMessage({
+                  pluginMessage: {
+                    type: 'replace-font-weight',
+                    family: fontName,
+                    oldStyle: item.value,
+                    newStyle: newStyle
                   }
-                };
+                }, '*');
+              }
+            };
+            
+            controlDiv.appendChild(select);
+            controlDiv.appendChild(applyBtn);
+          }
+          
+          itemDiv.appendChild(labelDiv);
+          itemDiv.appendChild(controlDiv);
+          details.appendChild(itemDiv);
+        });
+      }
+      
+      // Sizes section
+      const sizes = fontData.sizes || [];
+      if (sizes.length > 0) {
+        const sizesTitle = document.createElement('div');
+        sizesTitle.className = 'font-detail-section-title';
+        sizesTitle.textContent = 'Sizes';
+        details.appendChild(sizesTitle);
+        
+        sizes.forEach(item => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'font-detail-item';
+          
+          const labelDiv = document.createElement('div');
+          labelDiv.className = 'font-detail-label';
+          
+          // Format size to 2 decimal places if it has decimals
+          const size = typeof item.value === 'number' ? 
+            (Number.isInteger(item.value) ? item.value : parseFloat(item.value.toFixed(2))) : 
+            item.value;
+          
+          const valueSpan = document.createElement('div');
+          valueSpan.className = 'font-detail-value';
+          valueSpan.textContent = `${size}px`;
+          
+          const countSpan = document.createElement('div');
+          countSpan.className = 'font-detail-count';
+          countSpan.textContent = `${item.count} layer${item.count === 1 ? '' : 's'}`;
+          
+          labelDiv.appendChild(valueSpan);
+          labelDiv.appendChild(countSpan);
+          
+          const controlDiv = document.createElement('div');
+          controlDiv.className = 'font-detail-control';
+          
+          // Create input for size
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.className = 'font-detail-input';
+          input.placeholder = 'New size';
+          input.step = '0.01';
+          input.min = '1';
+          
+          const applyBtn = document.createElement('button');
+          applyBtn.className = 'font-detail-btn';
+          applyBtn.textContent = 'Apply';
+          applyBtn.onclick = () => {
+            const newSize = parseFloat(input.value);
+            if (!isNaN(newSize) && newSize > 0 && newSize !== item.value) {
+              // Disable button and show loading state
+              applyBtn.disabled = true;
+              applyBtn.textContent = 'Applying...';
+              applyBtn.style.opacity = '0.6';
+              
+              // Show toast notification
+              showNotification(`Updating ${fontName} ${item.value}px → ${newSize}px...`, 0);
+              
+              parent.postMessage({
+                pluginMessage: {
+                  type: 'replace-font-size',
+                  family: fontName,
+                  oldSize: item.value,
+                  newSize: newSize
+                }
+              }, '*');
             }
-
-            actions.appendChild(replaceBtn);
-            row.appendChild(actions);
-            list.appendChild(row);
-          });
-
-          return list;
-        };
-
-        if (type === 'weight') {
-          const groups = splitWeightGroups(items, item => item.value);
-          if (groups.normal.length > 0) {
-            const normalHeader = document.createElement('div');
-            normalHeader.className = 'detail-subtitle';
-            normalHeader.textContent = 'Normal';
-            section.appendChild(normalHeader);
-            section.appendChild(buildList(groups.normal.map(entry => entry.item)));
-          }
-          if (groups.italic.length > 0) {
-            const italicHeader = document.createElement('div');
-            italicHeader.className = 'detail-subtitle';
-            italicHeader.textContent = 'Italic';
-            section.appendChild(italicHeader);
-            section.appendChild(buildList(groups.italic.map(entry => entry.item)));
-          }
-        } else {
-          section.appendChild(buildList(items));
-        }
-
-        return section;
-      };
-
-      modalContent.appendChild(createSection('Font weights', details.styles || [], value => value, 'weight'));
-      modalContent.appendChild(createSection('Font sizes', details.sizes || [], value => `${value}px`, 'size'));
-      modal.classList.add('show');
+          };
+          
+          controlDiv.appendChild(input);
+          controlDiv.appendChild(applyBtn);
+          
+          itemDiv.appendChild(labelDiv);
+          itemDiv.appendChild(controlDiv);
+          details.appendChild(itemDiv);
+        });
+      }
+      
+      if (weights.length === 0 && sizes.length === 0) {
+        details.innerHTML = '<div style="color: #999; font-size: 12px; padding: 8px 0;">No weights or sizes detected.</div>';
+      }
+      
+      details.classList.add('show');
     }
+
     function showLoader(message) {
       const loader = document.getElementById('loader');
       if (!loader) return;
