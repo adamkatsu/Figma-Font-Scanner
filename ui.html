@@ -12,7 +12,7 @@
       margin: 0;
       color: #000; 
       font-size: 13px; 
-      background: #fff;
+      background: #f6f6f6;
       line-height: 1.5;
     }
     
@@ -137,12 +137,12 @@
     }
     
     .item-wrapper { 
-      transition: background 0.15s ease;
+      transition: all 0.15s ease;
       overflow: visible;
     }
     
     .item-wrapper:hover {
-      background: #FAFAFA;
+      transform: translateY(-2px);
     }
     
     .item-wrapper:last-child {
@@ -162,7 +162,8 @@
     }
 
     .item:hover {
-      background-color: #f7f7f7;
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .item-main-row {
@@ -175,7 +176,8 @@
     
     .item.selected {
       cursor: default;
-      background-color: #f7f7f7;
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       position: relative;
       z-index: 100;
     }
@@ -201,9 +203,7 @@
       font-size: 11px;
       color: #777;
       letter-spacing: 0;
-      padding: 12px 0 0 0;
-      margin-top: 12px;
-      border-top: 1px solid #F0F0F0;
+      padding: 8px 0 0 0;
       width: 100%;
       position: relative;
       z-index: 1;
@@ -215,7 +215,7 @@
     }
 
     .font-detail-section-title:not(:first-child) {
-      margin-top: 16px;
+      margin-top: 8px;
     }
 
     .font-detail-item {
@@ -223,7 +223,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 8px 12px;
-      background: #fff;
+      background: #F7F7F7;
       border: none;
       border-radius: 6px;
       overflow: visible;
@@ -796,7 +796,7 @@
       align-items: center;
       gap: 0px;
       padding: 6px 12px;
-      background: #fff;
+      background: #F7F7F7;
       border-radius: 20px;
       font-size: 12px;
       cursor: pointer;
@@ -1602,10 +1602,6 @@
       // Weights section
       const weights = fontData.styles || [];
       if (weights.length > 0) {
-        const weightsTitle = document.createElement('div');
-        weightsTitle.className = 'font-detail-section-title';
-        weightsTitle.textContent = 'Weights';
-        details.appendChild(weightsTitle);
         
         weights.forEach(item => {
           const itemDiv = document.createElement('div');
