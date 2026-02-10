@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: https://fonts.google.com https://fonts.gstatic.com https://gwfh.mranftl.com https://www.googleapis.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: https://fonts.google.com https://fonts.gstatic.com https://www.googleapis.com;">
 
   <style>
     * { box-sizing: border-box; }
@@ -1391,21 +1391,6 @@
       // Add Download All button (Only if missing AND exists in Google)
       if (isMissing) {
         const downloadable = fonts.filter(f => googleSet.has(f.toLowerCase()));
-        if(downloadable.length > 0) {
-          const dlBtn = document.createElement('button');
-          dlBtn.className = 'icon-btn';
-          dlBtn.innerText = 'Download All';
-          dlBtn.onclick = () => {
-             if(confirm('Download ' + downloadable.length + ' fonts? You may need to allow popups.')) {
-                 downloadable.forEach((f, i) => {
-                     setTimeout(() => {
-                        window.open(`https://fonts.google.com/download?family=${f.replace(/\s+/g, '+')}`);
-                     }, i * 500);
-                 });
-             }
-          };
-          header.appendChild(dlBtn);
-        }
       }
       container.appendChild(header);
 
