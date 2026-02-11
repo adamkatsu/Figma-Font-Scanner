@@ -1,6 +1,6 @@
 // code.ts
 
-figma.showUI(__html__, { width: 400, height: 600 });
+figma.showUI(__html__, { width: 360, height: 600 });
 
 // --- 1. SCANNING LOGIC ---
 
