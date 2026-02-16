@@ -9,16 +9,46 @@ type FontUsageDetails = {
   sizes: Map<number, number>;
 };
 
-async function getFontsFromPage() {
-  const fontFamilies = new Map<string, number>(); // Map to count occurrences
+const CONTAINER_TYPES = new Set<string>(['FRAME', 'GROUP', 'COMPONENT', 'INSTANCE', 'SECTION']);
+
+function getSelectedContainerCount(): number {
+  const selection = figma.currentPage.selection;
+  return selection.filter(node => CONTAINER_TYPES.has(node.type)).length;
+}
+
+function collectTextNodesFromSelection(): TextNode[] {
+  const selection = figma.currentPage.selection;
+  const containers = selection.filter(node => CONTAINER_TYPES.has(node.type));
+  const textNodes: TextNode[] = [];
+  const seen = new Set<string>();
+  for (const node of containers) {
+    const container = node as { findAllWithCriteria(criteria: { types: string[] }): TextNode[] };
+    const children = container.findAllWithCriteria({ types: ['TEXT'] });
+    for (const text of children) {
+      if (!seen.has(text.id)) {
+        seen.add(text.id);
+        textNodes.push(text);
+      }
+    }
+  }
+  return textNodes;
+}
+
+function getTextNodesForScope(scope: 'page' | 'selection'): TextNode[] {
+  if (scope === 'selection') {
+    return collectTextNodesFromSelection();
+  }
+  return figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
+}
+
+async function getFontsFromTextNodes(textNodes: TextNode[]) {
+  const fontFamilies = new Map<string, number>();
   const missingFontFamilies = new Set<string>();
   const fontDetails = new Map<string, FontUsageDetails>();
   const familyStyleMap = new Map<string, Set<string>>();
 
-  // Get all available system fonts for the dropdown
   const availableFontsList = await figma.listAvailableFontsAsync();
-  
-  // Create a unique list of family names for the UI dropdown
+
   const systemFonts = Array.from(new Set(availableFontsList.map(f => {
     const family = f.fontName.family;
     const style = f.fontName.style;
@@ -29,11 +59,7 @@ async function getFontsFromPage() {
     return family;
   }))).sort();
 
-  // Create a lookup for fast checking
   const availableFamilies = new Set(systemFonts.map(f => f.toLowerCase()));
-
-  // Find all Text Nodes
-  const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
 
   const ensureFontDetail = (family: string): FontUsageDetails => {
     if (!fontDetails.has(family)) {
@@ -48,7 +74,6 @@ async function getFontsFromPage() {
   textNodes.forEach(node => {
     try {
       if (node.fontName === figma.mixed || node.fontSize === figma.mixed) {
-        // For mixed text, count each segment separately
         const segments = node.getStyledTextSegments(['fontName', 'fontSize']);
         segments.forEach(segment => {
           const family = segment.fontName.family;
@@ -66,7 +91,6 @@ async function getFontsFromPage() {
           }
         });
       } else {
-        // For single font text, count once
         const fontName = node.fontName as FontName;
         const family = fontName.family;
         fontFamilies.set(family, (fontFamilies.get(family) || 0) + 1);
@@ -88,7 +112,6 @@ async function getFontsFromPage() {
     }
   });
 
-  // Convert Map to array of objects with name and count
   const fontsWithCount = Array.from(fontFamilies.entries())
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -119,13 +142,18 @@ async function getFontsFromPage() {
 
   figma.ui.postMessage({
     type: 'scan-result',
-    fonts: fontsWithCount.map(f => f.name), // Keep for backward compatibility
-    fontCounts: fontsWithCount, // New: includes counts
+    fonts: fontsWithCount.map(f => f.name),
+    fontCounts: fontsWithCount,
     missingFonts: Array.from(missingFontFamilies).sort(),
-    systemFonts: systemFonts, // <--- Send list of installed fonts to UI
+    systemFonts: systemFonts,
     fontDetails: fontDetailsPayload,
     familyStyles: familyStylesPayload
   });
+}
+
+async function getFontsFromPage() {
+  const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
+  await getFontsFromTextNodes(textNodes);
 }
 
 function extractFontFamilies(node: TextNode): Set<string> {
@@ -146,15 +174,15 @@ function extractFontFamilies(node: TextNode): Set<string> {
 
 // --- 2. REPLACEMENT LOGIC ---
 
-async function replaceFontFamily(oldFamily: string, newFamily: string) {
+async function replaceFontFamily(oldFamily: string, newFamily: string, scope: 'page' | 'selection' = 'page') {
   const targetOld = oldFamily.toLowerCase();
-  
+
   // Get all available styles for the new font family FIRST
   const availableFonts = await figma.listAvailableFontsAsync();
   const newFontStyles = availableFonts
     .filter(f => f.fontName.family.toLowerCase() === newFamily.toLowerCase())
     .map(f => f.fontName);
-  
+
   if (newFontStyles.length === 0) {
     figma.ui.postMessage({
       type: 'notification',
@@ -167,23 +195,23 @@ async function replaceFontFamily(oldFamily: string, newFamily: string) {
   // Create a helper to find best matching style
   const findBestStyle = (oldStyle: string): FontName => {
     // Try exact match first
-    let match = newFontStyles.find(f => 
+    let match = newFontStyles.find(f =>
       f.style.toLowerCase() === oldStyle.toLowerCase()
     );
     if (match) return match;
-    
+
     // Try "Regular"
-    match = newFontStyles.find(f => 
+    match = newFontStyles.find(f =>
       f.style.toLowerCase() === 'regular'
     );
     if (match) return match;
-    
+
     // Return first available style
     return newFontStyles[0];
   };
-  
-  // Find all nodes using the old font
-  const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
+
+  // Get nodes to consider (page or selection)
+  const textNodes = getTextNodesForScope(scope);
   const nodesToUpdate: TextNode[] = [];
 
   // Filter nodes first
@@ -350,8 +378,12 @@ async function replaceFontFamily(oldFamily: string, newFamily: string) {
     count: updateCount,
     fontName: newFamily
   });
-  // Re-scan to update UI
-  await getFontsFromPage();
+  // Re-scan to update UI (same scope as replace)
+  if (scope === 'selection') {
+    await getFontsFromTextNodes(collectTextNodesFromSelection());
+  } else {
+    await getFontsFromPage();
+  }
 }
 
 // Helper: Try to match style (Bold -> Bold), fallback to Regular if needed
@@ -364,7 +396,7 @@ async function loadFontWithCache(font: FontName, cache: Set<string>) {
   cache.add(key);
 }
 
-async function replaceFontStyleForFamily(family: string, oldStyle: string, newStyle: string) {
+async function replaceFontStyleForFamily(family: string, oldStyle: string, newStyle: string, scope: 'page' | 'selection' = 'page') {
   const targetFamily = family.trim().toLowerCase();
   const targetStyle = oldStyle.trim().toLowerCase();
   const replacementStyle = newStyle.trim();
@@ -373,7 +405,7 @@ async function replaceFontStyleForFamily(family: string, oldStyle: string, newSt
     return;
   }
 
-  const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
+  const textNodes = getTextNodesForScope(scope);
   const fontLoadCache = new Set<string>();
   let updateCount = 0;
 
@@ -521,17 +553,21 @@ async function replaceFontStyleForFamily(family: string, oldStyle: string, newSt
   });
 
   if (updateCount > 0) {
-    await getFontsFromPage();
+    if (scope === 'selection') {
+      await getFontsFromTextNodes(collectTextNodesFromSelection());
+    } else {
+      await getFontsFromPage();
+    }
   }
 }
 
-async function replaceFontSizeForFamily(family: string, oldSize: number, newSize: number) {
+async function replaceFontSizeForFamily(family: string, oldSize: number, newSize: number, scope: 'page' | 'selection' = 'page') {
   const targetFamily = family.trim().toLowerCase();
   if (!targetFamily || Number.isNaN(newSize) || newSize <= 0) {
     return;
   }
 
-  const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
+  const textNodes = getTextNodesForScope(scope);
   const fontLoadCache = new Set<string>();
   let updateCount = 0;
 
@@ -663,16 +699,20 @@ async function replaceFontSizeForFamily(family: string, oldSize: number, newSize
   });
 
   if (updateCount > 0) {
-    await getFontsFromPage();
+    if (scope === 'selection') {
+      await getFontsFromTextNodes(collectTextNodesFromSelection());
+    } else {
+      await getFontsFromPage();
+    }
   }
 }
 
 // --- 3. SELECTION LOGIC ---
 
-async function selectTextNodesByFont(fontFamily: string) {
+async function selectTextNodesByFont(fontFamily: string, scope: 'page' | 'selection' = 'page') {
   const targetFamily = fontFamily.toLowerCase();
   const matches: SceneNode[] = [];
-  const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
+  const textNodes = getTextNodesForScope(scope);
 
   textNodes.forEach(node => {
     const nodeFonts = extractFontFamilies(node);
@@ -684,16 +724,17 @@ async function selectTextNodesByFont(fontFamily: string) {
   figma.currentPage.selection = matches;
   if (matches.length > 0) {
     figma.viewport.scrollAndZoomIntoView(matches);
+    const scopeLabel = scope === 'selection' ? ' in selection' : ' on page';
     figma.ui.postMessage({
       type: 'notification',
-      message: `All "${fontFamily}" font${matches.length === 1 ? '' : 's'} selected!`,
+      message: `${matches.length} "${fontFamily}" layer${matches.length === 1 ? '' : 's'} selected${scopeLabel}!`,
       count: matches.length,
       fontName: fontFamily
     });
   } else {
     figma.ui.postMessage({
       type: 'notification',
-      message: 'No layers found on this page.',
+      message: scope === 'selection' ? 'No layers with this font in selection.' : 'No layers found on this page.',
       count: 0
     });
   }
@@ -703,10 +744,20 @@ async function selectTextNodesByFont(fontFamily: string) {
 
 let lastSelectedFont: string | null = null;
 
+function notifySelectionChanged() {
+  const count = getSelectedContainerCount();
+  figma.ui.postMessage({ type: 'selection-changed', count });
+}
+
+// Notify UI of initial selection when plugin opens
+setTimeout(() => notifySelectionChanged(), 100);
+
 // Listen for selection changes in Figma
 figma.on('selectionchange', () => {
   const selection = figma.currentPage.selection;
-  
+
+  notifySelectionChanged();
+
   // If nothing is selected, clear the UI selection
   if (selection.length === 0) {
     if (lastSelectedFont) {
@@ -717,12 +768,12 @@ figma.on('selectionchange', () => {
     }
     return;
   }
-  
+
   // Check if any selected nodes match the last selected font
   if (lastSelectedFont) {
     const targetFamily = lastSelectedFont.toLowerCase();
     let hasMatchingFont = false;
-    
+
     for (const node of selection) {
       if (node.type === 'TEXT') {
         try {
@@ -736,7 +787,7 @@ figma.on('selectionchange', () => {
         }
       }
     }
-    
+
     // If no matching fonts in selection, deselect in UI
     if (!hasMatchingFont) {
       figma.ui.postMessage({
@@ -752,14 +803,21 @@ figma.on('selectionchange', () => {
 figma.ui.onmessage = async msg => {
   if (msg.type === 'scan-layers') {
     await getFontsFromPage();
+  } else if (msg.type === 'scan-selection') {
+    const textNodes = collectTextNodesFromSelection();
+    await getFontsFromTextNodes(textNodes);
   } else if (msg.type === 'select-font') {
     lastSelectedFont = msg.font;
-    await selectTextNodesByFont(msg.font);
+    const scope = (msg.scope === 'selection' ? 'selection' : 'page') as 'page' | 'selection';
+    await selectTextNodesByFont(msg.font, scope);
   } else if (msg.type === 'replace-font') {
-    await replaceFontFamily(msg.oldFont, msg.newFont);
+    const scope = (msg.scope === 'selection' ? 'selection' : 'page') as 'page' | 'selection';
+    await replaceFontFamily(msg.oldFont, msg.newFont, scope);
   } else if (msg.type === 'replace-font-weight') {
-    await replaceFontStyleForFamily(msg.family, msg.oldStyle, msg.newStyle);
+    const scope = (msg.scope === 'selection' ? 'selection' : 'page') as 'page' | 'selection';
+    await replaceFontStyleForFamily(msg.family, msg.oldStyle, msg.newStyle, scope);
   } else if (msg.type === 'replace-font-size') {
-    await replaceFontSizeForFamily(msg.family, msg.oldSize, msg.newSize);
+    const scope = (msg.scope === 'selection' ? 'selection' : 'page') as 'page' | 'selection';
+    await replaceFontSizeForFamily(msg.family, msg.oldSize, msg.newSize, scope);
   }
 };
