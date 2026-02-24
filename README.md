@@ -13,11 +13,14 @@ A Figma plugin that scans your designs for font usage, surfaces missing fonts, a
 ## Features
 
 - **Scan fonts** – Discovers all font families used in text layers, with usage counts.
-- **Font details** – For each font: styles (weights) and sizes used, so you can see exactly how it’s applied.
+- **Font details** – For each font: styles (weights) and sizes used, with line height and letter spacing so you can see exactly how it’s applied and spot inconsistent styles.
+- **Size list by line height & letter spacing** – Sizes are grouped by line height and letter spacing (e.g. 16px 120% 2%), shown in an aligned list. Click a value to edit, press Enter to apply; the list re-scans and merges identical variants.
+- **Edit size, line height, and letter spacing** – Change font size, line height (% or Auto), or letter spacing (%) per row with the same click-to-edit flow.
 - **Missing fonts** – Highlights fonts that aren’t available on your system and links to Google Fonts to download them.
 - **Replace font** – Replace a font family with another (with best-effort style matching, e.g. Bold → Bold).
-- **Replace style/size** – Change weight (e.g. Regular → Medium) or fontSize in bulk for a given font.
+- **Replace style/size/line height/letter spacing** – Change weight (e.g. Regular → Medium), fontSize, line height, or letter spacing in bulk for a given font.
 - **Select by font** – Select all text layers using a specific font (handy for cleanup or restyling).
+- **Select by weight or size variant** – Click a weight row to select all layers with that font and style; click a size row (or its “Layers” cell) to select all layers with that exact size, line height, and letter spacing.
 - **Page vs selection** – Scan the whole page or only selected frame(s); replace and select respect the same scope.
 
 ---
@@ -32,12 +35,12 @@ A Figma plugin that scans your designs for font usage, surfaces missing fonts, a
    - **Scan Selected Frame(s)** – Select one or more frames (or groups/components/sections): the main button becomes “Scan Selected Frame” or “Scan N Frames”. Click it to scan only text inside that selection.
 
 3. **Review results**  
-   The plugin lists every font family found, with counts. Expand a font to see styles and sizes. Missing fonts are marked and can be opened on Google Fonts to install.
+   The plugin lists every font family found, with counts. Expand a font to see **weights** (with counts and an Apply dropdown to change style) and a **size list** (Size · Line height · Letter spacing · Layers). Each size row shows one combination (e.g. 24px, 120%, 2%). Missing fonts are marked and can be opened on Google Fonts to install.
 
 4. **Replace or select**  
-   From a font’s row you can:  
-   - **Replace** with another font (or change style/size).  
-   - **Select** all layers using that font in Figma.  
+   - **Weights:** Click a weight row (not the dropdown/Apply) to select all layers with that font and style. Use the dropdown and Apply to replace that weight with another style.  
+   - **Sizes:** Click a size row (on the “Layers” cell or row background) to select all layers with that exact size, line height, and letter spacing. Click the size, line height, or letter spacing value to edit it; press Enter to apply.  
+   - From a font’s main row you can **Replace** with another font or **Select** all layers using that font.  
    All of these actions use the same scope as the last scan (whole page or selected frames only).
 
 5. **Re-scan**  
@@ -50,8 +53,14 @@ A Figma plugin that scans your designs for font usage, surfaces missing fonts, a
 - **1.0.0** (released)  
   - Initial release: scan page, font list with counts and details, missing-font detection, replace font/style/size, select layers by font.
 
-- **1.1.0** (upcoming)  
+- **1.1.0** (released)  
   - **Scan selected frames** – When one or more frames (or groups/components/sections) are selected, you can scan only those. Replace and “Select by font” then apply only within that selection, so you can work on a single frame or a subset of the page.
+
+- **1.2.0** (released)  
+  - **Size list grouped by line height & letter spacing** – Sizes are shown in a list with columns (Size, Line height, Letter spacing, Layers) so you can spot inconsistent combinations (e.g. 24px at 120% vs 140%).
+  - **Editable line height and letter spacing** – Click a line height or letter spacing value in the size list to change it (line height can be a number or “Auto”); press Enter to apply. Replaces only layers matching that exact variant.
+  - **Select by weight** – Click a font weight row (the label/count area) to select all layers using that font and style. Weight rows have a hover state.
+  - **Select by size variant** – Click a size row (the “Layers” cell or row background) to select all layers with that exact size, line height, and letter spacing.
 
 ---
 

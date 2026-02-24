@@ -229,6 +229,12 @@
       border-radius: 6px;
       overflow: visible;
       position: relative;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    
+    .font-detail-item:hover {
+      background: #EEEEEE;
     }
 
     .font-detail-label {
@@ -816,88 +822,104 @@
       margin: 12px 0;
     }
     
-    /* Font Size Pills */
-    .size-pills-container {
+    /* Font Size List (grouped by line height & letter spacing) */
+    .size-list {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 4px;
-      margin-top: 0px;
+      margin-top: 0;
     }
     
-    .size-pill {
-      display: inline-flex;
+    .size-list-header,
+    .size-list-row {
+      display: grid;
+      grid-template-columns: 48px 72px auto 64px;
+      gap: 10px;
       align-items: center;
-      gap: 0px;
-      padding: 6px 12px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    
+    .size-list-header {
+      font-size: 10px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      min-height: 24px;
+    }
+    
+    .size-list-header .size-list-col-count {
+      text-align: right;
+    }
+    
+    .size-list-row {
       background: #F7F7F7;
-      border-radius: 20px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      user-select: none;
+      border: none;
+      border-radius: 6px;
       color: #000;
+      transition: background 0.15s ease;
+      cursor: pointer;
+      overflow: visible;
+      position: relative;
     }
     
-    .size-pill:hover {
-      background: #000000;
-      color: #fff !important;
+    .size-list-row:hover {
+      background: #EEEEEE;
     }
     
-    .size-pill.editing {
-      background: #000000;
-      color: #ffffff;
+    .size-list-row.editing {
+      background: #000;
+      color: #fff;
       cursor: default;
     }
     
-    .size-pill.updating {
-      opacity: 0.2;
+    .size-list-row.updating {
+      opacity: 0.5;
       pointer-events: none;
     }
     
-    .size-pill-value {
-      font-weight: 500;
+    .size-list-value {
+      font-weight: 600;
     }
     
-    .size-pill-unit {
-      font-weight: 500;
-    }
-    
-    .size-pill-value[contenteditable="true"] {
+    .size-list-value[contenteditable="true"] {
       outline: none;
       cursor: text;
       user-select: text;
-      padding: 0;
+      padding: 1px 2px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.15);
+    }
+    
+    .size-list-lh,
+    .size-list-ls {
+      font-weight: 500;
+      padding: 1px 2px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    
+    .size-list-lh[contenteditable="true"],
+    .size-list-ls[contenteditable="true"] {
+      outline: none;
+      cursor: text;
+      user-select: text;
+      background: rgba(255,255,255,0.15);
+    }
+    
+    .size-list-row.editing .size-list-lh,
+    .size-list-row.editing .size-list-ls {
       color: #fff;
     }
     
-    .size-pill-value[contenteditable="true"]:focus {
-      background: transparent;
-    }
-    
-    .size-pill-count {
+    .size-list-count {
+      font-size: 11px;
       color: #999;
-      font-weight: 400;
-      margin-left: 4px;
+      text-align: right;
     }
     
-    .size-pill-apply {
-      color: #ffffff;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      margin-left: 4px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 16px;
-      height: 16px;
-    }
-    
-    .size-pill-apply i {
-      font-size: 16px;
-    }
-    
-    .size-pill-apply:hover {
-      opacity: 0.7;
+    .size-list-row.editing .size-list-count {
+      color: rgba(255,255,255,0.7);
     }
     
     .replace-label {
@@ -1109,7 +1131,7 @@
   
   <div class="footer-section">
     <div class="footer-content">
-      <span class="footer-version">v1.1.0</span>
+      <span class="footer-version">v1.2.0</span>
       <span class="footer-separator">•</span>
       <span>Made with <span style="color: #ff6b6b;">♥</span> by</span>
       <a href="https://slabpixel.com" target="_blank" class="footer-link">SlabPixel</a>
@@ -1693,197 +1715,281 @@
           
           itemDiv.appendChild(labelDiv);
           itemDiv.appendChild(controlDiv);
+          
+          itemDiv.onclick = (e) => {
+            if (e.target.closest('.font-detail-control')) return;
+            parent.postMessage({
+              pluginMessage: {
+                type: 'select-font-weight',
+                family: fontName,
+                style: item.value,
+                scope: lastScanScope
+              }
+            }, '*');
+          };
+          
+          if (controlDiv.children.length > 0) {
+            controlDiv.onclick = (e) => e.stopPropagation();
+          }
+          
           details.appendChild(itemDiv);
         });
       }
       
-      // Sizes section
-      const sizes = fontData.sizes || [];
-      if (sizes.length > 0) {
-        const sizesTitle = document.createElement('div');
-        sizesTitle.className = 'font-detail-section-title';
-        sizesTitle.textContent = 'Sizes';
-        details.appendChild(sizesTitle);
+      // Sizes section (grouped by line height & letter spacing)
+      let sizeVariants = fontData.sizeVariants || [];
+      if (sizeVariants.length === 0 && (fontData.sizes || []).length > 0) {
+        sizeVariants = fontData.sizes.map(s => ({
+          fontSize: s.value,
+          lineHeightPercent: null,
+          letterSpacingPercent: 0,
+          count: s.count
+        }));
+      }
+      if (sizeVariants.length > 0) {
+        const listContainer = document.createElement('div');
+        listContainer.className = 'size-list';
         
-        const pillsContainer = document.createElement('div');
-        pillsContainer.className = 'size-pills-container';
+        const headerRow = document.createElement('div');
+        headerRow.className = 'size-list-header';
+        headerRow.innerHTML = '<span>Size</span><span>Line height</span><span>Letter spacing</span><span class="size-list-col-count">Layers</span>';
+        listContainer.appendChild(headerRow);
         
-        sizes.forEach(item => {
-          // Format size to 2 decimal places if it has decimals
-          const size = typeof item.value === 'number' ? 
-            (Number.isInteger(item.value) ? item.value : parseFloat(item.value.toFixed(2))) : 
-            item.value;
+        sizeVariants.forEach(item => {
+          const fontSize = item.fontSize;
+          const sizeDisplay = Number.isInteger(fontSize) ? fontSize : parseFloat(fontSize.toFixed(2));
+          const lhDisplay = item.lineHeightPercent == null ? 'Auto' : `${item.lineHeightPercent}%`;
+          const lsDisplay = `${item.letterSpacingPercent}%`;
           
-          const pill = document.createElement('div');
-          pill.className = 'size-pill';
+          const row = document.createElement('div');
+          row.className = 'size-list-row';
           
           const valueSpan = document.createElement('span');
-          valueSpan.className = 'size-pill-value';
-          valueSpan.textContent = size;
+          valueSpan.className = 'size-list-value';
+          valueSpan.textContent = String(sizeDisplay);
           
-          const unitText = document.createElement('span');
-          unitText.className = 'size-pill-unit';
-          unitText.textContent = 'px';
+          const lhSpan = document.createElement('span');
+          lhSpan.className = 'size-list-lh';
+          lhSpan.textContent = lhDisplay;
+          
+          const lsSpan = document.createElement('span');
+          lsSpan.className = 'size-list-ls';
+          lsSpan.textContent = lsDisplay;
           
           const countSpan = document.createElement('span');
-          countSpan.className = 'size-pill-count';
-          countSpan.textContent = `(${item.count})`;
+          countSpan.className = 'size-list-count';
+          countSpan.textContent = `${item.count} layer${item.count === 1 ? '' : 's'}`;
           
-          const applySpan = document.createElement('span');
-          applySpan.className = 'size-pill-apply';
-          applySpan.innerHTML = `<i class="fa-solid fa-check"></i>`;
-          applySpan.style.display = 'none';
+          row.appendChild(valueSpan);
+          row.appendChild(lhSpan);
+          row.appendChild(lsSpan);
+          row.appendChild(countSpan);
           
-          pill.appendChild(valueSpan);
-          pill.appendChild(unitText);
-          pill.appendChild(countSpan);
-          pill.appendChild(applySpan);
+          let editingField = null;
+          let originalSize = sizeDisplay;
+          let originalLh = lhDisplay;
+          let originalLs = lsDisplay;
           
-          let isEditing = false;
-          let originalValue = size;
-          
-          // Click handler to enable editing
-          pill.onclick = (e) => {
-            e.stopPropagation();
-            
-            if (!isEditing) {
-              isEditing = true;
-              pill.classList.add('editing');
-              
-              // Make value editable
-              valueSpan.contentEditable = 'true';
-              valueSpan.textContent = size.toString();
-              
-              // Show apply, hide count and unit
-              unitText.style.display = 'none';
-              countSpan.style.display = 'none';
-              applySpan.style.display = 'inline';
-              
-              // Focus and select text
-              valueSpan.focus();
-              const range = document.createRange();
-              range.selectNodeContents(valueSpan);
-              const sel = window.getSelection();
-              sel.removeAllRanges();
-              sel.addRange(range);
+          function cancelEdit() {
+            if (!editingField) return;
+            if (editingField === 'size') {
+              valueSpan.contentEditable = 'false';
+              valueSpan.textContent = String(originalSize);
+            } else if (editingField === 'lh') {
+              lhSpan.contentEditable = 'false';
+              lhSpan.textContent = originalLh;
+            } else if (editingField === 'ls') {
+              lsSpan.contentEditable = 'false';
+              lsSpan.textContent = originalLs;
             }
+            row.classList.remove('editing');
+            editingField = null;
+          }
+          
+          function startEdit(field, span, text) {
+            if (editingField) cancelEdit();
+            editingField = field;
+            row.classList.add('editing');
+            span.contentEditable = 'true';
+            span.textContent = text;
+            span.focus();
+            const range = document.createRange();
+            range.selectNodeContents(span);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+          }
+          
+          valueSpan.onclick = (e) => {
+            e.stopPropagation();
+            if (editingField) return;
+            startEdit('size', valueSpan, String(originalSize));
+          };
+          lhSpan.onclick = (e) => {
+            e.stopPropagation();
+            if (editingField) return;
+            startEdit('lh', lhSpan, item.lineHeightPercent == null ? 'Auto' : String(item.lineHeightPercent));
+          };
+          lsSpan.onclick = (e) => {
+            e.stopPropagation();
+            if (editingField) return;
+            startEdit('ls', lsSpan, String(item.letterSpacingPercent));
           };
           
-          // Apply the change
-          const applyChange = () => {
-            const newValue = parseFloat(valueSpan.textContent);
-            
+          row.onclick = (e) => {
+            if (e.target.closest('.size-list-value') || e.target.closest('.size-list-lh') || e.target.closest('.size-list-ls')) return;
+            parent.postMessage({
+              pluginMessage: {
+                type: 'select-font-variant',
+                family: fontName,
+                fontSize,
+                lineHeightPercent: item.lineHeightPercent,
+                letterSpacingPercent: item.letterSpacingPercent,
+                scope: lastScanScope
+              }
+            }, '*');
+          };
+          
+          function applySize() {
+            const newValue = parseFloat(valueSpan.textContent.replace(/,/g, '.'));
             if (isNaN(newValue) || newValue <= 0) {
-              // Invalid value, reset
-              valueSpan.textContent = originalValue;
+              valueSpan.textContent = String(originalSize);
               cancelEdit();
               return;
             }
-            
-            if (newValue !== item.value) {
-              // Update display immediately with new value
-              isEditing = false;
-              pill.classList.remove('editing');
-              pill.classList.add('updating');
-              valueSpan.contentEditable = 'false';
-              
-              // Format the new value for display
-              const formattedNewValue = Number.isInteger(newValue) ? newValue : parseFloat(newValue.toFixed(2));
-              valueSpan.textContent = formattedNewValue;
-              originalValue = formattedNewValue;
-              
-              // Restore view mode UI
-              unitText.style.display = 'inline';
-              countSpan.style.display = 'inline';
-              applySpan.style.display = 'none';
-              
-              // Send update message
-              showNotification(`Updating ${fontName} ${item.value}px → ${newValue}px...`, 0);
-              
-              parent.postMessage({
-                pluginMessage: {
-                  type: 'replace-font-size',
-                  family: fontName,
-                  oldSize: item.value,
-                  newSize: newValue,
-                  scope: lastScanScope
-                }
-              }, '*');
-              
-              // Remove updating state after a brief moment (scan will update the UI)
-              setTimeout(() => {
-                pill.classList.remove('updating');
-              }, 500);
-            } else {
-              // No change, just cancel
+            if (Math.abs(newValue - fontSize) < 0.01) {
               cancelEdit();
+              return;
             }
-          };
-          
-          const cancelEdit = () => {
-            if (!isEditing) return;
-            
-            isEditing = false;
-            pill.classList.remove('editing');
+            editingField = null;
+            row.classList.remove('editing');
+            row.classList.add('updating');
             valueSpan.contentEditable = 'false';
-            valueSpan.textContent = originalValue;
-            
-            // Restore view mode
-            unitText.style.display = 'inline';
-            countSpan.style.display = 'inline';
-            applySpan.style.display = 'none';
-          };
-          
-          // Handle Enter key to apply
-          valueSpan.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              applyChange();
-            } else if (e.key === 'Escape') {
-              e.preventDefault();
-              cancelEdit();
-            }
-          });
-          
-          // Only allow numbers and decimal point
-          valueSpan.addEventListener('input', (e) => {
-            const text = valueSpan.textContent;
-            const cleaned = text.replace(/[^\d.]/g, '');
-            if (text !== cleaned) {
-              valueSpan.textContent = cleaned;
-              // Move cursor to end
-              const range = document.createRange();
-              const sel = window.getSelection();
-              range.selectNodeContents(valueSpan);
-              range.collapse(false);
-              sel.removeAllRanges();
-              sel.addRange(range);
-            }
-          });
-          
-          // Apply button click handler
-          applySpan.onclick = (e) => {
-            e.stopPropagation();
-            applyChange();
-          };
-          
-          // Cancel on blur (but not if clicking apply)
-          valueSpan.addEventListener('blur', (e) => {
-            // Small delay to allow apply click to register
-            setTimeout(() => {
-              if (isEditing && !e.relatedTarget) {
-                cancelEdit();
+            const formatted = Number.isInteger(newValue) ? newValue : parseFloat(newValue.toFixed(2));
+            valueSpan.textContent = String(formatted);
+            originalSize = formatted;
+            showNotification(`Updating ${fontName} ${sizeDisplay}px → ${newValue}px...`, 0);
+            parent.postMessage({
+              pluginMessage: {
+                type: 'replace-font-size',
+                family: fontName,
+                oldSize: fontSize,
+                newSize: newValue,
+                scope: lastScanScope,
+                variant: { lineHeightPercent: item.lineHeightPercent, letterSpacingPercent: item.letterSpacingPercent }
               }
-            }, 150);
+            }, '*');
+            setTimeout(() => row.classList.remove('updating'), 500);
+          }
+          
+          function applyLineHeight() {
+            const raw = (lhSpan.textContent || '').trim();
+            const isAuto = /^auto$/i.test(raw);
+            const newValue = isAuto ? null : parseFloat(raw.replace(/,/g, '.'));
+            if (!isAuto && (isNaN(newValue) || newValue < 0)) {
+              lhSpan.textContent = originalLh;
+              cancelEdit();
+              return;
+            }
+            const same = (item.lineHeightPercent == null && newValue === null) ||
+              (item.lineHeightPercent !== null && newValue !== null && Math.abs(item.lineHeightPercent - newValue) < 0.01);
+            if (same) {
+              cancelEdit();
+              return;
+            }
+            editingField = null;
+            row.classList.remove('editing');
+            row.classList.add('updating');
+            lhSpan.contentEditable = 'false';
+            originalLh = newValue == null ? 'Auto' : `${newValue}%`;
+            lhSpan.textContent = originalLh;
+            const oldStr = item.lineHeightPercent == null ? 'Auto' : `${item.lineHeightPercent}%`;
+            showNotification(`Updating line height ${oldStr} → ${originalLh}...`, 0);
+            parent.postMessage({
+              pluginMessage: {
+                type: 'replace-font-line-height',
+                family: fontName,
+                fontSize,
+                oldLineHeightPercent: item.lineHeightPercent,
+                newLineHeightPercent: newValue,
+                letterSpacingPercent: item.letterSpacingPercent,
+                scope: lastScanScope
+              }
+            }, '*');
+            setTimeout(() => row.classList.remove('updating'), 500);
+          }
+          
+          function applyLetterSpacing() {
+            const newValue = parseFloat(lsSpan.textContent.replace(/,/g, '.'));
+            if (isNaN(newValue)) {
+              lsSpan.textContent = originalLs;
+              cancelEdit();
+              return;
+            }
+            if (Math.abs(newValue - item.letterSpacingPercent) < 0.01) {
+              cancelEdit();
+              return;
+            }
+            editingField = null;
+            row.classList.remove('editing');
+            row.classList.add('updating');
+            lsSpan.contentEditable = 'false';
+            const formatted = Math.round(newValue * 10) / 10;
+            originalLs = `${formatted}%`;
+            lsSpan.textContent = originalLs;
+            showNotification(`Updating letter spacing ${item.letterSpacingPercent}% → ${formatted}%...`, 0);
+            parent.postMessage({
+              pluginMessage: {
+                type: 'replace-font-letter-spacing',
+                family: fontName,
+                fontSize,
+                lineHeightPercent: item.lineHeightPercent,
+                oldLetterSpacingPercent: item.letterSpacingPercent,
+                newLetterSpacingPercent: formatted,
+                scope: lastScanScope
+              }
+            }, '*');
+            setTimeout(() => row.classList.remove('updating'), 500);
+          }
+          
+          valueSpan.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); applySize(); }
+            else if (e.key === 'Escape') { e.preventDefault(); cancelEdit(); }
+          });
+          valueSpan.addEventListener('input', () => {
+            const text = valueSpan.textContent || '';
+            const cleaned = text.replace(/[^\d.,]/g, '').replace(',', '.');
+            if (text !== cleaned) valueSpan.textContent = cleaned;
           });
           
-          pillsContainer.appendChild(pill);
+          lhSpan.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); applyLineHeight(); }
+            else if (e.key === 'Escape') { e.preventDefault(); cancelEdit(); }
+          });
+          lsSpan.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); applyLetterSpacing(); }
+            else if (e.key === 'Escape') { e.preventDefault(); cancelEdit(); }
+          });
+          lsSpan.addEventListener('input', () => {
+            const text = lsSpan.textContent || '';
+            const cleaned = text.replace(/[^\d.,-]/g, '').replace(',', '.');
+            if (text !== cleaned) lsSpan.textContent = cleaned;
+          });
+          
+          function onBlur() {
+            setTimeout(() => { if (editingField) cancelEdit(); }, 150);
+          }
+          valueSpan.addEventListener('blur', onBlur);
+          lhSpan.addEventListener('blur', onBlur);
+          lsSpan.addEventListener('blur', onBlur);
+          
+          listContainer.appendChild(row);
         });
         
-        details.appendChild(pillsContainer);
+        details.appendChild(listContainer);
       }
       
-      if (weights.length === 0 && sizes.length === 0) {
+      if (weights.length === 0 && sizeVariants.length === 0) {
         details.innerHTML = '<div style="color: #999; font-size: 12px; padding: 8px 0;">No weights or sizes detected.</div>';
       }
       
