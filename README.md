@@ -50,6 +50,10 @@ A Figma plugin that scans your designs for font usage, surfaces missing fonts, a
 
 ## Version history
 
+- **1.2.4** (released)  
+  - **UI version label** – Footer in `ui.html` now bumps with every release (`v1.2.4`).
+  - **Release workflow** – `ui.html` added to mandatory files on `git push` alongside `package.json` and docs.
+
 - **1.2.3** (released)  
   - **Release workflow fix** – Stop using amend for commit hashes in `VERSION.md`; backfill hashes on the next release instead. Guarantees a clean working tree after `git push`.
 

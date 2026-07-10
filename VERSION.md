@@ -20,13 +20,28 @@ This document tracks the evolution of the **Font Scanner** plugin from initial c
 | **1.2.0** | Feb 24, 2026 | `4a8938a` | Released |
 | **1.2.1** | Jul 10, 2026 | `ae0cfe4` | Released |
 | **1.2.2** | Jul 10, 2026 | `41ac074` | Released |
-| **1.2.3** | Jul 10, 2026 | — | Released |
+| **1.2.3** | Jul 10, 2026 | `b22bf26` | Released |
+| **1.2.4** | Jul 10, 2026 | — | Released |
+
+---
+
+## v1.2.4 — Released
+
+**Date:** Jul 10, 2026
+
+### Changes
+
+- **UI version label** – Footer `.footer-version` in `ui.html` updated to match release (`v1.2.4`); was stale at `v1.2.0`.
+- **Release workflow** – `ui.html` is now a mandatory version bump target on every `git push` release.
+- Updated `git-push-release.mdc`, `AGENTS.md`, and `VERSION.md` maintenance notes.
+
+**Files changed:** `ui.html`, `package.json`, `package-lock.json`, `README.md`, `VERSION.md`, `AGENTS.md`, `.cursor/rules/git-push-release.mdc`
 
 ---
 
 ## v1.2.3 — Released
 
-**Date:** Jul 10, 2026
+**Commit:** `b22bf26` — *release: v1.2.3* (Jul 10, 2026)
 
 ### Changes
 
@@ -218,7 +233,8 @@ Base plugin structure:
 2026-02-24  4a8938a  v1.2.0 new features update            [kemonn98]
 2026-07-10  ae0cfe4  release v1.2.1 — scan scope fix, docs  [kemonn98]
 2026-07-10  41ac074  release v1.2.2 — release workflow fix  [kemonn98]
-2026-07-10  release v1.2.3 — fix hash backfill workflow     [kemonn98]
+2026-07-10  b22bf26  release v1.2.3 — fix hash backfill workflow     [kemonn98]
+2026-07-10  release v1.2.4 — ui.html version in release workflow    [kemonn98]
 ```
 
 ---
@@ -258,7 +274,7 @@ After each release or significant change:
 1. Add an entry to **Version Summary**
 2. Write details in the relevant version section
 3. Append a line to **Full Timeline** with the commit hash from `git log`
-4. Sync version strings in `package.json` and `package-lock.json`
+4. Sync version strings in `package.json`, `package-lock.json`, and `ui.html` (footer `.footer-version`)
 5. Sync with [README.md](./README.md) → **Version history** and [AGENTS.md](./AGENTS.md) release checklist
 
 On release (`git push` workflow): use `—` for the new release's commit hash in `VERSION.md`; backfill the previous release's hash from `git log`. Do not amend to inject hashes.

@@ -19,6 +19,7 @@ Guidelines for AI agents (Cursor, Copilot, etc.) working on this repository. Thi
 |------|----------------|
 | `package.json` | `"version"` |
 | `package-lock.json` | root `"version"` + `packages[""].version` |
+| `ui.html` | `.footer-version` → `vX.Y.Z` |
 | `README.md` | Version history entry |
 | `VERSION.md` | Version Summary, release section, Full Timeline |
 
@@ -170,12 +171,13 @@ Full steps: [.cursor/rules/git-push-release.mdc](./.cursor/rules/git-push-releas
 2. Analyze `git diff` + conversation for changelog.
 3. **Bump version in `package.json`** (required).
 4. **Bump version in `package-lock.json`** — root and `packages[""]` (required).
-5. Add entry to [README.md → Version history](./README.md#version-history).
-6. Update [VERSION.md](./VERSION.md): Version Summary (`—` for new release commit), version section, Full Timeline; backfill previous release hash from `git log`.
-7. Run `npm run build` if `code.ts` changed.
-8. `git commit` with `release: vX.Y.Z` message.
-9. `git push -u origin HEAD` — **final step**.
-10. Verify `git status` is clean — no uncommitted changes.
+5. **Bump version in `ui.html`** — `.footer-version` span: `vX.Y.Z` (required).
+6. Add entry to [README.md → Version history](./README.md#version-history).
+7. Update [VERSION.md](./VERSION.md): Version Summary (`—` for new release commit), version section, Full Timeline; backfill previous release hash from `git log`.
+8. Run `npm run build` if `code.ts` changed.
+9. `git commit` with `release: vX.Y.Z` message.
+10. `git push -u origin HEAD` — **final step**.
+11. Verify `git status` is clean — no uncommitted changes.
 
 **One push, clean tree.** Do not amend for commit hashes. Backfill the previous version's hash when cutting the next release.
 
@@ -185,11 +187,12 @@ Full steps: [.cursor/rules/git-push-release.mdc](./.cursor/rules/git-push-releas
 |------|----------|
 | `package.json` | Yes |
 | `package-lock.json` | Yes |
+| `ui.html` | Yes — footer `.footer-version` |
 | `README.md` | Yes |
 | `VERSION.md` | Yes |
 | `code.js` | Rebuild locally if `code.ts` changed (gitignored — not committed) |
 | `AGENTS.md` | Only if modified |
-| `code.ts`, `ui.html`, `manifest.json` | If changed in this release |
+| `code.ts`, `manifest.json` | If changed in this release |
 
 ---
 
@@ -203,6 +206,7 @@ Full steps: [.cursor/rules/git-push-release.mdc](./.cursor/rules/git-push-releas
 
 - **README.md** — short bullet list per release (user-facing).
 - **VERSION.md** — detailed notes, commit hashes, technical changes, timeline.
+- **ui.html** — footer `.footer-version` label shown in the plugin UI (**must** match `package.json` on every release).
 - **package.json** — canonical semver string for npm/tooling (**must** be bumped on every release).
 - **package-lock.json** — must match `package.json` version (root + `packages[""]`).
 

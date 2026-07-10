@@ -43,6 +43,7 @@ Update **every mandatory file** below with `NEW_VERSION`. Do not proceed to comm
 |------|-----------------|----------|
 | `package.json` | `"version": "NEW_VERSION"` | **Yes** — canonical semver for the project |
 | `package-lock.json` | root `"version"` and `packages[""].version` | **Yes** — keep in sync with `package.json` |
+| `ui.html` | `.footer-version` span in footer | **Yes** — user-visible version label (`vNEW_VERSION`) |
 | `README.md` | `## Version history` — new entry at top | **Yes** |
 | `VERSION.md` | Version Summary, version section, Full Timeline | **Yes** |
 | `AGENTS.md` | Current version references (if present) | Update if version is cited inline |
@@ -55,7 +56,7 @@ Update **every mandatory file** below with `NEW_VERSION`. Do not proceed to comm
 
 ### `package-lock.json` (required)
 
-Update both occurrences of the version string at the root and under `packages[""]`:
+Update **only** the project version at the lockfile root and under `packages[""]` — do **not** use blind `replace_all` (it can corrupt dependency versions):
 
 ```json
 {
@@ -66,6 +67,14 @@ Update both occurrences of the version string at the root and under `packages[""
     }
   }
 }
+```
+
+### `ui.html` (required)
+
+Update the footer version label:
+
+```html
+<span class="footer-version">vNEW_VERSION</span>
 ```
 
 ### `README.md` — section `## Version history`
@@ -101,7 +110,7 @@ Before staging, confirm version strings match `NEW_VERSION` in:
 
 ```bash
 grep '"version"' package.json package-lock.json
-grep 'NEW_VERSION' README.md VERSION.md
+grep 'NEW_VERSION' README.md VERSION.md ui.html
 ```
 
 Also stage compiled output if `code.ts` changed:
@@ -161,7 +170,7 @@ Only report success after push **and** a clean working tree.
 ## Constraints
 
 - All docs and commit messages must be in **English**.
-- **NEVER skip `package.json` or `package-lock.json` version bumps** — they are mandatory on every release.
+- **NEVER skip `package.json`, `package-lock.json`, or `ui.html` version bumps** — they are mandatory on every release.
 - NEVER skip README or VERSION.md updates.
 - NEVER bump version without documenting what changed.
 - NEVER `git push --force` to main/master unless user explicitly requests it.
