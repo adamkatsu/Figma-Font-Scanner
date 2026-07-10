@@ -171,10 +171,14 @@ Full steps: [.cursor/rules/git-push-release.mdc](./.cursor/rules/git-push-releas
 3. **Bump version in `package.json`** (required).
 4. **Bump version in `package-lock.json`** — root and `packages[""]` (required).
 5. Add entry to [README.md → Version history](./README.md#version-history).
-6. Update [VERSION.md](./VERSION.md): Version Summary, version section, Full Timeline.
-7. Run `npm run build` if `code.ts` changed; stage `code.js`.
+6. Update [VERSION.md](./VERSION.md): Version Summary (`TBD` for commit), version section, Full Timeline (`TBD`).
+7. Run `npm run build` if `code.ts` changed.
 8. `git commit` with `release: vX.Y.Z` message.
-9. `git push -u origin HEAD`.
+9. Fill commit hash in `VERSION.md` → `git commit --amend --no-edit`.
+10. `git push -u origin HEAD` — **final step**.
+11. Verify `git status` is clean — no uncommitted changes.
+
+**One push, clean tree.** Never push with modified `VERSION.md` left behind; never fix hashes in a follow-up commit after push.
 
 ### Mandatory files on every release
 
@@ -184,7 +188,7 @@ Full steps: [.cursor/rules/git-push-release.mdc](./.cursor/rules/git-push-releas
 | `package-lock.json` | Yes |
 | `README.md` | Yes |
 | `VERSION.md` | Yes |
-| `code.js` | Yes, if `code.ts` changed |
+| `code.js` | Rebuild locally if `code.ts` changed (gitignored — not committed) |
 | `AGENTS.md` | Only if modified |
 | `code.ts`, `ui.html`, `manifest.json` | If changed in this release |
 

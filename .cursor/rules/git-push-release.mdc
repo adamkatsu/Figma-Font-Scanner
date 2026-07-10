@@ -76,15 +76,21 @@ Add a new entry at the top (below the heading), mark `(released)`:
 ```
 
 ### `VERSION.md` (English only)
-1. **Version Summary** — add row: `| **NEW_VERSION** | <today> | *(pending)* | Released |`; mark previous "In progress" row as Released with its commit if known.
-2. Replace any `## vX.Y.Z — In Progress` block with a released section:
+
+**Do not write the commit hash before committing** — the hash is unknown until after `git commit`. Use placeholders first, then fill in via amend (Step 4b).
+
+1. **Version Summary** — add row with commit column `TBD` (not `*(pending)*`):
+   `| **NEW_VERSION** | <today> | TBD | Released |`
+2. Replace any `## vX.Y.Z — In Progress` block with a released section (no commit line yet):
    ```markdown
    ## vNEW_VERSION — Released
+
    **Date:** <YYYY-MM-DD>
+
    ### Changes
    - ...
    ```
-3. **Full Timeline** — append: `YYYY-MM-DD  (pending)  release vNEW_VERSION`
+3. **Full Timeline** — append with placeholder: `YYYY-MM-DD  TBD  release vNEW_VERSION`
 4. Remove stale "uncommitted" / "In progress" notes for the version being released.
 
 ### Pre-commit verification
@@ -113,8 +119,10 @@ git log -3 --oneline
 
 Stage relevant files only (never `.DS_Store`, secrets):
 ```bash
-git add package.json package-lock.json README.md VERSION.md AGENTS.md code.ts code.js ui.html manifest.json <other changed source files>
+git add package.json package-lock.json README.md VERSION.md AGENTS.md code.ts ui.html manifest.json <other changed source files>
 ```
+
+Note: `code.js` is gitignored — run `npm run build` if `code.ts` changed, but do not force-add it.
 
 Commit message (HEREDOC):
 ```
@@ -126,15 +134,49 @@ release: vNEW_VERSION
 - <change 2>
 ```
 
-If commit hooks fail, fix and create a **new** commit (never `--amend` unless hook auto-fixed files from your commit).
+If commit hooks fail, fix and create a **new** commit.
 
-## Step 5 — Git push
+### Step 4b — Fill commit hash in VERSION.md, then amend (required)
+
+The release is **not complete** until VERSION.md contains the real hash and is part of the release commit **before push**.
+
+```bash
+HASH=$(git rev-parse --short HEAD)
+```
+
+Update `VERSION.md`:
+- Version Summary row: replace `TBD` with `` `HASH` ``
+- Version section: add `` **Commit:** `HASH` — *release: vNEW_VERSION* (<date>) ``
+- Full Timeline: replace `TBD` with `HASH`
+
+Then fold into the release commit (single commit, not pushed yet):
+
+```bash
+git add VERSION.md
+git commit --amend --no-edit
+```
+
+**Allowed:** `--amend` here only — same release, HEAD is the release commit, not yet pushed.
+
+## Step 5 — Git push (final step)
 
 ```bash
 git push -u origin HEAD
 ```
 
-Only push after commit succeeds. Report the new version and push result to the user.
+## Step 6 — Verify clean state (required)
+
+After push, confirm nothing is left uncommitted:
+
+```bash
+git status
+```
+
+**Success criteria:** `nothing to commit, working tree clean` (except ignored files like `.DS_Store`).
+
+If `VERSION.md` or any file still shows as modified, amend was missed — fix and amend **before** reporting success. Do **not** create a follow-up commit after push for version-doc fixes.
+
+Only report success after push **and** a clean working tree.
 
 ## Constraints
 
@@ -144,4 +186,6 @@ Only push after commit succeeds. Report the new version and push result to the u
 - NEVER bump version without documenting what changed.
 - NEVER `git push --force` to main/master unless user explicitly requests it.
 - NEVER update git config.
+- NEVER leave `VERSION.md` uncommitted after `git push` — hash must be filled via amend (Step 4b) before push.
+- NEVER create a separate docs commit after push to fix VERSION.md commit hashes.
 - If there are no changes to release, tell the user — do not create an empty version bump.

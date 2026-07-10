@@ -1,6 +1,6 @@
 {
   "name": "Font Scanner",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Figma plugin to scan font usage, detect missing fonts, and replace or select text by font",
   "main": "code.js",
   "scripts": {

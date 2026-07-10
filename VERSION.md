@@ -19,12 +19,28 @@ This document tracks the evolution of the **Font Scanner** plugin from initial c
 | **1.1.0** | Feb 16, 2026 | `18a7c7b` | Released |
 | **1.2.0** | Feb 24, 2026 | `4a8938a` | Released |
 | **1.2.1** | Jul 10, 2026 | `ae0cfe4` | Released |
+| **1.2.2** | Jul 10, 2026 | `3bc516d` | Released |
+
+---
+
+## v1.2.2 — Released
+
+**Commit:** `3bc516d` — *release: v1.2.2* (Jul 10, 2026)
+
+### Changes
+
+- **Release workflow fix** – `git-push-release.mdc` uses `TBD` placeholders for commit hash, then `git commit --amend` before push so `VERSION.md` is never left uncommitted.
+- **Clean tree requirement** – Step 6 verifies `git status` is clean after push; no follow-up docs commits.
+- Updated `AGENTS.md` release checklist to match amend-before-push flow.
+- Corrected v1.2.1 commit references in `VERSION.md` to `ae0cfe4`.
+
+**Files changed:** `.cursor/rules/git-push-release.mdc`, `AGENTS.md`, `VERSION.md`, `package.json`, `package-lock.json`, `README.md`
 
 ---
 
 ## v1.2.1 — Released
 
-**Commit:** `1a83e7e` — *release: v1.2.1* (Jul 10, 2026)
+**Commit:** `ae0cfe4` — *release: v1.2.1* (Jul 10, 2026)
 
 ### Changes
 
@@ -185,7 +201,8 @@ Base plugin structure:
 2026-02-11  eaa6035  showUI update                         [kemonn98]
 2026-02-16  18a7c7b  major features updates    → v1.1.0   [kemonn98]
 2026-02-24  4a8938a  v1.2.0 new features update            [kemonn98]
-2026-07-10  1a83e7e  release v1.2.1 — scan scope fix, docs  [kemonn98]
+2026-07-10  ae0cfe4  release v1.2.1 — scan scope fix, docs  [kemonn98]
+2026-07-10  TBD       release v1.2.2 — release workflow fix  [kemonn98]
 ```
 
 ---
@@ -227,6 +244,8 @@ After each release or significant change:
 3. Append a line to **Full Timeline** with the commit hash from `git log`
 4. Sync version strings in `package.json` and `package-lock.json`
 5. Sync with [README.md](./README.md) → **Version history** and [AGENTS.md](./AGENTS.md) release checklist
+
+On release (`git push` workflow): write commit hash in `VERSION.md` **after** `git commit`, via `git commit --amend`, **before** `git push` — so the working tree is clean when done.
 
 ```bash
 # View recent commits
