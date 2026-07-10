@@ -43,7 +43,8 @@ Update **every mandatory file** below with `NEW_VERSION`. Do not proceed to comm
 |------|-----------------|----------|
 | `package.json` | `"version": "NEW_VERSION"` | **Yes** — canonical semver for the project |
 | `package-lock.json` | root `"version"` and `packages[""].version` | **Yes** — keep in sync with `package.json` |
-| `ui.html` | `.footer-version` span in footer | **Yes** — user-visible version label (`vNEW_VERSION`) |
+| `ui/index.html` | `.footer-version` span in footer | **Yes** — source of truth for UI version label |
+| `ui.html` | Regenerated via `npm run build:ui` | **Yes** — must match after build |
 | `README.md` | `## Version history` — new entry at top | **Yes** |
 | `VERSION.md` | Version Summary, version section, Full Timeline | **Yes** |
 | `AGENTS.md` | Current version references (if present) | Update if version is cited inline |
@@ -69,13 +70,15 @@ Update **only** the project version at the lockfile root and under `packages[""]
 }
 ```
 
-### `ui.html` (required)
+### `ui/index.html` + `ui.html` (required)
 
-Update the footer version label:
+Update the footer version label in the **source** template [`ui/index.html`](ui/index.html):
 
 ```html
 <span class="footer-version">vNEW_VERSION</span>
 ```
+
+Then run `npm run build` (or `npm run build:ui`) so root `ui.html` is regenerated with the same version. Do not edit root `ui.html` by hand.
 
 ### `README.md` — section `## Version history`
 Add a new entry at the top (below the heading), mark `(released)`:
@@ -110,13 +113,13 @@ Before staging, confirm version strings match `NEW_VERSION` in:
 
 ```bash
 grep '"version"' package.json package-lock.json
-grep 'NEW_VERSION' README.md VERSION.md ui.html
+grep 'NEW_VERSION' README.md VERSION.md ui/index.html ui.html
 ```
 
-Also stage compiled output if `code.ts` changed:
+Also stage compiled output if sources changed:
 
 ```bash
-# If code.ts was modified, ensure code.js is rebuilt
+# Rebuild UI + main thread
 npm run build
 ```
 
@@ -130,10 +133,10 @@ git log -3 --oneline
 
 Stage relevant files only (never `.DS_Store`, secrets):
 ```bash
-git add package.json package-lock.json README.md VERSION.md AGENTS.md code.ts ui.html manifest.json <other changed source files>
+git add package.json package-lock.json README.md VERSION.md AGENTS.md code.ts ui/index.html ui.html ui/src scripts manifest.json <other changed source files>
 ```
 
-Note: `code.js` is gitignored — run `npm run build` if `code.ts` changed, but do not force-add it.
+Note: `code.js` is gitignored — run `npm run build` if `code.ts` or UI sources changed, but do not force-add `code.js`. Root `ui.html` is generated and **should** be committed so Figma can load the plugin without a local build.
 
 Commit message (HEREDOC) — **describe what changed, not the version number**:
 
@@ -189,7 +192,7 @@ Only report success after push **and** a clean working tree.
 ## Constraints
 
 - All docs and commit messages must be in **English**.
-- **NEVER skip `package.json`, `package-lock.json`, or `ui.html` version bumps** — they are mandatory on every release.
+- **NEVER skip `package.json`, `package-lock.json`, `ui/index.html`, or regenerated `ui.html` version bumps** — they are mandatory on every release.
 - NEVER skip README or VERSION.md updates.
 - NEVER bump version without documenting what changed.
 - NEVER `git push --force` to main/master unless user explicitly requests it.

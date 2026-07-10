@@ -50,6 +50,12 @@ A Figma plugin that scans your designs for font usage, surfaces missing fonts, a
 
 ## Version history
 
+- **1.2.6** (released)  
+  - **Security** – Removed exposed Google Fonts API key; classify Google Fonts from an offline bundled family list (`npm run update:google-fonts`).
+  - **UI architecture** – Split monolithic `ui.html` into `ui/src` modules built with esbuild into a single inlined `ui.html`.
+  - **Scan performance** – Cache available fonts, show scan progress with layer counts, lighter scan payloads, lazy-load system fonts for Replace.
+  - **UX** – Select-fonts uses pointer icon; shorter large-page toast; scan overlay shows progress without waiting on the plain loader.
+
 - **1.2.5** (released)  
   - **Commit message convention** – Release commits describe what changed (`fix:` / `feat:` / `chore:`) instead of `release: vX.Y.Z`. Version numbers stay in `package.json`, `ui.html`, and docs only.
   - **Hash backfill** – Previous release commit hash is resolved via `git log` on the `package.json` version bump.
@@ -103,11 +109,13 @@ npm install --save-dev @figma/plugin-typings
 
 ### Build
 
-- **One-off build:** `npm run build`  
-- **Watch mode (rebuild on save):** `npm run watch`  
-  In VS Code you can use **Terminal → Run Build Task…** and choose **npm: watch**.
+- **Full build (UI + main thread):** `npm run build`
+- **UI only:** `npm run build:ui` (bundles `ui/src` → root `ui.html`)
+- **Main thread only:** `npm run build:code` (`code.ts` → `code.js`)
+- **Watch UI:** `npm run watch`
+- **Refresh Google Fonts list:** `npm run update:google-fonts` (offline classification; no API key)
 
-TypeScript compiles `code.ts` to `code.js` for the plugin runtime.
+Edit `ui/src/*` and `ui/index.html`, not the generated root `ui.html`.
 
 ---
 

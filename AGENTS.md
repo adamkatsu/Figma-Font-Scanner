@@ -19,7 +19,8 @@ Guidelines for AI agents (Cursor, Copilot, etc.) working on this repository. Thi
 |------|----------------|
 | `package.json` | `"version"` |
 | `package-lock.json` | root `"version"` + `packages[""].version` |
-| `ui.html` | `.footer-version` → `vX.Y.Z` |
+| `ui/index.html` | `.footer-version` → `vX.Y.Z` (then `npm run build:ui`) |
+| `ui.html` | Regenerated built UI (commit after build) |
 | `README.md` | Version history entry |
 | `VERSION.md` | Version Summary, release section, Full Timeline |
 
@@ -45,15 +46,31 @@ See [Release workflow](#release-workflow).
 
 ```
 Figma-Font-Scanner/
-├── code.ts          # Plugin main thread (scan, replace, select, message handler)
-├── code.js          # Compiled output (do not edit by hand)
-├── ui.html          # Plugin UI (scan button, font list, inline edit, modals)
-├── manifest.json    # Figma plugin manifest
-├── package.json     # npm version & build scripts
+├── code.ts                 # Plugin main thread (scan, replace, select, message handler)
+├── code.js                 # Compiled output (do not edit by hand)
+├── ui.html                 # Built plugin UI (do not edit by hand — generated)
+├── ui/
+│   ├── index.html          # UI shell template
+│   └── src/                # UI TypeScript modules + styles (source of truth)
+│       ├── main.ts
+│       ├── scan.ts
+│       ├── googleFonts.ts
+│       ├── notifications.ts
+│       ├── state.ts
+│       ├── weights.ts
+│       ├── styles.css
+│       ├── data/googleFontFamilies.ts   # Generated offline Google Fonts list
+│       ├── render/
+│       └── replace/
+├── scripts/
+│   ├── build-ui.mjs        # esbuild → inline into root ui.html
+│   └── fetch-google-fonts.mjs
+├── manifest.json
+├── package.json
 ├── tsconfig.json
-├── README.md        # User documentation
-├── VERSION.md       # Detailed version history & timeline
-├── AGENTS.md        # This file
+├── README.md
+├── VERSION.md
+├── AGENTS.md
 └── .cursor/rules/
     ├── english-only.mdc
     └── git-push-release.mdc
@@ -63,18 +80,22 @@ Figma-Font-Scanner/
 
 | Section | Responsibility |
 |---------|----------------|
-| **1. Scanning** | `getFontsFromPage`, `getFontsFromTextNodes`, `collectTextNodesFromSelection`, `scannedContainers` cache |
+| **1. Scanning** | `getFontsFromPage`, `getFontsFromTextNodes`, `collectTextNodesFromSelection`, `scannedContainers` cache, available-fonts cache, `scan-progress` |
 | **2. Replacement** | `replaceFontFamily`, `replaceFontStyleForFamily`, `replaceFontSizeForFamily`, `replaceLineHeightForFamily`, `replaceLetterSpacingForFamily` |
 | **3. Selection** | `selectTextNodesByFont`, `selectTextNodesByFontAndStyle`, `selectTextNodesByFontVariant` |
 | **4. Selection tracking** | `figma.on('selectionchange')`, sync UI highlight with canvas selection |
 
-### `ui.html` key concepts
+### UI source (`ui/src/`) key concepts
 
 | Concept | Description |
 |---------|-------------|
 | `lastScanScope` | `'page'` or `'selection'` — passed with every plugin message after scan |
 | `performScan()` | Sends `scan-layers` or `scan-selection` based on frame selection count |
 | `selectedFrameCount` | Drives dynamic scan button label |
+| Google Fonts classification | Offline via `data/googleFontFamilies.ts` (no API key) |
+| System font autocomplete | Lazy-loaded via `get-system-fonts` when Replace modal opens |
+
+**Do not edit root `ui.html` by hand.** Change `ui/index.html` / `ui/src/*`, then run `npm run build:ui` (or `npm run build`).
 
 ### UI ↔ main thread messages
 
@@ -82,6 +103,7 @@ Figma-Font-Scanner/
 |----------------|---------|
 | `scan-layers` | Scan entire current page |
 | `scan-selection` | Scan text inside selected containers; stores `scannedContainers` |
+| `get-system-fonts` | Request cached system font family list for Replace autocomplete |
 | `select-font` | Select layers by font family |
 | `select-font-weight` | Select by family + style |
 | `select-font-variant` | Select by size + line height + letter spacing |
@@ -90,6 +112,16 @@ Figma-Font-Scanner/
 | `replace-font-size` | Replace font size (optional variant filter) |
 | `replace-font-line-height` | Replace line height for a variant |
 | `replace-font-letter-spacing` | Replace letter spacing for a variant |
+
+| `code.ts` → UI | Purpose |
+|----------------|---------|
+| `scan-progress` | Batch progress while scanning text nodes |
+| `scan-result` | Font list, counts, details, familyStyles for used families |
+| `system-fonts` | Response to `get-system-fonts` |
+| `replacement-progress` | Bulk replace progress overlay |
+| `notification` | Toast message |
+| `selection-changed` | Frame selection count for scan button label |
+| `deselect-font` | Clear UI highlight |
 
 All replace/select messages accept `scope: 'page' | 'selection'`.
 
@@ -118,10 +150,10 @@ Agents must read and follow these rules. Do not duplicate them here — refer to
 ### Code style
 
 - **Minimize scope** — smallest correct diff; no unrelated changes.
-- **Match existing patterns** — naming, message types, UI structure in `ui.html`.
+- **Match existing patterns** — naming, message types, UI structure in `ui/src/`.
 - **No over-engineering** — avoid abstractions for one-off logic.
 - **Comments** — only for non-obvious behavior (e.g. `hasMissingFont` paths, `figma.mixed` handling).
-- **Build after `code.ts` changes:** `npm run build` (or `npm run watch`).
+- **Build after changes:** `npm run build` (UI + `code.ts`). For UI-only: `npm run build:ui`. For main thread only: `npm run build:code`.
 
 ### Figma API constraints
 
@@ -141,8 +173,14 @@ CONTAINER_TYPES = ['FRAME', 'GROUP', 'COMPONENT', 'INSTANCE', 'SECTION']
 ### What not to commit
 
 - `.DS_Store`
-- Secrets (API keys in `ui.html` — review before public release)
+- Secrets / API keys — Google Fonts classification is offline; never add API keys to the UI
 - Hand-edited `code.js` (always compile from `code.ts`)
+- Hand-edited root `ui.html` (always build from `ui/src` via `npm run build:ui`)
+
+### Google Fonts list
+
+- Offline family list: `ui/src/data/googleFontFamilies.ts`
+- Refresh: `npm run update:google-fonts` (fetches `fonts.google.com/metadata/fonts`, no API key)
 
 ### Git safety
 
@@ -171,10 +209,10 @@ Full steps: [.cursor/rules/git-push-release.mdc](./.cursor/rules/git-push-releas
 2. Analyze `git diff` + conversation for changelog.
 3. **Bump version in `package.json`** (required).
 4. **Bump version in `package-lock.json`** — root and `packages[""]` (required).
-5. **Bump version in `ui.html`** — `.footer-version` span: `vX.Y.Z` (required).
+5. **Bump version in `ui/index.html`** — `.footer-version` span: `vX.Y.Z`, then run `npm run build` so root `ui.html` is regenerated (required).
 6. Add entry to [README.md → Version history](./README.md#version-history).
 7. Update [VERSION.md](./VERSION.md): Version Summary (`—` for new release commit), version section, Full Timeline; backfill previous release hash from `git log`.
-8. Run `npm run build` if `code.ts` changed.
+8. Run `npm run build` (rebuilds UI and `code.js` when sources change).
 9. `git commit` with a **descriptive message** (`fix:` / `feat:` / `chore:` + what changed — not `release: vX.Y.Z`).
 10. `git push -u origin HEAD` — **final step**.
 11. Verify `git status` is clean — no uncommitted changes.
@@ -215,11 +253,14 @@ Full steps: [.cursor/rules/git-push-release.mdc](./.cursor/rules/git-push-releas
 ## Development commands
 
 ```bash
-npm install          # Install dependencies
-npm run build        # Compile code.ts → code.js
-npm run watch        # Rebuild on save
-npm run lint         # ESLint
-npm run lint:fix     # ESLint with auto-fix
+npm install                 # Install dependencies
+npm run build               # build:ui + build:code
+npm run build:ui            # Bundle ui/src → root ui.html
+npm run build:code          # Compile code.ts → code.js
+npm run watch               # Watch and rebuild UI
+npm run update:google-fonts # Refresh offline Google Fonts family list
+npm run lint                # ESLint
+npm run lint:fix            # ESLint with auto-fix
 ```
 
 Reload the plugin in Figma after rebuilding to test changes.
@@ -233,7 +274,7 @@ Reload the plugin in Figma after rebuilding to test changes.
 1. Implement logic in `code.ts` with `scope: 'page' | 'selection'`.
 2. Use `getTextNodesForScope(scope)` — respects `scannedContainers` for selection scope.
 3. Add message handler in `figma.ui.onmessage`.
-4. Wire UI in `ui.html` with `lastScanScope`.
+4. Wire UI in `ui/src` with `lastScanScope`, then `npm run build:ui`.
 5. Post `notification` or `scan-result` messages to refresh UI.
 6. Document in README features if user-facing.
 

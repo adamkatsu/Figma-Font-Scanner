@@ -1,1111 +1,1110 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: https://fonts.google.com https://fonts.gstatic.com https://gwfh.mranftl.com https://www.googleapis.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: https://fonts.google.com https://fonts.gstatic.com https://gwfh.mranftl.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com;">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
   <style>
-    * { box-sizing: border-box; }
-    
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif; 
-      padding: 0; 
-      margin: 0;
-      color: #000; 
-      font-size: 13px; 
-      background: #f4f4f4;
-      line-height: 1.5;
-    }
-    
-    /* Header Section */
-    .header-section {
-      text-align: center;
-      padding: 24px 20px;
-      margin: 8;
-      border-radius: 8px;
-      background-color: #fffbf0;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .header-section::before {
-      content: '';
-      position: absolute;
-      bottom: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 500px;
-      height: 200px;
-      background: #FFD43A;
-      filter: blur(40px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    
-    .header-section > * {
-      position: relative;
-      z-index: 1;
-    }
-    
-    h2 { 
-      margin: 0 0 0 0; 
-      font-size: 28px; 
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: #000;
-    }
-    
-    .header-subtitle {
-      font-size: 13px;
-      color: #666;
-      margin: 0 0 16px 0;
-      font-weight: 400;
-    }
-    
-    /* Global Buttons */
-    button { 
-      cursor: pointer; 
-      border: none; 
-      border-radius: 8px; 
-      font-weight: 500; 
-      transition: all 0.15s ease;
-      font-family: inherit;
-      font-size: 13px;
-    }
-    
-    .primary-btn {
-      background: #000; 
-      color: #fff; 
-      padding: 12px 32px; 
-      font-weight: 600;
-      letter-spacing: -0.1px;
-      border-radius: 8px;
-      font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      min-width: 200px;
-    }
-    
-    .primary-btn i.fa-regular,
-    .primary-btn i.fa-solid {
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-    .primary-btn:hover { 
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    .primary-btn:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Headers */
-    .section-header {
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center;
-      margin: 0 0 0 0; 
-      padding-bottom: 4px;
-    }
-    
-    h3 { 
-      margin: 0; 
-      font-size: 11px; 
-      text-transform: uppercase; 
-      color: #666;
-      font-weight: 600;
-    }
-    
-    /* Disclaimers for sections */
-    .header-disclaimer {
-      font-size: 11px; 
-      color: #999; 
-      margin-top: 6px; 
-      font-weight: 400;
-      text-transform: none;
-      letter-spacing: 0;
-    }
+* { box-sizing: border-box; }
 
-    /* List Items */
-    .list { 
-      list-style: none; 
-      padding: 0; 
-      margin: 0 0 24px 0;
-      overflow: visible;
-    }
-    
-    .item-wrapper { 
-      transition: all 0.15s ease;
-      overflow: visible;
-    }
-    
-    .item-wrapper:hover {
-      transform: translateY(-2px);
-    }
-    
-    .item-wrapper:last-child {
-      border-bottom: none;
-    }
-    
-    .item {
-      display: flex; 
-      flex-direction: column;
-      padding: 8px 8px; 
-      border: 1px solid #F7F7F7;
-      border-radius: 8px;
-      margin-top: 4px;
-      background-color: #ffffff;
-      transition: all 0.15s ease;
-      overflow: visible;
-    }
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif; 
+  padding: 0; 
+  margin: 0;
+  color: #000; 
+  font-size: 13px; 
+  background: #f4f4f4;
+  line-height: 1.5;
+}
 
-    .item:hover {
-      background-color: #ffffff;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
+/* Header Section */
+.header-section {
+  text-align: center;
+  padding: 24px 20px;
+  margin: 8;
+  border-radius: 8px;
+  background-color: #fffbf0;
+  position: relative;
+  overflow: hidden;
+}
 
-    .item-main-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      cursor: pointer;
-    }
-    
-    .item.selected {
-      cursor: default;
-      background-color: #ffffff;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      position: relative;
-      z-index: 100;
-    }
+.header-section::before {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 200px;
+  background: #FFD43A;
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 0;
+}
 
-    .font-name { 
-      font-weight: 500; 
-      font-size: 14px; 
-      display: flex; 
-      align-items: center; 
-      gap: 8px;
-      color: #000;
-      letter-spacing: -0.2px;
-      position: relative;
-      padding-left: 4px;
-      transition: color 0.15s ease, padding-left 0.2s ease;
-      flex: 1;
-    }
+.header-section > * {
+  position: relative;
+  z-index: 1;
+}
 
-    .font-details {
-      display: none;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 11px;
-      color: #777;
-      letter-spacing: 0;
-      padding: 8px 0 0 0;
-      width: 100%;
-      position: relative;
-      z-index: 1;
-      overflow: visible;
-    }
+h2 { 
+  margin: 0 0 0 0; 
+  font-size: 28px; 
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #000;
+}
 
-    .font-details.show {
-      display: flex;
-    }
+.header-subtitle {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 16px 0;
+  font-weight: 400;
+}
 
-    .font-detail-section-title:not(:first-child) {
-      margin-top: 8px;
-    }
+/* Global Buttons */
+button { 
+  cursor: pointer; 
+  border: none; 
+  border-radius: 8px; 
+  font-weight: 500; 
+  transition: all 0.15s ease;
+  font-family: inherit;
+  font-size: 13px;
+}
 
-    .font-detail-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 12px;
-      background: #F7F7F7;
-      border: none;
-      border-radius: 6px;
-      overflow: visible;
-      position: relative;
-      cursor: pointer;
-      transition: background 0.15s ease;
-    }
-    
-    .font-detail-item:hover {
-      background: #EEEEEE;
-    }
+.primary-btn {
+  background: #000; 
+  color: #fff; 
+  padding: 12px 32px; 
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 200px;
+}
 
-    .font-detail-label {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+.primary-btn i.fa-regular,
+.primary-btn i.fa-solid {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.primary-btn:hover { 
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.primary-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
 
-    .font-detail-value {
-      font-weight: 500; 
-      color: #000;
-      font-size: 13px;
-    }
+/* Headers */
+.section-header {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  margin: 0 0 0 0; 
+  padding-bottom: 4px;
+}
 
-    .font-detail-count {
-      font-size: 11px;
-      color: #999;
-    }
+h3 { 
+  margin: 0; 
+  font-size: 11px; 
+  text-transform: uppercase; 
+  color: #666;
+  font-weight: 600;
+}
 
-    .font-detail-control {
-      display: flex; 
-      gap: 6px;
-      align-items: center; 
-    }
+/* Disclaimers for sections */
+.header-disclaimer {
+  font-size: 11px; 
+  color: #999; 
+  margin-top: 6px; 
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
 
-    .font-detail-input,
-    .font-detail-select {
-      padding: 6px 10px;
-      border: 1px solid #E5E5E5;
-      border-radius: 4px;
-      font-size: 12px;
-      font-family: inherit;
-      background: #fff;
-      color: #000;
-      min-width: 100px;
-    }
+/* List Items */
+.list { 
+  list-style: none; 
+  padding: 0; 
+  margin: 0 0 24px 0;
+  overflow: visible;
+}
 
-    .font-detail-input:focus,
-    .font-detail-select:focus {
-      outline: none;
-      border-color: #000;
-      box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
-    }
+.item-wrapper { 
+  transition: all 0.15s ease;
+  overflow: visible;
+}
 
-    .font-detail-input {
-      width: 80px;
-    }
+.item-wrapper:hover {
+  transform: translateY(-2px);
+}
 
-    .font-detail-btn {
-      padding: 6px 12px;
-      background: #000;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
+.item-wrapper:last-child {
+  border-bottom: none;
+}
 
-    .font-detail-btn:hover {
-      background: #333;
-    }
+.item {
+  display: flex; 
+  flex-direction: column;
+  padding: 8px 8px; 
+  border: 1px solid #F7F7F7;
+  border-radius: 8px;
+  margin-top: 4px;
+  background-color: #ffffff;
+  transition: all 0.15s ease;
+  overflow: visible;
+}
 
-    .font-detail-btn:active {
-      transform: scale(0.95);
-    }
+.item:hover {
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
 
-    .font-detail-section-title {
-      font-size: 10px;
-      font-weight: 600;
-      color: #999;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin: 0 0 4px 0;
-    }
-    
-    .dropdown-icon {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-      transition: transform 0.2s ease, color 0.15s ease;
-      color: #666;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-    .dropdown-icon i {
-      font-size: 12px;
-    }
-    
-    .item-main-row:hover .dropdown-icon {
-      color: #000;
-    }
-    
-    .dropdown-icon.open {
-      transform: rotate(90deg);
-      color: #000;
-    }
-    
-    .badge-missing { 
-      background: rgba(255, 67, 67, 0.1); 
-      color: #ff4343; 
-      font-size: 10px; 
-      padding: 3px 8px; 
-      margin-left: 5px;
-      border-radius: 4px;
-      font-weight: 500;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-    }
-    
-    /* Action Buttons Row */
-    .actions { 
-      display: flex; 
-      gap: 6px; 
-      align-items: center;
-      opacity: 1;
-      transition: opacity 0.15s ease;
-      padding-top: 2px;
-    }
-    
-    .icon-btn {
-      background: transparent; 
-      border: 1px solid #E5E5E5; 
-      color: #000;
-      padding: 6px 12px; 
-      font-size: 12px; 
-      border-radius: 4px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .icon-btn svg {
-      display: block;
-    }
-    
-    .icon-btn:hover { 
-      background: #000; 
-      color: #fff;
-      border-color: #000;
-    }
-    
-    .icon-btn.active { 
-      background: #000; 
-      border-color: #000; 
-      color: #fff; 
-    }
+.item-main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+}
 
-    /* External Links */
-    .link-group { 
-      display: flex; 
-      gap: 0px; 
-    }
-    
-    /* Action icons: hidden by default, slide in from right on row hover with stagger */
-    .item .link-group .ext-link {
-      opacity: 0;
-      transform: translateX(14px);
-      pointer-events: none;
-      transition: transform 0.10s ease, opacity 0.10s ease;
-    }
-    /* Stagger: hover out = left to right (first icon exits first) */
-    .item .link-group .ext-link:nth-child(1) { transition-delay: 0ms; }
-    .item .link-group .ext-link:nth-child(2) { transition-delay: 20ms; }
-    .item .link-group .ext-link:nth-child(3) { transition-delay: 40ms; }
-    .item .link-group .ext-link:nth-child(4) { transition-delay: 60ms; }
-    .item .link-group .ext-link:nth-child(5) { transition-delay: 80ms; }
-    .item:hover .link-group .ext-link {
-      opacity: 1;
-      transform: translateX(0);
-      pointer-events: auto;
-    }
-    /* Stagger: hover in = right to left (rightmost icon enters first) */
-    .item:hover .link-group .ext-link:nth-last-child(1) { transition-delay: 0ms; }
-    .item:hover .link-group .ext-link:nth-last-child(2) { transition-delay: 20ms; }
-    .item:hover .link-group .ext-link:nth-last-child(3) { transition-delay: 40ms; }
-    .item:hover .link-group .ext-link:nth-last-child(4) { transition-delay: 60ms; }
-    .item:hover .link-group .ext-link:nth-last-child(5) { transition-delay: 80ms; }
-    
-    .ext-link { 
-      text-decoration: none; 
-      color: #666; 
-      font-weight: 400; 
-      font-size: 14px;
-      padding: 8px;
-      border-radius: 4px;
-      transition: transform 0.10s ease, opacity 0.10s ease, color 0.10s ease, background 0.10s ease;
-      display: flex;
-      align-items: center;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-family: inherit;
-    }
-    
-    .ext-link:hover { 
-      color: #000;
-      background: #e9e9e9;
-    }
-    
-    .ext-link i.fa-regular,
-    .ext-link i.fa-solid {
-      font-size: 12px;
-      width: 1em;
-      text-align: center;
-    }
-    
-    .ext-link.replace-active {
-      color: #000;
-      background: #e9e9e9;
-    }
-    
-    /* Tooltip */
-    .ext-link {
-      position: relative;
-    }
-    
-    .ext-link::before {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%) translateY(-8px);
-      background: #fff;
-      color: #000;
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 500;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      z-index: 1001;
-      margin-bottom: 4px;
-      border: 1px solid #E5E5E5;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    
-    .ext-link::after {
-      content: '';
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%) translateY(-8px);
-      border: 4px solid transparent;
-      border-top-color: #fff;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      z-index: 1002;
-      margin-bottom: -4px;
-      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.05));
-    }
-    
-    .ext-link:hover::before,
-    .ext-link:hover::after {
-      opacity: 1;
-    }
-    
-    .ext-link:hover::before {
-      transform: translateX(-50%) translateY(0);
-    }
-    
-    .ext-link:hover::after {
-      transform: translateX(-50%) translateY(0);
-    }
+.item.selected {
+  cursor: default;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 100;
+}
 
-    /* REPLACEMENT MODAL CSS */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 10000;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-    
-    .modal-overlay.show {
-      display: flex;
-      opacity: 1;
-    }
-    
-    .modal-container {
-      background: #fff;
-      border-radius: 8px;
-      padding: 24px;
-      width: 90%;
-      max-width: 320px;
-      position: relative;
-      transform: scale(0.95);
-      transition: transform 0.2s ease;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      margin: auto;
-    }
-    
-    .modal-overlay.show .modal-container {
-      transform: scale(1);
-      max-height: 85vh;
-      overflow: visible;
-    }
-    
-    /* LOADING OVERLAY CSS */
-    .loading-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255, 255, 255, 0.95);
-      z-index: 20000;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-    
-    .loading-overlay.show {
-      display: flex;
-      opacity: 1;
-    }
-    
-    .loading-content {
-      text-align: center;
-      padding: 32px;
-    }
-    
-    .loading-spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid #f0f0f0;
-      border-top: 4px solid #0066FF;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 20px;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .loading-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #000;
-      margin-bottom: 8px;
-    }
-    
-    .loading-progress {
-      font-size: 13px;
-      color: #666;
-    }
-    
-    .modal-header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    
-    .modal-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #000;
-      margin: 0;
-      text-align: center;
-      text-transform: none;
-    }
-    
-    .modal-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #666;
-      border-radius: 4px;
-      transition: all 0.15s ease;
-    }
-    
-    .modal-close:hover {
-      background: #F5F5F5;
-      color: #000;
-    }
-    
-    .modal-close i {
-      font-size: 16px;
-    }
-    
-    .replace-row { 
-      display: flex; 
-      flex-direction: column;
-      gap: 16px; 
-      position: relative; 
-      overflow: visible;
-    }
-    
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      overflow: visible;
-    }
-    
-    .input-group:first-child {
-      padding-bottom: 16px;
-      border-bottom: 1px solid #E5E5E5;
-      position: relative;
-    }
-    
-    .replace-divider-label {
-      position: absolute;
-      bottom: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #fff;
-      padding: 0 8px;
-      font-size: 10px;
-      color: #999;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    
-    .input-wrapper { 
-      position: relative; 
-      flex-grow: 1; 
-      overflow: visible;
-    }
+.font-name { 
+  font-weight: 500; 
+  font-size: 14px; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+  color: #000;
+  letter-spacing: -0.2px;
+  position: relative;
+  padding-left: 4px;
+  transition: color 0.15s ease, padding-left 0.2s ease;
+  flex: 1;
+}
 
-    .replace-input {
-      width: 100%; 
-      box-sizing: border-box;
-      padding: 10px 12px; 
-      border: 1px solid #E5E5E5; 
-      border-radius: 6px; 
-      font-size: 13px;
-      background: #fff;
-      color: #000;
-      font-family: inherit;
-      transition: all 0.15s ease;
-    }
-    
-    .replace-input:focus {
-      outline: none;
-      border-color: #000;
-      box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
-    }
-    
-    .replace-input::placeholder {
-      color: #999;
-    }
-    
-    .replace-input.readonly {
-      background: #F9F9F9;
-      color: #666;
-      cursor: default;
-      border-color: #E5E5E5;
-    }
+.font-details {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: #777;
+  letter-spacing: 0;
+  padding: 8px 0 0 0;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
 
-    .detail-section {
-      margin-bottom: 20px;
-    }
+.font-details.show {
+  display: flex;
+}
 
-    .detail-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      margin-bottom: 6px;
-    }
+.font-detail-section-title:not(:first-child) {
+  margin-top: 8px;
+}
 
-    .detail-list {
-      border: 1px solid #E5E5E5;
-      border-radius: 6px;
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      background: #FBFBFB;
-      max-height: 160px;
-      overflow-y: auto;
-    }
+.font-detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #F7F7F7;
+  border: none;
+  border-radius: 6px;
+  overflow: visible;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
 
-    .detail-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-      color: #000;
-    }
+.font-detail-item:hover {
+  background: #EEEEEE;
+}
 
-    .detail-value {
-      font-weight: 500;
-    }
+.font-detail-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
-    .detail-count {
-      color: #777;
-    }
+.font-detail-value {
+  font-weight: 500; 
+  color: #000;
+  font-size: 13px;
+}
 
-    .detail-subtitle {
-      font-size: 12px;
-      font-weight: 600;
-      color: #333;
-      margin: 12px 0 6px;
-      text-transform: none;
-      letter-spacing: 0;
-    }
+.font-detail-count {
+  font-size: 11px;
+  color: #999;
+}
 
-    .detail-actions {
-      display: flex;
-      gap: 6px;
-      margin-left: 8px;
-    }
+.font-detail-control {
+  display: flex; 
+  gap: 6px;
+  align-items: center; 
+}
 
-    .detail-action-btn {
-      border: 1px solid #E5E5E5;
-      border-radius: 4px;
-      background: #fff;
-      font-size: 11px;
-      padding: 4px 8px;
-      cursor: pointer;
-      color: #000;
-    }
+.font-detail-input,
+.font-detail-select {
+  padding: 6px 10px;
+  border: 1px solid #E5E5E5;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: inherit;
+  background: #fff;
+  color: #000;
+  min-width: 100px;
+}
 
-    .detail-action-btn:hover {
-      background: #000;
-      color: #fff;
-      border-color: #000;
-    }
+.font-detail-input:focus,
+.font-detail-select:focus {
+  outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+}
 
-    .weight-picker {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-    }
+.font-detail-input {
+  width: 80px;
+}
 
-    .weight-picker-btn {
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid #E5E5E5;
-      background: #fff;
-      font-size: 13px;
-      cursor: pointer;
-      min-width: 80px;
-      text-align: center;
-    }
+.font-detail-btn {
+  padding: 6px 12px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
 
-    .weight-picker-btn:hover {
-      border-color: #000;
-      background: #000;
-      color: #fff;
-    }
+.font-detail-btn:hover {
+  background: #333;
+}
 
-    .weight-picker-btn.current {
-      background: #000;
-      color: #fff;
-      border-color: #000;
-      cursor: default;
-    }
+.font-detail-btn:active {
+  transform: scale(0.95);
+}
 
-    .detail-empty {
-      text-align: center;
-      color: #999;
-      font-size: 13px;
-      margin: 12px 0;
-    }
-    
-    /* Font Size List (grouped by line height & letter spacing) */
-    .size-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-top: 0;
-    }
-    
-    .size-list-header,
-    .size-list-row {
-      display: grid;
-      grid-template-columns: 48px 72px auto 64px;
-      gap: 10px;
-      align-items: center;
-      padding: 8px 12px;
-      font-size: 13px;
-    }
-    
-    .size-list-header {
-      font-size: 10px;
-      font-weight: 600;
-      color: #999;
-      text-transform: uppercase;
-      min-height: 24px;
-    }
-    
-    .size-list-header .size-list-col-count {
-      text-align: right;
-    }
-    
-    .size-list-row {
-      background: #F7F7F7;
-      border: none;
-      border-radius: 6px;
-      color: #000;
-      transition: background 0.15s ease;
-      cursor: pointer;
-      overflow: visible;
-      position: relative;
-    }
-    
-    .size-list-row:hover {
-      background: #EEEEEE;
-    }
-    
-    .size-list-row.editing {
-      background: #000;
-      color: #fff;
-      cursor: default;
-    }
-    
-    .size-list-row.updating {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-    
-    .size-list-value {
-      font-weight: 600;
-    }
-    
-    .size-list-value[contenteditable="true"] {
-      outline: none;
-      cursor: text;
-      user-select: text;
-      padding: 1px 2px;
-      border-radius: 2px;
-      background: rgba(255,255,255,0.15);
-    }
-    
-    .size-list-lh,
-    .size-list-ls {
-      font-weight: 500;
-      padding: 1px 2px;
-      border-radius: 2px;
-      cursor: pointer;
-    }
-    
-    .size-list-lh[contenteditable="true"],
-    .size-list-ls[contenteditable="true"] {
-      outline: none;
-      cursor: text;
-      user-select: text;
-      background: rgba(255,255,255,0.15);
-    }
-    
-    .size-list-row.editing .size-list-lh,
-    .size-list-row.editing .size-list-ls {
-      color: #fff;
-    }
-    
-    .size-list-count {
-      font-size: 11px;
-      color: #999;
-      text-align: right;
-    }
-    
-    .size-list-row.editing .size-list-count {
-      color: rgba(255,255,255,0.7);
-    }
-    
-    .replace-label {
-      font-size: 11px;
-      font-weight: 500;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      margin-bottom: 6px;
-      display: block;
-    }
+.font-detail-section-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px 0;
+}
 
-    /* CUSTOM SCROLLABLE LIST */
-    .suggestions-list {
-      position: absolute; 
-      top: 100%; 
-      left: 0; 
-      right: 0;
-      background: #fff; 
-      border: 1px solid #E5E5E5; 
-      border-top: none;
-      border-radius: 0 0 6px 6px;
-      max-height: 200px; 
-      overflow-y: auto;
-      z-index: 10001; 
-      display: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      margin-top: -1px;
-    }
-    
-    .suggestions-list.show { 
-      display: block; 
-    }
-    
-    .suggestion-item { 
-      padding: 10px 12px; 
-      cursor: pointer; 
-      border-bottom: 1px solid #e9e9e9;
-      color: #000;
-      font-size: 13px;
-      transition: background 0.1s ease;
-    }
-    
-    .suggestion-item:last-child {
-      border-bottom: none;
-    }
-    
-    .suggestion-item:hover { 
-      background: #FAFAFA; 
-    }
+.dropdown-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.15s ease;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.dropdown-icon i {
+  font-size: 12px;
+}
 
-    .apply-btn { 
-      background: #000; 
-      color: #fff; 
-      padding: 10px 20px; 
-      white-space: nowrap;
-      font-weight: 500;
-      border-radius: 4px;
-    }
-    
-    .apply-btn:hover { 
-      background: #333; 
-    }
-    
-    .apply-btn:active {
-      transform: scale(0.98);
-    }
+.item-main-row:hover .dropdown-icon {
+  color: #000;
+}
 
-    .loader { 
-      display: none; 
-      text-align: center; 
-      margin: 24px 0; 
-      color: #666;
-      font-size: 13px;
-    }
-    
-    /* Container */
-    #resultsContainer {
-      padding: 0 0 0 0;
-    }
-    
-    .content-wrapper {
-      min-height: calc(100vh - 200px);
-    }
-    
-    /* Empty state */
-    #resultsContainer p {
-      margin: 8px 0;
-      color: #999;
-      font-size: 13px;
-      text-align: center;
-    }
-    
-    /* Main container padding */
-    body > *:not(script) {
-      padding-left: 8px;
-      padding-right: 8px;
-    }
-    
-    /* Footer Section */
-    .footer-section {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #fff;
-      border-top: 1px solid #E5E5E5;
-      padding: 12px 20px;
-      text-align: center;
-      font-size: 11px;
-      color: #999;
-      z-index: 100;
-    }
-    
-    .footer-content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 3px;
-      flex-wrap: wrap;
-    }
-    
-    .footer-link {
-      color: #000;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.15s ease;
-    }
-    
-    .footer-link:hover {
-      color: #666;
-    }
-    
-    .footer-version {
-      color: #999;
-    }
-    
-    .footer-separator {
-      color: #E5E5E5;
-    }
-    
-    /* Content wrapper to prevent footer overlap */
-    .content-wrapper {
-      padding: 8px 8px 32px 8px;
-    }
-    
-    /* Notification Toast */
-    .notification-toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #fff;
-      color: #000;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 10px;
-      font-weight: 500;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-      z-index: 10000;
-      opacity: 0;
-      transition: all 0.3s ease;
-      display: inline-block;
-      width: auto;
-      min-width: fit-content;
-      max-width: calc(100% - 32px);
-      pointer-events: none;
-      text-align: center;
-      border: 1px solid #E5E5E5;
-      white-space: nowrap;
-    }
-    
-    .notification-toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-      pointer-events: auto;
-    }
-    
-    .notification-toast .notification-count {
-      font-weight: 600;
-      margin-right: 4px;
-    }
-  </style>
+.dropdown-icon.open {
+  transform: rotate(90deg);
+  color: #000;
+}
+
+.badge-missing { 
+  background: rgba(255, 67, 67, 0.1); 
+  color: #ff4343; 
+  font-size: 10px; 
+  padding: 3px 8px; 
+  margin-left: 5px;
+  border-radius: 4px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Action Buttons Row */
+.actions { 
+  display: flex; 
+  gap: 6px; 
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.15s ease;
+  padding-top: 2px;
+}
+
+.icon-btn {
+  background: transparent; 
+  border: 1px solid #E5E5E5; 
+  color: #000;
+  padding: 6px 12px; 
+  font-size: 12px; 
+  border-radius: 4px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn svg {
+  display: block;
+}
+
+.icon-btn:hover { 
+  background: #000; 
+  color: #fff;
+  border-color: #000;
+}
+
+.icon-btn.active { 
+  background: #000; 
+  border-color: #000; 
+  color: #fff; 
+}
+
+/* External Links */
+.link-group { 
+  display: flex; 
+  gap: 0px; 
+}
+
+/* Action icons: hidden by default, slide in from right on row hover with stagger */
+.item .link-group .ext-link {
+  opacity: 0;
+  transform: translateX(14px);
+  pointer-events: none;
+  transition: transform 0.10s ease, opacity 0.10s ease;
+}
+/* Stagger: hover out = left to right (first icon exits first) */
+.item .link-group .ext-link:nth-child(1) { transition-delay: 0ms; }
+.item .link-group .ext-link:nth-child(2) { transition-delay: 20ms; }
+.item .link-group .ext-link:nth-child(3) { transition-delay: 40ms; }
+.item .link-group .ext-link:nth-child(4) { transition-delay: 60ms; }
+.item .link-group .ext-link:nth-child(5) { transition-delay: 80ms; }
+.item:hover .link-group .ext-link {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+/* Stagger: hover in = right to left (rightmost icon enters first) */
+.item:hover .link-group .ext-link:nth-last-child(1) { transition-delay: 0ms; }
+.item:hover .link-group .ext-link:nth-last-child(2) { transition-delay: 20ms; }
+.item:hover .link-group .ext-link:nth-last-child(3) { transition-delay: 40ms; }
+.item:hover .link-group .ext-link:nth-last-child(4) { transition-delay: 60ms; }
+.item:hover .link-group .ext-link:nth-last-child(5) { transition-delay: 80ms; }
+
+.ext-link { 
+  text-decoration: none; 
+  color: #666; 
+  font-weight: 400; 
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 4px;
+  transition: transform 0.10s ease, opacity 0.10s ease, color 0.10s ease, background 0.10s ease;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ext-link:hover { 
+  color: #000;
+  background: #e9e9e9;
+}
+
+.ext-link i.fa-regular,
+.ext-link i.fa-solid {
+  font-size: 12px;
+  width: 1em;
+  text-align: center;
+}
+
+.ext-link.replace-active {
+  color: #000;
+  background: #e9e9e9;
+}
+
+/* Tooltip */
+.ext-link {
+  position: relative;
+}
+
+.ext-link::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  background: #fff;
+  color: #000;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1001;
+  margin-bottom: 4px;
+  border: 1px solid #E5E5E5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ext-link::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  border: 4px solid transparent;
+  border-top-color: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 1002;
+  margin-bottom: -4px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.05));
+}
+
+.ext-link:hover::before,
+.ext-link:hover::after {
+  opacity: 1;
+}
+
+.ext-link:hover::before {
+  transform: translateX(-50%) translateY(0);
+}
+
+.ext-link:hover::after {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* REPLACEMENT MODAL CSS */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.modal-overlay.show {
+  display: flex;
+  opacity: 1;
+}
+
+.modal-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 320px;
+  position: relative;
+  transform: scale(0.95);
+  transition: transform 0.2s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  margin: auto;
+}
+
+.modal-overlay.show .modal-container {
+  transform: scale(1);
+  max-height: 85vh;
+  overflow: visible;
+}
+
+/* LOADING OVERLAY CSS */
+.loading-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 20000;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.loading-overlay.show {
+  display: flex;
+  opacity: 1;
+}
+
+.loading-content {
+  text-align: center;
+  padding: 32px;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid #0066FF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 8px;
+}
+
+.loading-progress {
+  font-size: 13px;
+  color: #666;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+  text-align: center;
+  text-transform: none;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.modal-close:hover {
+  background: #F5F5F5;
+  color: #000;
+}
+
+.modal-close i {
+  font-size: 16px;
+}
+
+.replace-row { 
+  display: flex; 
+  flex-direction: column;
+  gap: 16px; 
+  position: relative; 
+  overflow: visible;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: visible;
+}
+
+.input-group:first-child {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E5E5E5;
+  position: relative;
+}
+
+.replace-divider-label {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  padding: 0 8px;
+  font-size: 10px;
+  color: #999;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.input-wrapper { 
+  position: relative; 
+  flex-grow: 1; 
+  overflow: visible;
+}
+
+.replace-input {
+  width: 100%; 
+  box-sizing: border-box;
+  padding: 10px 12px; 
+  border: 1px solid #E5E5E5; 
+  border-radius: 6px; 
+  font-size: 13px;
+  background: #fff;
+  color: #000;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.replace-input:focus {
+  outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+}
+
+.replace-input::placeholder {
+  color: #999;
+}
+
+.replace-input.readonly {
+  background: #F9F9F9;
+  color: #666;
+  cursor: default;
+  border-color: #E5E5E5;
+}
+
+.detail-section {
+  margin-bottom: 20px;
+}
+
+.detail-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+}
+
+.detail-list {
+  border: 1px solid #E5E5E5;
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #FBFBFB;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #000;
+}
+
+.detail-value {
+  font-weight: 500;
+}
+
+.detail-count {
+  color: #777;
+}
+
+.detail-subtitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  margin: 12px 0 6px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: 8px;
+}
+
+.detail-action-btn {
+  border: 1px solid #E5E5E5;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 11px;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: #000;
+}
+
+.detail-action-btn:hover {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.weight-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.weight-picker-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #E5E5E5;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 80px;
+  text-align: center;
+}
+
+.weight-picker-btn:hover {
+  border-color: #000;
+  background: #000;
+  color: #fff;
+}
+
+.weight-picker-btn.current {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+  cursor: default;
+}
+
+.detail-empty {
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+  margin: 12px 0;
+}
+
+/* Font Size List (grouped by line height & letter spacing) */
+.size-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 0;
+}
+
+.size-list-header,
+.size-list-row {
+  display: grid;
+  grid-template-columns: 48px 72px auto 64px;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.size-list-header {
+  font-size: 10px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  min-height: 24px;
+}
+
+.size-list-header .size-list-col-count {
+  text-align: right;
+}
+
+.size-list-row {
+  background: #F7F7F7;
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  transition: background 0.15s ease;
+  cursor: pointer;
+  overflow: visible;
+  position: relative;
+}
+
+.size-list-row:hover {
+  background: #EEEEEE;
+}
+
+.size-list-row.editing {
+  background: #000;
+  color: #fff;
+  cursor: default;
+}
+
+.size-list-row.updating {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.size-list-value {
+  font-weight: 600;
+}
+
+.size-list-value[contenteditable="true"] {
+  outline: none;
+  cursor: text;
+  user-select: text;
+  padding: 1px 2px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.15);
+}
+
+.size-list-lh,
+.size-list-ls {
+  font-weight: 500;
+  padding: 1px 2px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.size-list-lh[contenteditable="true"],
+.size-list-ls[contenteditable="true"] {
+  outline: none;
+  cursor: text;
+  user-select: text;
+  background: rgba(255,255,255,0.15);
+}
+
+.size-list-row.editing .size-list-lh,
+.size-list-row.editing .size-list-ls {
+  color: #fff;
+}
+
+.size-list-count {
+  font-size: 11px;
+  color: #999;
+  text-align: right;
+}
+
+.size-list-row.editing .size-list-count {
+  color: rgba(255,255,255,0.7);
+}
+
+.replace-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* CUSTOM SCROLLABLE LIST */
+.suggestions-list {
+  position: absolute; 
+  top: 100%; 
+  left: 0; 
+  right: 0;
+  background: #fff; 
+  border: 1px solid #E5E5E5; 
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  max-height: 200px; 
+  overflow-y: auto;
+  z-index: 10001; 
+  display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-top: -1px;
+}
+
+.suggestions-list.show { 
+  display: block; 
+}
+
+.suggestion-item { 
+  padding: 10px 12px; 
+  cursor: pointer; 
+  border-bottom: 1px solid #e9e9e9;
+  color: #000;
+  font-size: 13px;
+  transition: background 0.1s ease;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover { 
+  background: #FAFAFA; 
+}
+
+.apply-btn { 
+  background: #000; 
+  color: #fff; 
+  padding: 10px 20px; 
+  white-space: nowrap;
+  font-weight: 500;
+  border-radius: 4px;
+}
+
+.apply-btn:hover { 
+  background: #333; 
+}
+
+.apply-btn:active {
+  transform: scale(0.98);
+}
+
+.loader { 
+  display: none; 
+  text-align: center; 
+  margin: 24px 0; 
+  color: #666;
+  font-size: 13px;
+}
+
+/* Container */
+#resultsContainer {
+  padding: 0 0 0 0;
+}
+
+.content-wrapper {
+  min-height: calc(100vh - 200px);
+}
+
+/* Empty state */
+#resultsContainer p {
+  margin: 8px 0;
+  color: #999;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Main container padding */
+body > *:not(script) {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+/* Footer Section */
+.footer-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-top: 1px solid #E5E5E5;
+  padding: 12px 20px;
+  text-align: center;
+  font-size: 11px;
+  color: #999;
+  z-index: 100;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  color: #000;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.footer-link:hover {
+  color: #666;
+}
+
+.footer-version {
+  color: #999;
+}
+
+.footer-separator {
+  color: #E5E5E5;
+}
+
+/* Content wrapper to prevent footer overlap */
+.content-wrapper {
+  padding: 8px 8px 32px 8px;
+}
+
+/* Notification Toast */
+.notification-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #fff;
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 10000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  display: inline-block;
+  width: auto;
+  min-width: fit-content;
+  max-width: calc(100% - 32px);
+  pointer-events: none;
+  text-align: center;
+  border: 1px solid #E5E5E5;
+  white-space: nowrap;
+}
+
+.notification-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.notification-toast .notification-count {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+</style>
 </head>
 <body>
-
   <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-content">
@@ -1116,29 +1115,29 @@
   </div>
 
   <div class="header-section">
-  <h2>Font Scanner</h2>
+    <h2>Font Scanner</h2>
     <p class="header-subtitle">Scan and manage fonts in your Figma designs</p>
     <button id="scanBtn" class="primary-btn">
       <i class="fa-solid fa-magnifying-glass"></i>
       <span id="scanBtnLabel">Scan This Page</span>
     </button>
   </div>
-  
+
   <div class="content-wrapper">
-  <div id="loader" class="loader">Scanning...</div>
-  <div id="resultsContainer"></div>
+    <div id="loader" class="loader">Scanning...</div>
+    <div id="resultsContainer"></div>
   </div>
-  
+
   <div class="footer-section">
     <div class="footer-content">
-      <span class="footer-version">v1.2.5</span>
+      <span class="footer-version">v1.2.6</span>
       <span class="footer-separator">•</span>
       <span>Made with <span style="color: #ff6b6b;">♥</span> by</span>
       <a href="https://slabpixel.com" target="_blank" class="footer-link">SlabPixel</a>
     </div>
   </div>
   <div id="notificationToast" class="notification-toast"></div>
-  
+
   <!-- Replace Modal -->
   <div id="replaceModal" class="modal-overlay">
     <div class="modal-container" id="modalContainer">
@@ -1153,1194 +1152,928 @@
   </div>
 
   <script>
-    const API_KEY = 'AIzaSyBZqOric7hC8x6zLV-Xt-X6VS0g6NsoA6k'; 
-    let systemFontsGlobal = []; 
-    let selectedFontItem = null; 
-    let selectedFontName = null;
-    let fontDetailsGlobal = {};
-    let familyStylesGlobal = {};
-    let selectedFrameCount = 0;
-    let lastScanScope = 'page'; // 'page' or 'selection' - used when applying replace so only selection is updated
-
-    function updateScanButtonLabel() {
-      const label = document.getElementById('scanBtnLabel');
-      if (!label) return;
-      if (selectedFrameCount === 0) {
-        label.textContent = 'Scan This Page';
-      } else if (selectedFrameCount === 1) {
-        label.textContent = 'Scan Selected Frame';
-      } else {
-        label.textContent = `Scan ${selectedFrameCount} Frames`;
-      }
+"use strict";
+(() => {
+  // ui/src/state.ts
+  var systemFontsGlobal = [];
+  var systemFontsPromise = null;
+  var systemFontsResolve = null;
+  var selectedFontItem = null;
+  var selectedFontName = null;
+  var fontDetailsGlobal = {};
+  var familyStylesGlobal = {};
+  var selectedFrameCount = 0;
+  var lastScanScope = "page";
+  function postToPlugin(message) {
+    parent.postMessage({ pluginMessage: message }, "*");
+  }
+  function setSystemFonts(fonts) {
+    systemFontsGlobal = fonts;
+    if (systemFontsResolve) {
+      systemFontsResolve(fonts);
+      systemFontsResolve = null;
     }
+    systemFontsPromise = null;
+  }
+  function beginSystemFontsRequest() {
+    if (systemFontsGlobal.length > 0) {
+      return Promise.resolve(systemFontsGlobal);
+    }
+    if (systemFontsPromise) return systemFontsPromise;
+    const p = new Promise((resolve) => {
+      systemFontsResolve = resolve;
+    });
+    systemFontsPromise = p;
+    postToPlugin({ type: "get-system-fonts" });
+    setTimeout(() => {
+      if (systemFontsResolve) {
+        systemFontsResolve(systemFontsGlobal);
+        systemFontsResolve = null;
+        systemFontsPromise = null;
+      }
+    }, 8e3);
+    return p;
+  }
+  function setSelectedFontItem(item) {
+    selectedFontItem = item;
+  }
+  function setSelectedFontName(name) {
+    selectedFontName = name;
+  }
+  function setFontDetails(details) {
+    fontDetailsGlobal = details;
+  }
+  function setFamilyStyles(styles) {
+    familyStylesGlobal = styles;
+  }
+  function setSelectedFrameCount(count) {
+    selectedFrameCount = count;
+  }
+  function setLastScanScope(scope) {
+    lastScanScope = scope;
+  }
 
-    // KEYWORDS TO DETECT ICON FONTS
-    const ICON_KEYWORDS = [
-      'awesome', 'icon', 'symbol', 'glyph', 'icomoon', 'entypo', 'dingbat', 'ionicons', 'material icons', 'material symbols'
-    ];
+  // ui/src/notifications.ts
+  function showNotification(message, count, _fontName) {
+    const toast = document.getElementById("notificationToast");
+    if (!toast) return;
+    let displayMessage = message;
+    if (count && count > 0) {
+      displayMessage = message.replace(/(\d+)/, '<span class="notification-count">$1</span>');
+    }
+    toast.innerHTML = displayMessage;
+    toast.classList.add("show");
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 3e3);
+  }
+  function setOverlayTitle(title) {
+    const el = document.querySelector(".loading-title");
+    if (el) el.textContent = title;
+  }
+  function showScanOverlay(progressText = "Preparing\u2026") {
+    const overlay = document.getElementById("loadingOverlay");
+    const progress = document.getElementById("loadingProgress");
+    const loader = document.getElementById("loader");
+    if (!overlay || !progress) return;
+    setOverlayTitle("Scanning...");
+    progress.textContent = progressText;
+    overlay.classList.add("show");
+    if (loader) loader.style.display = "none";
+  }
+  function hideScanOverlay() {
+    const overlay = document.getElementById("loadingOverlay");
+    if (!overlay) return;
+    overlay.classList.remove("show");
+    setOverlayTitle("Replacing fonts...");
+  }
+  function handleReplacementProgress(current, total, _fontName) {
+    const overlay = document.getElementById("loadingOverlay");
+    const progress = document.getElementById("loadingProgress");
+    if (!overlay || !progress) return;
+    setOverlayTitle("Replacing fonts...");
+    if (current === 0) {
+      overlay.classList.add("show");
+      progress.textContent = `0/${total}`;
+    } else if (current >= total) {
+      progress.textContent = `${total}/${total}`;
+      setTimeout(() => {
+        overlay.classList.remove("show");
+      }, 500);
+    } else {
+      progress.textContent = `${current}/${total}`;
+    }
+  }
+  function handleScanProgress(current, total) {
+    const overlay = document.getElementById("loadingOverlay");
+    const progress = document.getElementById("loadingProgress");
+    const loader = document.getElementById("loader");
+    if (!overlay || !progress) return;
+    setOverlayTitle("Scanning...");
+    if (loader) loader.style.display = "none";
+    overlay.classList.add("show");
+    if (total < 0) {
+      progress.textContent = "Preparing\u2026";
+      return;
+    }
+    if (total === 0) {
+      progress.textContent = "0/0";
+      return;
+    }
+    progress.textContent = `${current}/${total}`;
+  }
+  function showLoader(message) {
+    const loader = document.getElementById("loader");
+    if (!loader) return;
+    loader.textContent = message || "Loading...";
+    loader.style.display = "block";
+  }
 
-    const WEIGHT_KEYWORDS = [
-      { weight: 100, tokens: ['thin', 'hairline'] },
-      { weight: 200, tokens: ['extra light', 'extralight', 'ultra light', 'ultralight'] },
-      { weight: 300, tokens: ['light'] },
-      { weight: 350, tokens: ['book'] },
-      { weight: 400, tokens: ['regular', 'normal', 'roman'] },
-      { weight: 500, tokens: ['medium'] },
-      { weight: 600, tokens: ['semibold', 'semi bold', 'demibold', 'demi bold'] },
-      { weight: 700, tokens: ['bold'] },
-      { weight: 800, tokens: ['extra bold', 'extrabold', 'ultra bold', 'ultrabold'] },
-      { weight: 900, tokens: ['black', 'heavy'] }
-    ];
+  // ui/src/scan.ts
+  function updateScanButtonLabel() {
+    const label = document.getElementById("scanBtnLabel");
+    if (!label) return;
+    if (selectedFrameCount === 0) {
+      label.textContent = "Scan This Page";
+    } else if (selectedFrameCount === 1) {
+      label.textContent = "Scan Selected Frame";
+    } else {
+      label.textContent = `Scan ${selectedFrameCount} Frames`;
+    }
+  }
+  function performScan() {
+    const results = document.getElementById("resultsContainer");
+    const loader = document.getElementById("loader");
+    if (results) results.innerHTML = "";
+    if (loader) loader.style.display = "none";
+    showScanOverlay();
+    if (selectedFontItem) {
+      selectedFontItem.classList.remove("selected");
+      setSelectedFontItem(null);
+    }
+    const type = selectedFrameCount > 0 ? "scan-selection" : "scan-layers";
+    setLastScanScope(selectedFrameCount > 0 ? "selection" : "page");
+    postToPlugin({ type });
+  }
 
-    function getWeightMeta(style) {
-      const value = (style || '').toString();
-      const lower = value.toLowerCase();
-      const isItalic = lower.includes('italic') || lower.includes('oblique');
-      const numericMatch = lower.match(/(\d{3})/);
-      let weight = numericMatch ? parseInt(numericMatch[1], 10) : null;
-      if (!weight) {
-        for (const entry of WEIGHT_KEYWORDS) {
-          if (entry.tokens.some(token => lower.includes(token))) {
-            weight = entry.weight;
-            break;
-          }
+  // ui/src/data/googleFontFamilies.ts
+  var GOOGLE_FONT_FAMILY_SET = /* @__PURE__ */ new Set(
+    ["abeezee", "abel", "abhaya libre", "aboreto", "abril fatface", "abyssinica sil", "aclonica", "acme", "actor", "adamina", "adlam display", "advent pro", "afacad", "afacad flux", "agbalumo", "agdasima", "agu display", "aguafina script", "akatab", "akaya kanadaka", "akaya telivigala", "akronim", "akshar", "akt", "aladin", "alan sans", "alata", "alatsi", "albert sans", "aldrich", "alef", "alegreya", "alegreya sans", "alegreya sans sc", "alegreya sc", "aleo", "alex brush", "alexandria", "alfa slab one", "alice", "alien block", "alike", "alike angular", "alkalami", "alkatra", "allan", "allerta", "allerta stencil", "allison", "allkin", "allura", "almarai", "almendra", "almendra display", "almendra sc", "alumni sans", "alumni sans collegiate one", "alumni sans inline one", "alumni sans pinstripe", "alumni sans sc", "alyamama", "amarante", "amaranth", "amarna", "amatic sc", "amethysta", "amiko", "amiri", "amiri quran", "amita", "anaheim", "ancizar sans", "ancizar serif", "andada pro", "andika", "anek bangla", "anek devanagari", "anek gujarati", "anek gurmukhi", "anek kannada", "anek latin", "anek malayalam", "anek odia", "anek tamil", "anek telugu", "angkor", "annapurna sil", "annie use your telescope", "anonymous pro", "anta", "antic", "antic didone", "antic slab", "anton", "anton sc", "antonio", "anuphan", "anybody", "aoboshi one", "ar one sans", "arapey", "arbutus", "arbutus slab", "architects daughter", "archivo", "archivo black", "archivo narrow", "are you serious", "aref ruqaa", "aref ruqaa ink", "arima", "arimo", "arizonia", "armata", "arsenal", "arsenal sc", "artifika", "arvo", "arya", "asap", "asap condensed", "asar", "asimovian", "asset", "assistant", "asta sans", "astloch", "asul", "athiti", "atkinson hyperlegible", "atkinson hyperlegible mono", "atkinson hyperlegible next", "atma", "atomic age", "aubrey", "audiowide", "autour one", "average", "average sans", "averia gruesa libre", "averia libre", "averia sans libre", "averia serif libre", "azeret mono", "b612", "b612 mono", "babylonica", "bacasime antique", "bad script", "badeen display", "bagel fat one", "bahiana", "bahianita", "bai jamjuree", "bakbak one", "ballet", "baloo 2", "baloo bhai 2", "baloo bhaijaan 2", "baloo bhaina 2", "baloo chettan 2", "baloo da 2", "baloo paaji 2", "baloo tamma 2", "baloo tammudu 2", "baloo thambi 2", "balsamiq sans", "balthazar", "bangers", "barlow", "barlow condensed", "barlow semi condensed", "barriecito", "barrio", "basic", "baskervville", "baskervville sc", "battambang", "baumans", "bayon", "bbh bartle", "bbh bogle", "bbh hegarty", "be vietnam pro", "beau rivage", "bebas neue", "beiruti", "belanosima", "belgrano", "bellefair", "belleza", "bellota", "bellota text", "benchnine", "benne", "bentham", "berkshire swash", "besley", "betania patmos", "betania patmos gdl", "betania patmos in", "betania patmos in gdl", "beth ellen", "bevan", "bhutuka expanded one", "big shoulders", "big shoulders inline", "big shoulders stencil", "bigelow rules", "bigshot one", "bilbo", "bilbo swash caps", "biorhyme", "biorhyme expanded", "birthstone", "birthstone bounce", "biryani", "bitcount", "bitcount grid double", "bitcount grid double ink", "bitcount grid single", "bitcount grid single ink", "bitcount ink", "bitcount prop double", "bitcount prop double ink", "bitcount prop single", "bitcount prop single ink", "bitcount single", "bitcount single ink", "bitter", "biz udgothic", "biz udmincho", "biz udpgothic", "biz udpmincho", "bjcree", "black and white picture", "black han sans", "black ops one", "blaka", "blaka hollow", "blaka ink", "blinker", "bodoni moda", "bodoni moda sc", "bokor", "boldonse", "bona nova", "bona nova sc", "bonbon", "bonheur royale", "boogaloo", "borel", "bowlby one", "bowlby one sc", "bpmf huninn", "bpmf iansui", "bpmf zihi kai std", "braah one", "brawler", "bree serif", "bricolage grotesque", "bruno ace", "bruno ace sc", "brygada 1918", "bubblegum sans", "bubbler one", "buda", "buenard", "bungee", "bungee hairline", "bungee inline", "bungee outline", "bungee shade", "bungee spice", "bungee tint", "butcherman", "butterfly kids", "bytesized", "cabin", "cabin condensed", "cabin sketch", "cactus classical serif", "caesar dressing", "cagliostro", "cairo", "cairo play", "cal sans", "caladea", "calistoga", "calligraffitti", "cambay", "cambo", "candal", "cantarell", "cantata one", "cantora one", "caprasimo", "capriola", "caramel", "carattere", "cardo", "carlito", "carme", "carrois gothic", "carrois gothic sc", "carter one", "cascadia code", "cascadia mono", "castoro", "castoro titling", "catamaran", "caudex", "cause", "caveat", "caveat brush", "cedarville cursive", "ceviche one", "chakra petch", "changa", "changa one", "chango", "charis sil", "charm", "charmonman", "chathura", "chau philomene one", "chela one", "chelsea market", "chenla", "cherish", "cherry bomb one", "cherry cream soda", "cherry swash", "chewy", "chicle", "chilanka", "chiron goround tc", "chiron hei hk", "chiron sung hk", "chivo", "chivo mono", "chocolate classical sans", "chokokutai", "chonburi", "cinzel", "cinzel decorative", "clicker script", "climate crisis", "coda", "codystar", "coiny", "combo", "comfortaa", "comforter", "comforter brush", "comic neue", "comic relief", "coming soon", "comme", "commissioner", "concert one", "condiment", "content", "contrail one", "convergence", "cookie", "copse", "coral pixels", "corben", "corinthia", "cormorant", "cormorant garamond", "cormorant infant", "cormorant sc", "cormorant unicase", "cormorant upright", "cossette texte", "cossette titre", "courgette", "courier prime", "cousine", "coustard", "covered by your grace", "crafty girls", "creepster", "crete round", "crimson pro", "crimson text", "croissant one", "crushed", "cuprum", "cute font", "cutive", "cutive mono", "dai banna sil", "damion", "dancing script", "danfo", "dangrek", "darker grotesque", "darumadrop one", "datatype", "david libre", "dawning of a new day", "days one", "dekko", "dela gothic one", "delicious handrawn", "delius", "delius swash caps", "delius unicase", "della respira", "denk one", "devonshire", "dhurjati", "didact gothic", "diphylleia", "diplomata", "diplomata sc", "dm mono", "dm sans", "dm serif display", "dm serif text", "do hyeon", "dokdo", "domine", "donegal one", "dongle", "doppio one", "dorsa", "dosis", "dotgothic16", "doto", "dr sugiyama", "duru sans", "dynalight", "dynapuff", "eagle lake", "east sea dokdo", "eater", "eb garamond", "economica", "eczar", "edu au vic wa nt arrows", "edu au vic wa nt dots", "edu au vic wa nt guides", "edu au vic wa nt hand", "edu au vic wa nt pre", "edu nsw act cursive", "edu nsw act foundation", "edu nsw act hand pre", "edu qld beginner", "edu qld hand", "edu sa beginner", "edu sa hand", "edu tas beginner", "edu vic wa nt beginner", "edu vic wa nt hand", "edu vic wa nt hand pre", "el messiri", "electrolize", "elms sans", "elsie", "elsie swash caps", "emblema one", "emilys candy", "encode sans", "encode sans condensed", "encode sans expanded", "encode sans sc", "encode sans semi condensed", "encode sans semi expanded", "engagement", "englebert", "enriqueta", "ephesis", "epilogue", "epunda sans", "epunda slab", "erica one", "esteban", "estedad", "estonia", "euphoria script", "ewert", "exile", "exo", "exo 2", "expletus sans", "explora", "faculty glyphic", "fahkwang", "familjen grotesk", "fanwood text", "farro", "farsan", "fascinate", "fascinate inline", "faster one", "fasthand", "fauna one", "faustina", "federant", "federo", "felipa", "fenix", "festive", "figtree", "finger paint", "finlandica headline", "finlandica text", "fira code", "fira mono", "fira sans", "fira sans condensed", "fira sans extra condensed", "fjalla one", "fjord one", "flamenco", "flavors", "fleur de leah", "flow block", "flow circular", "flow rounded", "foldit", "fondamento", "fontdiner swanky", "forum", "fragment mono", "francois one", "frank ruhl libre", "fraunces", "freckle face", "fredericka the great", "fredoka", "freehand", "freeman", "fresca", "frijole", "fruktur", "fugaz one", "fuggles", "funnel display", "funnel sans", "fustat", "fuzzy bubbles", "ga maamli", "gabarito", "gabriela", "gaegu", "gafata", "gajraj one", "galada", "galdeano", "galindo", "gamja flower", "gantari", "gasoek one", "gayathri", "geist", "geist mono", "geist pixel", "gelasio", "gemunu libre", "genos", "gentium book plus", "gentium plus", "geo", "geologica", "geom", "geomini", "georama", "geostar", "geostar fill", "germania one", "gfs didot", "gfs neohellenic", "gideon roman", "gidole", "gidugu", "gilda display", "girassol", "give you glory", "glass antiqua", "glegoo", "gloock", "gloria hallelujah", "glory", "gluten", "goblin one", "gochi hand", "goldman", "golos text", "google sans", "google sans code", "google sans flex", "gorditas", "gothic a1", "gotu", "goudy bookletter 1911", "gowun batang", "gowun dodum", "graduate", "grand hotel", "grandiflora one", "grandstander", "grape nuts", "gravitas one", "great vibes", "grechen fuemen", "grenze", "grenze gotisch", "grey qo", "griffy", "gruppo", "gudea", "gugi", "gulzar", "gupter", "gurajada", "gveret levin", "gwendolyn", "habibi", "hachi maru pop", "hahmlet", "halant", "hammersmith one", "hanalei", "hanalei fill", "handjet", "handlee", "hanken grotesk", "hanuman", "happy monkey", "harmattan", "headland one", "hedvig letters sans", "hedvig letters serif", "heebo", "henny penny", "hepta slab", "herr von muellerhoff", "hi melody", "hibur mono", "hina mincho", "hind", "hind guntur", "hind madurai", "hind mysuru", "hind siliguri", "hind vadodara", "holtwood one sc", "homemade apple", "homenaje", "honk", "host grotesk", "hubballi", "hubot sans", "huninn", "hurricane", "iansui", "ibarra real nova", "ibm plex mono", "ibm plex sans", "ibm plex sans arabic", "ibm plex sans condensed", "ibm plex sans devanagari", "ibm plex sans hebrew", "ibm plex sans jp", "ibm plex sans kr", "ibm plex sans thai", "ibm plex sans thai looped", "ibm plex serif", "iceberg", "iceland", "idiqlat", "im fell double pica", "im fell double pica sc", "im fell dw pica", "im fell dw pica sc", "im fell english", "im fell english sc", "im fell french canon", "im fell french canon sc", "im fell great primer", "im fell great primer sc", "imbue", "imperial script", "imprima", "inclusive sans", "inconsolata", "inder", "indie flower", "ingrid darling", "inika", "inknut antiqua", "inria sans", "inria serif", "inspiration", "instrument sans", "instrument serif", "intel one mono", "inter", "inter tight", "iosevka charon", "iosevka charon mono", "irish grover", "island moments", "istok web", "italiana", "italianno", "itim", "jacquard 12", "jacquard 12 charted", "jacquard 24", "jacquard 24 charted", "jacquarda bastarda 9", "jacquarda bastarda 9 charted", "jacques francois", "jacques francois shadow", "jaini", "jaini purva", "jaldi", "jaro", "jersey 10", "jersey 10 charted", "jersey 15", "jersey 15 charted", "jersey 20", "jersey 20 charted", "jersey 25", "jersey 25 charted", "jetbrains mono", "jim nightshade", "joan", "jockey one", "jolly lodger", "jomhuria", "jomolhari", "josefin sans", "josefin slab", "jost", "joti one", "jua", "judson", "julee", "julius sans one", "junge", "jura", "just another hand", "just me again down here", "k2d", "kablammo", "kadwa", "kaisei decol", "kaisei harunoumi", "kaisei opti", "kaisei tokumin", "kalam", "kalnia", "kalnia glaze", "kameron", "kanchenjunga", "kanit", "kantumruy pro", "kapakana", "karantina", "karla", "karla tamil inclined", "karla tamil upright", "karma", "katibeh", "kaushan script", "kavivanar", "kavoon", "kay pho du", "kdam thmor pro", "keania one", "kedebideri", "kelly slab", "kenia", "khand", "khmer", "khula", "kings", "kirang haerang", "kite one", "kiwi maru", "klee one", "knewave", "kodchasan", "kode mono", "koh santepheap", "koho", "kolker brush", "konkhmer sleokchher", "kosugi", "kosugi maru", "kotta one", "koulen", "kranky", "kreon", "kristi", "krona one", "krub", "kufam", "kulim park", "kumar one", "kumar one outline", "kumbh sans", "kurale", "la belle aurore", "labrada", "lacquer", "laila", "lakki reddy", "lalezar", "lancelot", "langar", "lateef", "lato", "lavishly yours", "league gothic", "league script", "league spartan", "leckerli one", "ledger", "lekton", "lemon", "lemonada", "lexend", "lexend deca", "lexend exa", "lexend giga", "lexend mega", "lexend peta", "lexend tera", "lexend zetta", "libertinus keyboard", "libertinus math", "libertinus mono", "libertinus sans", "libertinus serif", "libertinus serif display", "libre barcode 128", "libre barcode 128 text", "libre barcode 39", "libre barcode 39 extended", "libre barcode 39 extended text", "libre barcode 39 text", "libre barcode ean13 text", "libre baskerville", "libre bodoni", "libre caslon display", "libre caslon text", "libre franklin", "licorice", "life savers", "lilex", "lilita one", "lily script one", "limelight", "linden hill", "line seed jp", "linefont", "lisu bosa", "liter", "literata", "liu jian mao cao", "livvic", "lobster", "lobster two", "londrina outline", "londrina shadow", "londrina sketch", "londrina solid", "long cang", "lora", "love light", "love ya like a sister", "loved by the king", "lovers quarrel", "luckiest guy", "lugrasimo", "lumanosimo", "lunasima", "lusitana", "lustria", "luxurious roman", "luxurious script", "lxgw marker gothic", "lxgw wenkai mono tc", "lxgw wenkai tc", "m plus 1", "m plus 1 code", "m plus 1p", "m plus 2", "m plus code latin", "m plus rounded 1c", "m plus u", "ma shan zheng", "macondo", "macondo swash caps", "mada", "madimi one", "magra", "maiden orange", "maitree", "major mono display", "mako", "mali", "mallanna", "maname", "mandali", "manjari", "manrope", "mansalva", "manuale", "manufacturing consent", "marcellus", "marcellus sc", "marck script", "margarine", "marhey", "markazi text", "marko one", "marmelad", "martel", "martel sans", "martian mono", "marvel", "matangi", "mate", "mate sc", "matemasie", "maven pro", "mclaren", "mea culpa", "meddon", "medievalsharp", "medula one", "meera inimai", "megrim", "meie script", "menbere", "meow script", "merienda", "merriweather", "merriweather sans", "metal", "metal mania", "metamorphous", "metrophobic", "michroma", "micro 5", "micro 5 charted", "milonga", "miltonian", "miltonian tattoo", "mina", "mingzat", "miniver", "miranda sans", "miriam libre", "mirza", "miss fajardose", "mitr", "mochiy pop one", "mochiy pop p one", "modak", "modern antiqua", "moderustic", "mogra", "mohave", "moirai one", "molengo", "molle", "momo signature", "momo trust display", "momo trust sans", "mona sans", "monda", "monofett", "monomakh", "monomaniac one", "monoton", "monsieur la doulaise", "montaga", "montagu slab", "montecarlo", "montenegrin gothic one", "montez", "montserrat", "montserrat alternates", "montserrat underline", "moo lah lah", "mooli", "moon dance", "moul", "moulpali", "mountains of christmas", "mouse memoirs", "mozilla headline", "mozilla text", "mr bedfort", "mr dafoe", "mr de haviland", "mrs saint delafield", "mrs sheppards", "ms madi", "mukta", "mukta mahee", "mukta malar", "mukta vaani", "mulish", "murecho", "museomoderno", "my soul", "mynerve", "mystery quest", "nabla", "namdhinggo", "nanum brush script", "nanum gothic", "nanum gothic coding", "nanum myeongjo", "nanum pen script", "narnoor", "nata sans", "national park", "neonderthaw", "nerko one", "neucha", "neuton", "new amsterdam", "new rocker", "new tegomin", "news cycle", "newsreader", "niconne", "niramit", "nixie one", "nobile", "nokora", "norican", "nosifer", "notable", "nothing you could do", "noticia text", "noto color emoji", "noto emoji", "noto kufi arabic", "noto music", "noto naskh arabic", "noto nastaliq urdu", "noto rashi hebrew", "noto sans", "noto sans adlam", "noto sans adlam unjoined", "noto sans anatolian hieroglyphs", "noto sans arabic", "noto sans armenian", "noto sans avestan", "noto sans balinese", "noto sans bamum", "noto sans bassa vah", "noto sans batak", "noto sans bengali", "noto sans bhaiksuki", "noto sans brahmi", "noto sans buginese", "noto sans buhid", "noto sans canadian aboriginal", "noto sans carian", "noto sans caucasian albanian", "noto sans chakma", "noto sans cham", "noto sans cherokee", "noto sans chorasmian", "noto sans coptic", "noto sans cuneiform", "noto sans cypriot", "noto sans cypro minoan", "noto sans deseret", "noto sans devanagari", "noto sans display", "noto sans duployan", "noto sans egyptian hieroglyphs", "noto sans elbasan", "noto sans elymaic", "noto sans ethiopic", "noto sans georgian", "noto sans glagolitic", "noto sans gothic", "noto sans grantha", "noto sans gujarati", "noto sans gunjala gondi", "noto sans gurmukhi", "noto sans hanifi rohingya", "noto sans hanunoo", "noto sans hatran", "noto sans hebrew", "noto sans hk", "noto sans imperial aramaic", "noto sans indic siyaq numbers", "noto sans inscriptional pahlavi", "noto sans inscriptional parthian", "noto sans javanese", "noto sans jp", "noto sans kaithi", "noto sans kannada", "noto sans kawi", "noto sans kayah li", "noto sans kharoshthi", "noto sans khmer", "noto sans khojki", "noto sans khudawadi", "noto sans kr", "noto sans lao", "noto sans lao looped", "noto sans lepcha", "noto sans limbu", "noto sans linear a", "noto sans linear b", "noto sans lisu", "noto sans lycian", "noto sans lydian", "noto sans mahajani", "noto sans malayalam", "noto sans mandaic", "noto sans manichaean", "noto sans marchen", "noto sans masaram gondi", "noto sans math", "noto sans mayan numerals", "noto sans medefaidrin", "noto sans meetei mayek", "noto sans mende kikakui", "noto sans meroitic", "noto sans miao", "noto sans modi", "noto sans mongolian", "noto sans mono", "noto sans mro", "noto sans multani", "noto sans myanmar", "noto sans nabataean", "noto sans nag mundari", "noto sans nandinagari", "noto sans new tai lue", "noto sans newa", "noto sans nko", "noto sans nko unjoined", "noto sans nushu", "noto sans ogham", "noto sans ol chiki", "noto sans old hungarian", "noto sans old italic", "noto sans old north arabian", "noto sans old permic", "noto sans old persian", "noto sans old sogdian", "noto sans old south arabian", "noto sans old turkic", "noto sans oriya", "noto sans osage", "noto sans osmanya", "noto sans pahawh hmong", "noto sans palmyrene", "noto sans pau cin hau", "noto sans phagspa", "noto sans phoenician", "noto sans psalter pahlavi", "noto sans rejang", "noto sans runic", "noto sans samaritan", "noto sans saurashtra", "noto sans sc", "noto sans sharada", "noto sans shavian", "noto sans siddham", "noto sans signwriting", "noto sans sinhala", "noto sans sogdian", "noto sans sora sompeng", "noto sans soyombo", "noto sans sundanese", "noto sans sunuwar", "noto sans syloti nagri", "noto sans symbols", "noto sans symbols 2", "noto sans syriac", "noto sans syriac eastern", "noto sans syriac western", "noto sans tagalog", "noto sans tagbanwa", "noto sans tai le", "noto sans tai tham", "noto sans tai viet", "noto sans takri", "noto sans tamil", "noto sans tamil supplement", "noto sans tangsa", "noto sans tc", "noto sans telugu", "noto sans thaana", "noto sans thai", "noto sans thai looped", "noto sans tifinagh", "noto sans tirhuta", "noto sans ugaritic", "noto sans vai", "noto sans vithkuqi", "noto sans wancho", "noto sans warang citi", "noto sans yi", "noto sans zanabazar square", "noto serif", "noto serif ahom", "noto serif armenian", "noto serif balinese", "noto serif bengali", "noto serif devanagari", "noto serif display", "noto serif dives akuru", "noto serif dogra", "noto serif ethiopic", "noto serif georgian", "noto serif grantha", "noto serif gujarati", "noto serif gurmukhi", "noto serif hebrew", "noto serif hentaigana", "noto serif hk", "noto serif jp", "noto serif kannada", "noto serif khitan small script", "noto serif khmer", "noto serif khojki", "noto serif kr", "noto serif lao", "noto serif makasar", "noto serif malayalam", "noto serif myanmar", "noto serif np hmong", "noto serif old uyghur", "noto serif oriya", "noto serif ottoman siyaq", "noto serif sc", "noto serif sinhala", "noto serif tamil", "noto serif tangut", "noto serif tc", "noto serif telugu", "noto serif thai", "noto serif tibetan", "noto serif todhri", "noto serif toto", "noto serif vithkuqi", "noto serif yezidi", "noto traditional nushu", "noto znamenny musical notation", "nova cut", "nova flat", "nova mono", "nova oval", "nova round", "nova script", "nova slim", "nova square", "ntr", "numans", "nunito", "nunito sans", "nuosu sil", "odibee sans", "odor mean chey", "offside", "oi", "ojuju", "old standard tt", "oldenburg", "ole", "oleo script", "oleo script swash caps", "onest", "oooh baby", "open sans", "oranienbaum", "orbit", "orbitron", "oregano", "orelega one", "orienta", "original surfer", "oswald", "outfit", "over the rainbow", "overlock", "overlock sc", "overpass", "overpass mono", "ovo", "oxanium", "oxygen", "oxygen mono", "pacifico", "padauk", "padyakke expanded one", "palanquin", "palanquin dark", "palette mosaic", "pangolin", "paprika", "parastoo", "parisienne", "parkinsans", "passero one", "passion one", "passions conflict", "pathway extreme", "pathway gothic one", "patrick hand", "patrick hand sc", "pattaya", "patua one", "pavanam", "paytone one", "peddana", "peralta", "permanent marker", "petemoss", "petit formal script", "petrona", "phetsarath", "philosopher", "phudu", "piazzolla", "piedra", "pinyon script", "pirata one", "pixelify sans", "plaster", "platypi", "play", "playball", "playfair", "playfair display", "playfair display sc", "playpen sans", "playpen sans arabic", "playpen sans deva", "playpen sans hebrew", "playpen sans thai", "playwrite ar", "playwrite ar guides", "playwrite at", "playwrite at guides", "playwrite au nsw", "playwrite au nsw guides", "playwrite au qld", "playwrite au qld guides", "playwrite au sa", "playwrite au sa guides", "playwrite au tas", "playwrite au tas guides", "playwrite au vic", "playwrite au vic guides", "playwrite be vlg", "playwrite be vlg guides", "playwrite be wal", "playwrite be wal guides", "playwrite br", "playwrite br guides", "playwrite ca", "playwrite ca guides", "playwrite cl", "playwrite cl guides", "playwrite co", "playwrite co guides", "playwrite cu", "playwrite cu guides", "playwrite cz", "playwrite cz guides", "playwrite de grund", "playwrite de grund guides", "playwrite de la", "playwrite de la guides", "playwrite de sas", "playwrite de sas guides", "playwrite de va", "playwrite de va guides", "playwrite dk loopet", "playwrite dk loopet guides", "playwrite dk uloopet", "playwrite dk uloopet guides", "playwrite es", "playwrite es deco", "playwrite es deco guides", "playwrite es guides", "playwrite fr moderne", "playwrite fr moderne guides", "playwrite fr trad", "playwrite fr trad guides", "playwrite gb j", "playwrite gb j guides", "playwrite gb s", "playwrite gb s guides", "playwrite hr", "playwrite hr guides", "playwrite hr lijeva", "playwrite hr lijeva guides", "playwrite hu", "playwrite hu guides", "playwrite id", "playwrite id guides", "playwrite ie", "playwrite ie guides", "playwrite in", "playwrite in guides", "playwrite is", "playwrite is guides", "playwrite it moderna", "playwrite it moderna guides", "playwrite it trad", "playwrite it trad guides", "playwrite mx", "playwrite mx guides", "playwrite ng modern", "playwrite ng modern guides", "playwrite nl", "playwrite nl guides", "playwrite no", "playwrite no guides", "playwrite nz", "playwrite nz basic", "playwrite nz basic guides", "playwrite nz guides", "playwrite pe", "playwrite pe guides", "playwrite pl", "playwrite pl guides", "playwrite pt", "playwrite pt guides", "playwrite ro", "playwrite ro guides", "playwrite sk", "playwrite sk guides", "playwrite tz", "playwrite tz guides", "playwrite us modern", "playwrite us modern guides", "playwrite us trad", "playwrite us trad guides", "playwrite vn", "playwrite vn guides", "playwrite za", "playwrite za guides", "pliant", "plus jakarta sans", "pochaevsk", "podkova", "poetsen one", "poiret one", "poller one", "poltawski nowy", "poly", "pompiere", "ponnala", "ponomar", "pontano sans", "poor story", "poppins", "port lligat sans", "port lligat slab", "potta one", "pragati narrow", "praise", "prata", "preahvihear", "press start 2p", "pridi", "princess sofia", "prociono", "prompt", "prosto one", "protest guerrilla", "protest revolution", "protest riot", "protest strike", "proza libre", "pt mono", "pt sans", "pt sans caption", "pt sans narrow", "pt serif", "pt serif caption", "public sans", "puppies play", "puritan", "purple purse", "qahiri", "quando", "quantico", "quattrocento", "quattrocento sans", "questrial", "quicksand", "quintessential", "qwigley", "qwitcher grypen", "racing sans one", "radio canada", "radio canada big", "radley", "rajdhani", "rakkas", "raleway", "raleway dots", "ramabhadra", "ramaraja", "rambla", "rammetto one", "rampart one", "ramsina", "ranchers", "rancho", "ranga", "rasa", "rationale", "ravi prakash", "readex pro", "recursive", "red hat display", "red hat mono", "red hat text", "red rose", "redacted", "redacted script", "reddit mono", "reddit sans", "reddit sans condensed", "redressed", "reem kufi", "reem kufi fun", "reem kufi ink", "reenie beanie", "reggae one", "rem", "rethink sans", "revalia", "rhodium libre", "ribeye", "ribeye marrow", "righteous", "risque", "road rage", "roboto", "roboto condensed", "roboto flex", "roboto mono", "roboto serif", "roboto slab", "rochester", "rock 3d", "rock salt", "rocknroll one", "rokkitt", "romanesco", "ropa sans", "rosario", "rosarivo", "rouge script", "rowdies", "rozha one", "rubik", "rubik 80s fade", "rubik beastly", "rubik broken fax", "rubik bubbles", "rubik burned", "rubik dirt", "rubik distressed", "rubik doodle shadow", "rubik doodle triangles", "rubik gemstones", "rubik glitch", "rubik glitch pop", "rubik iso", "rubik lines", "rubik maps", "rubik marker hatch", "rubik maze", "rubik microbe", "rubik mono one", "rubik moonrocks", "rubik pixels", "rubik puddles", "rubik scribble", "rubik spray paint", "rubik storm", "rubik vinyl", "rubik wet paint", "ruda", "rufina", "ruge boogie", "ruluko", "rum raisin", "ruslan display", "russo one", "ruthie", "ruwudu", "rye", "sacramento", "sahitya", "sail", "saira", "saira condensed", "saira extra condensed", "saira semi condensed", "saira stencil", "salsa", "sanchez", "sancreek", "sankofa display", "sansation", "sansita", "sansita swashed", "sarabun", "sarala", "sarina", "sarpanch", "sassy frass", "satisfy", "savate", "sawarabi gothic", "sawarabi mincho", "scada", "scheherazade new", "schibsted grotesk", "schoolbell", "science gothic", "scope one", "seaweed script", "secular one", "sedan", "sedan sc", "sedgwick ave", "sedgwick ave display", "sekuya", "sen", "send flowers", "sevillana", "seymour one", "shadows into light", "shadows into light two", "shafarik", "shalimar", "shantell sans", "shanti", "share", "share tech", "share tech mono", "shippori antique", "shippori antique b1", "shippori mincho", "shippori mincho b1", "shizuru", "shojumaru", "short stack", "shrikhand", "siemreap", "sigmar", "sigmar one", "signika", "signika negative", "silkscreen", "simonetta", "single day", "sintony", "sirin stencil", "sirivennela", "six caps", "sixtyfour", "sixtyfour convergence", "skranji", "slabo 13px", "slabo 27px", "slackey", "slackside one", "smokum", "smooch", "smooch sans", "smythe", "sn pro", "sniglet", "snippet", "snowburst one", "sofadi one", "sofia", "sofia sans", "sofia sans condensed", "sofia sans extra condensed", "sofia sans semi condensed", "solitreo", "solway", "sometype mono", "song myung", "sono", "sonsie one", "sora", "sorts mill goudy", "sour gummy", "source code pro", "source sans 3", "source serif 4", "space grotesk", "space mono", "special elite", "special gothic", "special gothic condensed one", "special gothic expanded one", "spectral", "spectral sc", "spicy rice", "spinnaker", "spirax", "splash", "spline sans", "spline sans mono", "squada one", "square peg", "sree krushnadevaraya", "sriracha", "srisakdi", "staatliches", "stack sans headline", "stack sans notch", "stack sans text", "stalemate", "stalinist one", "stardos stencil", "stick", "stick no bills", "stint ultra condensed", "stint ultra expanded", "stix two math", "stix two text", "stoke", "story script", "strait", "strichpunkt sans", "style script", "stylish", "sue ellen francisco", "suez one", "sulphur point", "sumana", "sunflower", "sunshiney", "supermercado one", "sura", "suranna", "suravaram", "suse", "suse mono", "suwannaphum", "swanky and moo moo", "syncopate", "syne", "syne mono", "syne tactile", "tac one", "tagesschrift", "tai heritage pro", "tajawal", "tangerine", "tapestry", "taprom", "tasa explorer", "tasa orbiter", "tauri", "taviraj", "teachers", "teko", "tektur", "telex", "tenali ramakrishna", "tenor sans", "text me one", "texturina", "thasadith", "the girl next door", "the nautigal", "tienne", "tiktok sans", "tillana", "tilt neon", "tilt prism", "tilt warp", "timmana", "tinos", "tiny5", "tiro bangla", "tiro devanagari hindi", "tiro devanagari marathi", "tiro devanagari sanskrit", "tiro gurmukhi", "tiro kannada", "tiro tamil", "tiro telugu", "tirra", "titan one", "titillium web", "tomorrow", "tourney", "trade winds", "train one", "triodion", "trirong", "trispace", "trocchi", "trochut", "truculenta", "trykker", "tsukimi rounded", "tuffy", "tulpen one", "turret road", "twinkle star", "ubuntu", "ubuntu condensed", "ubuntu mono", "ubuntu sans", "ubuntu sans mono", "uchen", "ultra", "unbounded", "uncial antiqua", "underdog", "unica one", "unifrakturcook", "unifrakturmaguntia", "unkempt", "unlock", "unna", "uoqmunthenkhung", "updock", "urbanist", "vampiro one", "varela", "varela round", "varta", "vast shadow", "vazirmatn", "vend sans", "vesper libre", "viaoda libre", "vibes", "vibur", "victor mono", "vidaloka", "viga", "vina sans", "voces", "volkhov", "vollkorn", "vollkorn sc", "voltaire", "vt323", "vujahday script", "waiting for the sunrise", "wallpoet", "walter turncoat", "warnes", "water brush", "waterfall", "wavefont", "wdxl lubrifont jp n", "wdxl lubrifont sc", "wdxl lubrifont tc", "wellfleet", "wendy one", "whisper", "windsong", "winky rough", "winky sans", "wire one", "wittgenstein", "wix madefor display", "wix madefor text", "work sans", "workbench", "xanh mono", "yaldevi", "yanone kaffeesatz", "yantramanav", "yarndings 12", "yarndings 12 charted", "yarndings 20", "yarndings 20 charted", "yatra one", "yellowtail", "yeon sung", "yeseva one", "yesteryear", "yomogi", "young serif", "yrsa", "ysabeau", "ysabeau infant", "ysabeau office", "ysabeau sc", "yuji boku", "yuji hentaigana akari", "yuji hentaigana akebono", "yuji mai", "yuji syuku", "yusei magic", "yuyu", "yuyu short", "zain", "zalando sans", "zalando sans expanded", "zalando sans semiexpanded", "zcool kuaile", "zcool qingke huangyou", "zcool xiaowei", "zen antique", "zen antique soft", "zen dots", "zen kaku gothic antique", "zen kaku gothic new", "zen kurenaido", "zen loop", "zen maru gothic", "zen old mincho", "zen tokyo zoo", "zeyada", "zhi mang xing", "zilla slab", "zilla slab highlight"]
+  );
+
+  // ui/src/googleFonts.ts
+  var ICON_KEYWORDS = [
+    "awesome",
+    "icon",
+    "symbol",
+    "glyph",
+    "icomoon",
+    "entypo",
+    "dingbat",
+    "ionicons",
+    "material icons",
+    "material symbols"
+  ];
+  function isGoogleFont(family) {
+    return GOOGLE_FONT_FAMILY_SET.has(family.toLowerCase());
+  }
+  function isIconFont(family) {
+    const lower = family.toLowerCase();
+    return ICON_KEYWORDS.some((keyword) => lower.includes(keyword));
+  }
+  function getGoogleFontSet() {
+    return GOOGLE_FONT_FAMILY_SET;
+  }
+
+  // ui/src/render/details.ts
+  function setInlineDetailsVisible(row, shouldShow, fontName, isMissing) {
+    const details = row.querySelector(".font-details");
+    if (!details) return;
+    if (!shouldShow) {
+      details.classList.remove("show");
+      details.innerHTML = "";
+      return;
+    }
+    if (!fontName) return;
+    const fontData = fontDetailsGlobal[fontName];
+    if (!fontData) {
+      details.innerHTML = '<div style="color: #999; font-size: 12px; padding: 8px 0;">No usage data yet.</div>';
+      details.classList.add("show");
+      return;
+    }
+    if (isMissing) {
+      details.innerHTML = '<div style="color: #999; font-size: 12px; padding: 0 0 8px 0;">Missing font - no details available.</div>';
+      details.classList.add("show");
+      return;
+    }
+    details.innerHTML = "";
+    const availableStyles = familyStylesGlobal[fontName] || [];
+    const weights = fontData.styles || [];
+    if (weights.length > 0) {
+      weights.forEach((item) => {
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "font-detail-item";
+        const labelDiv = document.createElement("div");
+        labelDiv.className = "font-detail-label";
+        const valueSpan = document.createElement("div");
+        valueSpan.className = "font-detail-value";
+        valueSpan.textContent = item.value;
+        const countSpan = document.createElement("div");
+        countSpan.className = "font-detail-count";
+        countSpan.textContent = `${item.count} layer${item.count === 1 ? "" : "s"}`;
+        labelDiv.appendChild(valueSpan);
+        labelDiv.appendChild(countSpan);
+        const controlDiv = document.createElement("div");
+        controlDiv.className = "font-detail-control";
+        if (availableStyles.length > 0) {
+          const select = document.createElement("select");
+          select.className = "font-detail-select";
+          availableStyles.forEach((style) => {
+            const option = document.createElement("option");
+            option.value = style;
+            option.textContent = style;
+            select.appendChild(option);
+          });
+          select.value = item.value;
+          const applyBtn = document.createElement("button");
+          applyBtn.className = "font-detail-btn";
+          applyBtn.textContent = "Apply";
+          applyBtn.onclick = () => {
+            const newStyle = select.value;
+            if (newStyle && newStyle !== item.value) {
+              applyBtn.disabled = true;
+              applyBtn.textContent = "Applying...";
+              applyBtn.style.opacity = "0.6";
+              showNotification(`Updating ${fontName} ${item.value} \u2192 ${newStyle}...`, 0);
+              postToPlugin({
+                type: "replace-font-weight",
+                family: fontName,
+                oldStyle: item.value,
+                newStyle,
+                scope: lastScanScope
+              });
+            }
+          };
+          controlDiv.appendChild(select);
+          controlDiv.appendChild(applyBtn);
         }
-      }
-      return {
-        weight: weight ?? 400,
-        isItalic
-      };
-    }
-
-    function splitWeightGroups(items, accessor = item => item) {
-      const enriched = items.map(item => {
-        const value = accessor(item);
-        return {
-          item,
-          value,
-          meta: getWeightMeta(value)
+        itemDiv.appendChild(labelDiv);
+        itemDiv.appendChild(controlDiv);
+        itemDiv.onclick = (e) => {
+          if (e.target.closest(".font-detail-control")) return;
+          postToPlugin({
+            type: "select-font-weight",
+            family: fontName,
+            style: item.value,
+            scope: lastScanScope
+          });
         };
-      });
-
-      enriched.sort((a, b) => {
-        if (a.meta.weight !== b.meta.weight) {
-          return a.meta.weight - b.meta.weight;
+        if (controlDiv.children.length > 0) {
+          controlDiv.onclick = (e) => e.stopPropagation();
         }
-        if (a.meta.isItalic !== b.meta.isItalic) {
-          return Number(a.meta.isItalic) - Number(b.meta.isItalic);
-        }
-        return a.value.localeCompare(b.value);
-      });
-
-      return {
-        normal: enriched.filter(entry => !entry.meta.isItalic),
-        italic: enriched.filter(entry => entry.meta.isItalic)
-      };
-    }
-
-    function restoreFontSelection(fontName) {
-      // Find all font items and select the one matching the font name
-      const allItems = document.querySelectorAll('.item');
-      allItems.forEach(item => {
-        const nameElement = item.querySelector('.font-name');
-        if (nameElement && nameElement.textContent.includes(fontName)) {
-          // Found the matching item
-          item.classList.add('selected');
-          selectedFontItem = item;
-          selectedFontName = fontName;
-          
-          // Open the dropdown icon
-          const dropdownIcon = item.querySelector('.dropdown-icon');
-          if (dropdownIcon) dropdownIcon.classList.add('open');
-          
-          // Get isMissing status from the badge
-          const isMissing = item.querySelector('.badge-missing') !== null;
-          setInlineDetailsVisible(item, true, fontName, isMissing);
-        }
+        details.appendChild(itemDiv);
       });
     }
+    let sizeVariants = fontData.sizeVariants || [];
+    if (sizeVariants.length === 0 && (fontData.sizes || []).length > 0) {
+      sizeVariants = fontData.sizes.map((s) => ({
+        fontSize: s.value,
+        lineHeightPercent: null,
+        letterSpacingPercent: 0,
+        count: s.count
+      }));
+    }
+    if (sizeVariants.length > 0) {
+      const listContainer = document.createElement("div");
+      listContainer.className = "size-list";
+      const headerRow = document.createElement("div");
+      headerRow.className = "size-list-header";
+      headerRow.innerHTML = '<span>Size</span><span>Line height</span><span>Letter spacing</span><span class="size-list-col-count">Layers</span>';
+      listContainer.appendChild(headerRow);
+      sizeVariants.forEach((item) => {
+        const fontSize = item.fontSize;
+        const sizeDisplay = Number.isInteger(fontSize) ? fontSize : parseFloat(fontSize.toFixed(2));
+        const lhDisplay = item.lineHeightPercent == null ? "Auto" : `${item.lineHeightPercent}%`;
+        const lsDisplay = `${item.letterSpacingPercent}%`;
+        const row2 = document.createElement("div");
+        row2.className = "size-list-row";
+        const valueSpan = document.createElement("span");
+        valueSpan.className = "size-list-value";
+        valueSpan.textContent = String(sizeDisplay);
+        const lhSpan = document.createElement("span");
+        lhSpan.className = "size-list-lh";
+        lhSpan.textContent = lhDisplay;
+        const lsSpan = document.createElement("span");
+        lsSpan.className = "size-list-ls";
+        lsSpan.textContent = lsDisplay;
+        const countSpan = document.createElement("span");
+        countSpan.className = "size-list-count";
+        countSpan.textContent = `${item.count} layer${item.count === 1 ? "" : "s"}`;
+        row2.appendChild(valueSpan);
+        row2.appendChild(lhSpan);
+        row2.appendChild(lsSpan);
+        row2.appendChild(countSpan);
+        let editingField = null;
+        let originalSize = sizeDisplay;
+        let originalLh = lhDisplay;
+        let originalLs = lsDisplay;
+        function cancelEdit() {
+          if (!editingField) return;
+          if (editingField === "size") {
+            valueSpan.contentEditable = "false";
+            valueSpan.textContent = String(originalSize);
+          } else if (editingField === "lh") {
+            lhSpan.contentEditable = "false";
+            lhSpan.textContent = originalLh;
+          } else if (editingField === "ls") {
+            lsSpan.contentEditable = "false";
+            lsSpan.textContent = originalLs;
+          }
+          row2.classList.remove("editing");
+          editingField = null;
+        }
+        function startEdit(field, span, text) {
+          if (editingField) cancelEdit();
+          editingField = field;
+          row2.classList.add("editing");
+          span.contentEditable = "true";
+          span.textContent = text;
+          span.focus();
+          const range = document.createRange();
+          range.selectNodeContents(span);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+        valueSpan.onclick = (e) => {
+          e.stopPropagation();
+          if (editingField) return;
+          startEdit("size", valueSpan, String(originalSize));
+        };
+        lhSpan.onclick = (e) => {
+          e.stopPropagation();
+          if (editingField) return;
+          startEdit("lh", lhSpan, item.lineHeightPercent == null ? "Auto" : String(item.lineHeightPercent));
+        };
+        lsSpan.onclick = (e) => {
+          e.stopPropagation();
+          if (editingField) return;
+          startEdit("ls", lsSpan, String(item.letterSpacingPercent));
+        };
+        row2.onclick = (e) => {
+          if (e.target.closest(".size-list-value") || e.target.closest(".size-list-lh") || e.target.closest(".size-list-ls")) return;
+          postToPlugin({
+            type: "select-font-variant",
+            family: fontName,
+            fontSize,
+            lineHeightPercent: item.lineHeightPercent,
+            letterSpacingPercent: item.letterSpacingPercent,
+            scope: lastScanScope
+          });
+        };
+        function applySize() {
+          const newValue = parseFloat(valueSpan.textContent.replace(/,/g, "."));
+          if (isNaN(newValue) || newValue <= 0) {
+            valueSpan.textContent = String(originalSize);
+            cancelEdit();
+            return;
+          }
+          if (Math.abs(newValue - fontSize) < 0.01) {
+            cancelEdit();
+            return;
+          }
+          editingField = null;
+          row2.classList.remove("editing");
+          row2.classList.add("updating");
+          valueSpan.contentEditable = "false";
+          const formatted = Number.isInteger(newValue) ? newValue : parseFloat(newValue.toFixed(2));
+          valueSpan.textContent = String(formatted);
+          originalSize = formatted;
+          showNotification(`Updating ${fontName} ${sizeDisplay}px \u2192 ${newValue}px...`, 0);
+          postToPlugin({
+            type: "replace-font-size",
+            family: fontName,
+            oldSize: fontSize,
+            newSize: newValue,
+            scope: lastScanScope,
+            variant: { lineHeightPercent: item.lineHeightPercent, letterSpacingPercent: item.letterSpacingPercent }
+          });
+          setTimeout(() => row2.classList.remove("updating"), 500);
+        }
+        function applyLineHeight() {
+          const raw = (lhSpan.textContent || "").trim();
+          const isAuto = /^auto$/i.test(raw);
+          const newValue = isAuto ? null : parseFloat(raw.replace(/,/g, "."));
+          if (!isAuto && (isNaN(newValue) || newValue < 0)) {
+            lhSpan.textContent = originalLh;
+            cancelEdit();
+            return;
+          }
+          const same = item.lineHeightPercent == null && newValue === null || item.lineHeightPercent !== null && newValue !== null && Math.abs(item.lineHeightPercent - newValue) < 0.01;
+          if (same) {
+            cancelEdit();
+            return;
+          }
+          editingField = null;
+          row2.classList.remove("editing");
+          row2.classList.add("updating");
+          lhSpan.contentEditable = "false";
+          originalLh = newValue == null ? "Auto" : `${newValue}%`;
+          lhSpan.textContent = originalLh;
+          const oldStr = item.lineHeightPercent == null ? "Auto" : `${item.lineHeightPercent}%`;
+          showNotification(`Updating line height ${oldStr} \u2192 ${originalLh}...`, 0);
+          postToPlugin({
+            type: "replace-font-line-height",
+            family: fontName,
+            fontSize,
+            oldLineHeightPercent: item.lineHeightPercent,
+            newLineHeightPercent: newValue,
+            letterSpacingPercent: item.letterSpacingPercent,
+            scope: lastScanScope
+          });
+          setTimeout(() => row2.classList.remove("updating"), 500);
+        }
+        function applyLetterSpacing() {
+          const newValue = parseFloat(lsSpan.textContent.replace(/,/g, "."));
+          if (isNaN(newValue)) {
+            lsSpan.textContent = originalLs;
+            cancelEdit();
+            return;
+          }
+          if (Math.abs(newValue - item.letterSpacingPercent) < 0.01) {
+            cancelEdit();
+            return;
+          }
+          editingField = null;
+          row2.classList.remove("editing");
+          row2.classList.add("updating");
+          lsSpan.contentEditable = "false";
+          const formatted = Math.round(newValue * 10) / 10;
+          originalLs = `${formatted}%`;
+          lsSpan.textContent = originalLs;
+          showNotification(`Updating letter spacing ${item.letterSpacingPercent}% \u2192 ${formatted}%...`, 0);
+          postToPlugin({
+            type: "replace-font-letter-spacing",
+            family: fontName,
+            fontSize,
+            lineHeightPercent: item.lineHeightPercent,
+            oldLetterSpacingPercent: item.letterSpacingPercent,
+            newLetterSpacingPercent: formatted,
+            scope: lastScanScope
+          });
+          setTimeout(() => row2.classList.remove("updating"), 500);
+        }
+        valueSpan.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            applySize();
+          } else if (e.key === "Escape") {
+            e.preventDefault();
+            cancelEdit();
+          }
+        });
+        valueSpan.addEventListener("input", () => {
+          const text = valueSpan.textContent || "";
+          const cleaned = text.replace(/[^\d.,]/g, "").replace(",", ".");
+          if (text !== cleaned) valueSpan.textContent = cleaned;
+        });
+        lhSpan.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            applyLineHeight();
+          } else if (e.key === "Escape") {
+            e.preventDefault();
+            cancelEdit();
+          }
+        });
+        lsSpan.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            applyLetterSpacing();
+          } else if (e.key === "Escape") {
+            e.preventDefault();
+            cancelEdit();
+          }
+        });
+        lsSpan.addEventListener("input", () => {
+          const text = lsSpan.textContent || "";
+          const cleaned = text.replace(/[^\d.,-]/g, "").replace(",", ".");
+          if (text !== cleaned) lsSpan.textContent = cleaned;
+        });
+        function onBlur() {
+          setTimeout(() => {
+            if (editingField) cancelEdit();
+          }, 150);
+        }
+        valueSpan.addEventListener("blur", onBlur);
+        lhSpan.addEventListener("blur", onBlur);
+        lsSpan.addEventListener("blur", onBlur);
+        listContainer.appendChild(row2);
+      });
+      details.appendChild(listContainer);
+    }
+    if (weights.length === 0 && sizeVariants.length === 0) {
+      details.innerHTML = '<div style="color: #999; font-size: 12px; padding: 8px 0;">No weights or sizes detected.</div>';
+    }
+    details.classList.add("show");
+  }
 
-    function performScan() {
-      document.getElementById('resultsContainer').innerHTML = '';
-      document.getElementById('loader').style.display = 'block';
-      // Don't clear selected state - preserve the font name for restoration
-      if (selectedFontItem) {
-        selectedFontItem.classList.remove('selected');
-        selectedFontItem = null;
-        // Keep selectedFontName so it can be restored
+  // ui/src/replace/modals.ts
+  function attachSuggestions(inputWrapper, input, suggestionSource) {
+    if (!suggestionSource.length) return;
+    const suggestionsBox = document.createElement("div");
+    suggestionsBox.className = "suggestions-list";
+    const renderSuggestions = (query) => {
+      suggestionsBox.innerHTML = "";
+      const val = (query || "").toLowerCase();
+      const matches = val ? suggestionSource.filter((f) => f.toLowerCase().includes(val)) : suggestionSource;
+      if (matches.length > 0) {
+        suggestionsBox.classList.add("show");
+        matches.forEach((match) => {
+          const item = document.createElement("div");
+          item.className = "suggestion-item";
+          item.textContent = match;
+          item.onclick = () => {
+            input.value = match;
+            suggestionsBox.classList.remove("show");
+          };
+          suggestionsBox.appendChild(item);
+        });
+      } else {
+        suggestionsBox.classList.remove("show");
       }
-      const type = selectedFrameCount > 0 ? 'scan-selection' : 'scan-layers';
-      lastScanScope = selectedFrameCount > 0 ? 'selection' : 'page';
-      parent.postMessage({ pluginMessage: { type } }, '*');
+    };
+    input.addEventListener("focus", () => renderSuggestions(input.value));
+    input.addEventListener("input", () => renderSuggestions(input.value));
+    const closeSuggestions = (e) => {
+      if (!inputWrapper.contains(e.target)) {
+        suggestionsBox.classList.remove("show");
+        document.removeEventListener("click", closeSuggestions);
+      }
+    };
+    document.addEventListener("click", closeSuggestions);
+    inputWrapper.appendChild(suggestionsBox);
+  }
+  async function openValueReplaceModal(options) {
+    const {
+      title,
+      currentLabel,
+      placeholder,
+      inputType = "text",
+      loadingText = "Updating...",
+      suggestions = null,
+      onSubmit
+    } = options;
+    const modal = document.getElementById("replaceModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalContent = document.getElementById("modalContent");
+    modalTitle.textContent = title || "Replace";
+    modalContent.innerHTML = "";
+    const inputRow = document.createElement("div");
+    inputRow.className = "replace-row";
+    const beforeGroup = document.createElement("div");
+    beforeGroup.className = "input-group";
+    const beforeInput = document.createElement("input");
+    beforeInput.className = "replace-input readonly";
+    beforeInput.value = currentLabel || "";
+    beforeInput.readOnly = true;
+    const dividerLabel = document.createElement("span");
+    dividerLabel.className = "replace-divider-label";
+    dividerLabel.textContent = "Replace with";
+    beforeGroup.appendChild(beforeInput);
+    beforeGroup.appendChild(dividerLabel);
+    const afterGroup = document.createElement("div");
+    afterGroup.className = "input-group";
+    const inputWrapper = document.createElement("div");
+    inputWrapper.className = "input-wrapper";
+    const input = document.createElement("input");
+    input.className = "replace-input";
+    input.placeholder = placeholder || "Enter value...";
+    input.autocomplete = "off";
+    input.type = inputType;
+    inputWrapper.appendChild(input);
+    let suggestionSource = [];
+    if (suggestions) {
+      const raw = typeof suggestions === "function" ? suggestions() : suggestions;
+      suggestionSource = Array.isArray(raw) ? raw : await raw;
     }
-    
-    document.getElementById('scanBtn').onclick = performScan;
-    
-    // Click outside to deselect font
-    document.addEventListener('click', (e) => {
-      // Check if click is outside of any .item
-      if (!e.target.closest('.item') && !e.target.closest('.modal-overlay') && selectedFontItem) {
-        setInlineDetailsVisible(selectedFontItem, false);
-        selectedFontItem.classList.remove('selected');
-        const dropdownIcon = selectedFontItem.querySelector('.dropdown-icon');
-        if (dropdownIcon) dropdownIcon.classList.remove('open');
-        selectedFontItem = null;
-        selectedFontName = null;
-        parent.postMessage({ pluginMessage: { type: 'deselect-font' } }, '*');
+    attachSuggestions(inputWrapper, input, suggestionSource);
+    afterGroup.appendChild(inputWrapper);
+    const applyBtn = document.createElement("button");
+    applyBtn.className = "apply-btn";
+    applyBtn.textContent = "Apply";
+    applyBtn.onclick = () => {
+      const value = input.value.trim();
+      if (!value) {
+        input.focus();
+        return;
+      }
+      const shouldClose = onSubmit ? onSubmit(value) : true;
+      if (shouldClose === false) {
+        return;
+      }
+      closeReplaceModal();
+      if (loadingText) {
+        showLoader(loadingText);
+      }
+    };
+    inputRow.appendChild(beforeGroup);
+    inputRow.appendChild(afterGroup);
+    inputRow.appendChild(applyBtn);
+    modalContent.appendChild(inputRow);
+    modal.classList.add("show");
+    setTimeout(() => input.focus(), 50);
+  }
+  async function showReplaceModal(fontName) {
+    await openValueReplaceModal({
+      title: "Replace Font",
+      currentLabel: fontName,
+      placeholder: "Type font name...",
+      loadingText: "Replacing...",
+      suggestions: () => beginSystemFontsRequest(),
+      onSubmit: (newFont) => {
+        if (newFont.toLowerCase() === fontName.toLowerCase()) {
+          alert("New font is the same as current font.");
+          return false;
+        }
+        postToPlugin({
+          type: "replace-font",
+          oldFont: fontName,
+          newFont,
+          scope: lastScanScope
+        });
+        return true;
       }
     });
-    
-    // Automatically scan on plugin open
-    performScan();
+  }
+  function closeReplaceModal() {
+    const modal = document.getElementById("replaceModal");
+    modal.classList.remove("show");
+  }
 
-    onmessage = async (event) => {
-      const msg = event.data.pluginMessage;
-
-      if (msg.type === 'selection-changed') {
-        selectedFrameCount = msg.count ?? 0;
-        updateScanButtonLabel();
+  // ui/src/render/fontList.ts
+  function restoreFontSelection(fontName) {
+    const allItems = document.querySelectorAll(".item");
+    allItems.forEach((node) => {
+      const item = node;
+      const nameElement = item.querySelector(".font-name");
+      if (nameElement && nameElement.textContent && nameElement.textContent.includes(fontName)) {
+        item.classList.add("selected");
+        setSelectedFontItem(item);
+        setSelectedFontName(fontName);
+        const dropdownIcon = item.querySelector(".dropdown-icon");
+        if (dropdownIcon) dropdownIcon.classList.add("open");
+        const isMissing = item.querySelector(".badge-missing") !== null;
+        setInlineDetailsVisible(item, true, fontName, isMissing);
+      }
+    });
+  }
+  function renderSection(container, title, fonts, googleSet, isMissing, countMap) {
+    const header = document.createElement("div");
+    header.className = "section-header";
+    let headerHTML = `<h3>${title} <span style="color: #999; font-weight: 400;">(${fonts.length})</span></h3>`;
+    if (isMissing) {
+      header.style.flexDirection = "column";
+      header.style.alignItems = "flex-start";
+    }
+    header.innerHTML = headerHTML;
+    container.appendChild(header);
+    const ul = document.createElement("ul");
+    ul.className = "list";
+    fonts.forEach((font) => {
+      const count = countMap.get(font);
+      const finalCount = count !== void 0 && count !== null ? count : 1;
+      ul.appendChild(createRow(font, googleSet.has(font.toLowerCase()), isMissing, finalCount));
+    });
+    container.appendChild(ul);
+  }
+  function createRow(fontName, isGoogle, isMissing, count) {
+    const wrapper = document.createElement("li");
+    wrapper.className = "c";
+    const mainRow = document.createElement("div");
+    mainRow.className = "item";
+    const itemMainRow = document.createElement("div");
+    itemMainRow.className = "item-main-row";
+    const nameDiv = document.createElement("div");
+    nameDiv.className = "font-name";
+    const displayCount = count || 0;
+    const countBadge = `<span style="color: #999; font-weight: 400; font-size: 12px; margin-left: 4px;">(${displayCount})</span>`;
+    const dropdownIcon = document.createElement("div");
+    dropdownIcon.className = "dropdown-icon";
+    dropdownIcon.innerHTML = `<i class="fa-solid fa-chevron-right"></i>`;
+    nameDiv.appendChild(dropdownIcon);
+    const nameText = document.createElement("span");
+    nameText.innerHTML = `${fontName}${countBadge} ${isMissing ? '<span class="badge-missing">Missing</span>' : ""}`;
+    nameDiv.appendChild(nameText);
+    const actionsDiv = document.createElement("div");
+    actionsDiv.className = "actions";
+    const linkGroup = document.createElement("div");
+    linkGroup.className = "link-group";
+    const encoded = fontName.replace(/\s+/g, "+");
+    const selectBtn = document.createElement("button");
+    selectBtn.className = "ext-link";
+    selectBtn.type = "button";
+    selectBtn.setAttribute("data-tooltip", "Select fonts");
+    selectBtn.innerHTML = `<i class="fa-solid fa-arrow-pointer"></i>`;
+    selectBtn.onclick = (event) => {
+      event.stopPropagation();
+      postToPlugin({ type: "select-font", font: fontName, scope: lastScanScope });
+    };
+    linkGroup.appendChild(selectBtn);
+    const appendLink = (href, tooltip, svgMarkup) => {
+      const anchor = document.createElement("a");
+      anchor.href = href;
+      anchor.className = "ext-link";
+      anchor.setAttribute("data-tooltip", tooltip);
+      anchor.target = "_blank";
+      anchor.innerHTML = svgMarkup;
+      linkGroup.appendChild(anchor);
+    };
+    if (isGoogle) {
+      appendLink(
+        `https://fonts.google.com/download?family=${encoded}`,
+        "Download font",
+        `<i class="fa-solid fa-download"></i>`
+      );
+      appendLink(
+        `https://fonts.google.com/specimen/${encoded}`,
+        "View in browser",
+        `<i class="fa-solid fa-globe"></i>`
+      );
+    } else {
+      appendLink(
+        `https://www.google.com/search?q=${encoded}+font`,
+        "Search in browser",
+        `<i class="fa-solid fa-globe"></i>`
+      );
+    }
+    const replaceBtn = document.createElement("button");
+    replaceBtn.className = "ext-link";
+    replaceBtn.type = "button";
+    replaceBtn.setAttribute("data-tooltip", "Replace font");
+    replaceBtn.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i>`;
+    replaceBtn.onclick = (event) => {
+      event.stopPropagation();
+      showReplaceModal(fontName);
+    };
+    linkGroup.appendChild(replaceBtn);
+    actionsDiv.appendChild(linkGroup);
+    itemMainRow.appendChild(nameDiv);
+    itemMainRow.appendChild(actionsDiv);
+    const detailsDiv = document.createElement("div");
+    detailsDiv.className = "font-details";
+    mainRow.appendChild(itemMainRow);
+    mainRow.appendChild(detailsDiv);
+    actionsDiv.onclick = (e) => {
+      e.stopPropagation();
+    };
+    itemMainRow.onclick = (e) => {
+      const target = e.target;
+      if ((target == null ? void 0 : target.closest(".actions")) || (target == null ? void 0 : target.closest(".ext-link")) || (target == null ? void 0 : target.closest("a"))) {
         return;
       }
-
-      if (msg.type === 'scan-result') {
-        if (msg.systemFonts) systemFontsGlobal = msg.systemFonts;
-        fontDetailsGlobal = msg.fontDetails || {};
-        familyStylesGlobal = msg.familyStyles || {};
-        
-        // Store the currently selected font name before rebuilding
-        const previouslySelectedFont = selectedFontName;
-        
-        await processFonts(
-          msg.fonts || [],
-          msg.missingFonts || [],
-          msg.fontCounts || [],
-          fontDetailsGlobal
-        );
-        
-        // Restore selection if there was one
-        if (previouslySelectedFont) {
-          restoreFontSelection(previouslySelectedFont);
-        }
-      } else if (msg.type === 'notification') {
-        showNotification(msg.message, msg.count, msg.fontName);
-      } else if (msg.type === 'replacement-progress') {
-        handleReplacementProgress(msg.current, msg.total, msg.fontName);
-      } else if (msg.type === 'deselect-font') {
-        // Clear selected state when deselected in Figma
+      const isCurrentlySelected = mainRow.classList.contains("selected");
+      if (isCurrentlySelected) {
+        setInlineDetailsVisible(mainRow, false);
+        mainRow.classList.remove("selected");
+        dropdownIcon.classList.remove("open");
+        setSelectedFontItem(null);
+        setSelectedFontName(null);
+        postToPlugin({ type: "deselect-font" });
+      } else {
         if (selectedFontItem) {
           setInlineDetailsVisible(selectedFontItem, false);
-          selectedFontItem.classList.remove('selected');
-          const dropdownIcon = selectedFontItem.querySelector('.dropdown-icon');
-          if (dropdownIcon) dropdownIcon.classList.remove('open');
-          selectedFontItem = null;
-          selectedFontName = null;
+          selectedFontItem.classList.remove("selected");
+          const prevIcon = selectedFontItem.querySelector(".dropdown-icon");
+          if (prevIcon) prevIcon.classList.remove("open");
         }
+        mainRow.classList.add("selected");
+        dropdownIcon.classList.add("open");
+        setSelectedFontItem(mainRow);
+        setSelectedFontName(fontName);
+        setInlineDetailsVisible(mainRow, true, fontName, isMissing);
       }
     };
-    
-    function showNotification(message, count, fontName) {
-      const toast = document.getElementById('notificationToast');
-      if (!toast) return;
-      
-      // Format the message with count highlighted if available
-      let displayMessage = message;
-      if (count > 0) {
-        // Extract count and make it bold
-        displayMessage = message.replace(/(\d+)/, '<span class="notification-count">$1</span>');
-      }
-      
-      toast.innerHTML = displayMessage;
-      toast.classList.add('show');
-      
-      // Auto-hide after 3 seconds
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
+    wrapper.appendChild(mainRow);
+    return wrapper;
+  }
+  function processFonts(figmaFonts, missingFonts, fontCounts = [], fontDetails = {}) {
+    const googleFontNames = getGoogleFontSet();
+    const countMap = /* @__PURE__ */ new Map();
+    if (fontCounts && fontCounts.length > 0) {
+      fontCounts.forEach((f) => {
+        countMap.set(f.name, f.count);
+      });
+    } else {
+      figmaFonts.forEach((f) => countMap.set(f, 1));
     }
-    
-    function handleReplacementProgress(current, total, fontName) {
-      const overlay = document.getElementById('loadingOverlay');
-      const progress = document.getElementById('loadingProgress');
-      
-      if (current === 0) {
-        // Starting replacement - show overlay
-        overlay.classList.add('show');
-        progress.textContent = `0/${total}`;
-      } else if (current >= total) {
-        // Finished - hide overlay after a brief moment
-        progress.textContent = `${total}/${total}`;
-        setTimeout(() => {
-          overlay.classList.remove('show');
-        }, 500);
+    const loader = document.getElementById("loader");
+    if (loader) loader.style.display = "none";
+    const container = document.getElementById("resultsContainer");
+    container.innerHTML = "";
+    setFontDetails(fontDetails || {});
+    if (figmaFonts.length === 0 && missingFonts.length === 0) {
+      container.innerHTML = '<p style="margin-top:24px; color:#999; font-size:13px; text-align:center;">No text layers found.</p>';
+      return;
+    }
+    const missingSet = new Set(missingFonts);
+    const installedFonts = figmaFonts.filter((f) => !missingSet.has(f));
+    if (missingFonts.length > 0) {
+      renderSection(container, "Missing Fonts", missingFonts, googleFontNames, true, countMap);
+    }
+    const iconMatches = [];
+    const googleMatches = [];
+    const localMatches = [];
+    installedFonts.forEach((font) => {
+      if (isIconFont(font)) {
+        iconMatches.push(font);
+      } else if (isGoogleFont(font)) {
+        googleMatches.push(font);
       } else {
-        // Update progress
-        progress.textContent = `${current}/${total}`;
+        localMatches.push(font);
       }
+    });
+    if (googleMatches.length > 0) renderSection(container, "Google Fonts", googleMatches, googleFontNames, false, countMap);
+    if (localMatches.length > 0) renderSection(container, "Local / System Fonts", localMatches, googleFontNames, false, countMap);
+    if (iconMatches.length > 0) renderSection(container, "Icon Fonts", iconMatches, googleFontNames, false, countMap);
+  }
+  function handleScanResult(msg) {
+    hideScanOverlay();
+    setFontDetails(msg.fontDetails || {});
+    processFonts(msg.fonts || [], msg.missingFonts || [], msg.fontCounts || [], msg.fontDetails || {});
+    if (msg.skippedCount && msg.skippedCount > 0) {
+      showNotification(`Skipped ${msg.skippedCount} unreadable text layer(s).`, msg.skippedCount);
     }
-
-    async function processFonts(figmaFonts, missingFonts, fontCounts, fontDetails = {}) {
-      try {
-        const response = await fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=${API_KEY}`);
-        const data = await response.json();
-        const googleFontNames = new Set(data.items.map(f => f.family.toLowerCase()));
-
-        // Create a map for quick count lookup
-        const countMap = new Map();
-        
-        if (fontCounts && fontCounts.length > 0) {
-          fontCounts.forEach(f => {
-            countMap.set(f.name, f.count);
-          });
-        } else {
-          // Fallback: if fontCounts not available, assume at least 1 occurrence per font
-          figmaFonts.forEach(f => countMap.set(f, 1));
-        }
-
-        document.getElementById('loader').style.display = 'none';
-        const container = document.getElementById('resultsContainer');
-        container.innerHTML = '';
-        fontDetailsGlobal = fontDetails || {};
-
-        if(figmaFonts.length === 0 && missingFonts.length === 0) {
-            container.innerHTML = '<p style="margin-top:24px; color:#999; font-size:13px; text-align:center;">No text layers found.</p>';
-            return;
-        }
-
-        // 1. Separate Missing Fonts
-        const missingSet = new Set(missingFonts);
-        const installedFonts = figmaFonts.filter(f => !missingSet.has(f));
-
-        if (missingFonts.length > 0) renderSection(container, 'Missing Fonts', missingFonts, googleFontNames, true, countMap);
-
-        // 2. Separate Installed Fonts into: Icons, Google, Local
-        const iconMatches = [];
-        const googleMatches = [];
-        const localMatches = [];
-
-        installedFonts.forEach(font => {
-            const lowerName = font.toLowerCase();
-            
-            // Check logic: Is it an Icon? -> Is it Google? -> Else Local
-            const isIcon = ICON_KEYWORDS.some(keyword => lowerName.includes(keyword));
-            
-            if (isIcon) {
-                iconMatches.push(font);
-            } else if (googleFontNames.has(lowerName)) {
-                googleMatches.push(font);
-            } else {
-                localMatches.push(font);
-            }
-        });
-
-        // 3. Render Sections
-        if (googleMatches.length > 0) renderSection(container, 'Google Fonts', googleMatches, googleFontNames, false, countMap);
-        if (localMatches.length > 0) renderSection(container, 'Local / System Fonts', localMatches, googleFontNames, false, countMap);
-        if (iconMatches.length > 0) renderSection(container, 'Icon Fonts', iconMatches, googleFontNames, false, countMap);
-
-      } catch (error) {
-        console.error(error);
-      }
+    if (msg.largePage) {
+      showNotification(`Large page (${msg.textNodeCount} text layers).`, 0);
     }
+  }
 
-    function renderSection(container, title, fonts, googleSet, isMissing, countMap) {
-      const header = document.createElement('div');
-      header.className = 'section-header';
-      
-      let headerHTML = `<h3>${title} <span style="color: #999; font-weight: 400;">(${fonts.length})</span></h3>`;
-      
-      // ADD THE DISCLAIMER FOR MISSING FONTS HERE
-      if (isMissing) {
-        header.style.flexDirection = 'column';
-        header.style.alignItems = 'flex-start';
-      }
-
-      header.innerHTML = headerHTML;
-      
-      // Add Download All button (Only if missing AND exists in Google)
-      if (isMissing) {
-        const downloadable = fonts.filter(f => googleSet.has(f.toLowerCase()));
-      }
-      container.appendChild(header);
-
-      const ul = document.createElement('ul');
-      ul.className = 'list';
-      fonts.forEach(font => {
-        const count = countMap.get(font);
-        // If count is undefined, it means the font wasn't in the countMap - this shouldn't happen but fallback to 1
-        const finalCount = count !== undefined && count !== null ? count : 1;
-        ul.appendChild(createRow(font, googleSet.has(font.toLowerCase()), isMissing, finalCount));
-      });
-      container.appendChild(ul);
+  // ui/src/main.ts
+  function clearSelectionUi() {
+    if (!selectedFontItem) return;
+    setInlineDetailsVisible(selectedFontItem, false);
+    selectedFontItem.classList.remove("selected");
+    const dropdownIcon = selectedFontItem.querySelector(".dropdown-icon");
+    if (dropdownIcon) dropdownIcon.classList.remove("open");
+    setSelectedFontItem(null);
+    setSelectedFontName(null);
+  }
+  document.getElementById("scanBtn").onclick = () => performScan();
+  document.addEventListener("click", (e) => {
+    const target = e.target;
+    if (!target.closest(".item") && !target.closest(".modal-overlay") && selectedFontItem) {
+      clearSelectionUi();
+      postToPlugin({ type: "deselect-font" });
     }
-
-    function createRow(fontName, isGoogle, isMissing, count) {
-      const wrapper = document.createElement('li');
-      wrapper.className = 'c';
-
-      const mainRow = document.createElement('div');
-      mainRow.className = 'item';
-
-      // Create main row container for font name and actions
-      const itemMainRow = document.createElement('div');
-      itemMainRow.className = 'item-main-row';
-
-      const nameDiv = document.createElement('div');
-      nameDiv.className = 'font-name';
-      const displayCount = count || 0;
-      const countBadge = `<span style="color: #999; font-weight: 400; font-size: 12px; margin-left: 4px;">(${displayCount})</span>`;
-      
-      // Create dropdown triangle icon
-      const dropdownIcon = document.createElement('div');
-      dropdownIcon.className = 'dropdown-icon';
-      dropdownIcon.innerHTML = `<i class="fa-solid fa-chevron-right"></i>`;
-      
-      nameDiv.appendChild(dropdownIcon);
-      
-      const nameText = document.createElement('span');
-      nameText.innerHTML = `${fontName}${countBadge} ${isMissing ? '<span class="badge-missing">Missing</span>' : ''}`;
-      nameDiv.appendChild(nameText);
-
-      const actionsDiv = document.createElement('div');
-      actionsDiv.className = 'actions';
-
-      const linkGroup = document.createElement('div');
-      linkGroup.className = 'link-group';
-      const encoded = fontName.replace(/\s+/g, '+');
-
-      // Select fonts button (before download) – selects all layers using this font (in selection or page)
-      const selectBtn = document.createElement('button');
-      selectBtn.className = 'ext-link';
-      selectBtn.type = 'button';
-      selectBtn.setAttribute('data-tooltip', 'Select fonts');
-      selectBtn.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i>`;
-      selectBtn.onclick = (event) => {
-        event.stopPropagation();
-        parent.postMessage({ pluginMessage: { type: 'select-font', font: fontName, scope: lastScanScope } }, '*');
-      };
-      linkGroup.appendChild(selectBtn);
-
-      const appendLink = (href, tooltip, svgMarkup) => {
-        const anchor = document.createElement('a');
-        anchor.href = href;
-        anchor.className = 'ext-link';
-        anchor.setAttribute('data-tooltip', tooltip);
-        anchor.target = '_blank';
-        anchor.innerHTML = svgMarkup;
-        linkGroup.appendChild(anchor);
-      };
-
-      if (isGoogle) {
-        appendLink(
-          `https://fonts.google.com/download?family=${encoded}`,
-          'Download font',
-          `<i class="fa-solid fa-download"></i>`
-        );
-        appendLink(
-          `https://fonts.google.com/specimen/${encoded}`,
-          'View in browser',
-          `<i class="fa-solid fa-globe"></i>`
-        );
-      } else {
-        appendLink(
-          `https://www.google.com/search?q=${encoded}+font`,
-          'Search in browser',
-          `<i class="fa-solid fa-globe"></i>`
-        );
-      }
-
-      const replaceBtn = document.createElement('button');
-      replaceBtn.className = 'ext-link';
-      replaceBtn.type = 'button';
-      replaceBtn.setAttribute('data-tooltip', 'Replace font');
-      replaceBtn.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i>`;
-      replaceBtn.onclick = (event) => {
-        event.stopPropagation();
-        showReplaceModal(fontName);
-      };
-      linkGroup.appendChild(replaceBtn);
-
-      actionsDiv.appendChild(linkGroup);
-
-      // Assemble the main row
-      itemMainRow.appendChild(nameDiv);
-      itemMainRow.appendChild(actionsDiv);
-
-      // Create details section
-      const detailsDiv = document.createElement('div');
-      detailsDiv.className = 'font-details';
-
-      // Append to main row
-      mainRow.appendChild(itemMainRow);
-      mainRow.appendChild(detailsDiv);
-
-      // Make action buttons stop propagation to prevent triggering the dropdown
-      actionsDiv.onclick = (e) => {
-        e.stopPropagation();
-      };
-      
-      // Handle item-main-row click to toggle details
-      itemMainRow.onclick = (e) => {
-        // Don't trigger if clicking on actions or links
-        if (e.target.closest('.actions') || e.target.closest('.ext-link') || e.target.closest('a')) {
-          return;
-        }
-        
-        const isCurrentlySelected = mainRow.classList.contains('selected');
-        
-        if (isCurrentlySelected) {
-          // Close details if already open
-          setInlineDetailsVisible(mainRow, false);
-          mainRow.classList.remove('selected');
-          dropdownIcon.classList.remove('open');
-          selectedFontItem = null;
-          selectedFontName = null;
-          parent.postMessage({ pluginMessage: { type: 'deselect-font' } }, '*');
-        } else {
-          // Close previous item if any
-          if (selectedFontItem) {
-            setInlineDetailsVisible(selectedFontItem, false);
-            selectedFontItem.classList.remove('selected');
-            const prevIcon = selectedFontItem.querySelector('.dropdown-icon');
-            if (prevIcon) prevIcon.classList.remove('open');
-          }
-          
-          // Open details for this item (no Figma selection)
-          mainRow.classList.add('selected');
-          dropdownIcon.classList.add('open');
-          selectedFontItem = mainRow;
-          selectedFontName = fontName;
-          setInlineDetailsVisible(mainRow, true, fontName, isMissing);
-        }
-      };
-      
-      wrapper.appendChild(mainRow);
-
-      return wrapper;
+  });
+  document.getElementById("modalClose").onclick = () => closeReplaceModal();
+  document.getElementById("replaceModal").onclick = (e) => {
+    if (e.target.id === "replaceModal") {
+      closeReplaceModal();
     }
-    
-    function setInlineDetailsVisible(row, shouldShow, fontName, isMissing) {
-      const details = row.querySelector('.font-details');
-      if (!details) return;
-      if (!shouldShow) {
-        details.classList.remove('show');
-        details.innerHTML = '';
-        return;
-      }
-      const fontData = fontDetailsGlobal[fontName];
-      if (!fontData) {
-        details.innerHTML = '<div style="color: #999; font-size: 12px; padding: 8px 0;">No usage data yet.</div>';
-        details.classList.add('show');
-        return;
-      }
-      if (isMissing) {
-        details.innerHTML = '<div style="color: #999; font-size: 12px; padding: 0 0 8px 0;">Missing font - no details available.</div>';
-        details.classList.add('show');
-        return;
-      }
-
-      // Clear previous content
-      details.innerHTML = '';
-      
-      // Get available styles for this font
-      const availableStyles = familyStylesGlobal[fontName] || [];
-      
-      // Weights section
-      const weights = fontData.styles || [];
-      if (weights.length > 0) {
-        
-        weights.forEach(item => {
-          const itemDiv = document.createElement('div');
-          itemDiv.className = 'font-detail-item';
-          
-          const labelDiv = document.createElement('div');
-          labelDiv.className = 'font-detail-label';
-          
-          const valueSpan = document.createElement('div');
-          valueSpan.className = 'font-detail-value';
-          valueSpan.textContent = item.value;
-          
-          const countSpan = document.createElement('div');
-          countSpan.className = 'font-detail-count';
-            countSpan.textContent = `${item.count} layer${item.count === 1 ? '' : 's'}`;
-
-          labelDiv.appendChild(valueSpan);
-          labelDiv.appendChild(countSpan);
-          
-          const controlDiv = document.createElement('div');
-          controlDiv.className = 'font-detail-control';
-          
-          // Create dropdown for weight selection
-          if (availableStyles.length > 0) {
-            const select = document.createElement('select');
-            select.className = 'font-detail-select';
-            availableStyles.forEach(style => {
-              const option = document.createElement('option');
-              option.value = style;
-              option.textContent = style;
-              select.appendChild(option);
-            });
-            
-            // Set the current weight as the selected value
-            select.value = item.value;
-            
-            const applyBtn = document.createElement('button');
-            applyBtn.className = 'font-detail-btn';
-            applyBtn.textContent = 'Apply';
-            applyBtn.onclick = () => {
-              const newStyle = select.value;
-              if (newStyle && newStyle !== item.value) {
-                // Disable button and show loading state
-                applyBtn.disabled = true;
-                applyBtn.textContent = 'Applying...';
-                applyBtn.style.opacity = '0.6';
-                
-                // Show toast notification
-                showNotification(`Updating ${fontName} ${item.value} → ${newStyle}...`, 0);
-                
-                parent.postMessage({
-                  pluginMessage: {
-                    type: 'replace-font-weight',
-                    family: fontName,
-                    oldStyle: item.value,
-                    newStyle: newStyle,
-                    scope: lastScanScope
-                  }
-                }, '*');
-              }
-            };
-            
-            controlDiv.appendChild(select);
-            controlDiv.appendChild(applyBtn);
-          }
-          
-          itemDiv.appendChild(labelDiv);
-          itemDiv.appendChild(controlDiv);
-          
-          itemDiv.onclick = (e) => {
-            if (e.target.closest('.font-detail-control')) return;
-            parent.postMessage({
-              pluginMessage: {
-                type: 'select-font-weight',
-                family: fontName,
-                style: item.value,
-                scope: lastScanScope
-              }
-            }, '*');
-          };
-          
-          if (controlDiv.children.length > 0) {
-            controlDiv.onclick = (e) => e.stopPropagation();
-          }
-          
-          details.appendChild(itemDiv);
-        });
-      }
-      
-      // Sizes section (grouped by line height & letter spacing)
-      let sizeVariants = fontData.sizeVariants || [];
-      if (sizeVariants.length === 0 && (fontData.sizes || []).length > 0) {
-        sizeVariants = fontData.sizes.map(s => ({
-          fontSize: s.value,
-          lineHeightPercent: null,
-          letterSpacingPercent: 0,
-          count: s.count
-        }));
-      }
-      if (sizeVariants.length > 0) {
-        const listContainer = document.createElement('div');
-        listContainer.className = 'size-list';
-        
-        const headerRow = document.createElement('div');
-        headerRow.className = 'size-list-header';
-        headerRow.innerHTML = '<span>Size</span><span>Line height</span><span>Letter spacing</span><span class="size-list-col-count">Layers</span>';
-        listContainer.appendChild(headerRow);
-        
-        sizeVariants.forEach(item => {
-          const fontSize = item.fontSize;
-          const sizeDisplay = Number.isInteger(fontSize) ? fontSize : parseFloat(fontSize.toFixed(2));
-          const lhDisplay = item.lineHeightPercent == null ? 'Auto' : `${item.lineHeightPercent}%`;
-          const lsDisplay = `${item.letterSpacingPercent}%`;
-          
-          const row = document.createElement('div');
-          row.className = 'size-list-row';
-          
-          const valueSpan = document.createElement('span');
-          valueSpan.className = 'size-list-value';
-          valueSpan.textContent = String(sizeDisplay);
-          
-          const lhSpan = document.createElement('span');
-          lhSpan.className = 'size-list-lh';
-          lhSpan.textContent = lhDisplay;
-          
-          const lsSpan = document.createElement('span');
-          lsSpan.className = 'size-list-ls';
-          lsSpan.textContent = lsDisplay;
-          
-          const countSpan = document.createElement('span');
-          countSpan.className = 'size-list-count';
-          countSpan.textContent = `${item.count} layer${item.count === 1 ? '' : 's'}`;
-          
-          row.appendChild(valueSpan);
-          row.appendChild(lhSpan);
-          row.appendChild(lsSpan);
-          row.appendChild(countSpan);
-          
-          let editingField = null;
-          let originalSize = sizeDisplay;
-          let originalLh = lhDisplay;
-          let originalLs = lsDisplay;
-          
-          function cancelEdit() {
-            if (!editingField) return;
-            if (editingField === 'size') {
-              valueSpan.contentEditable = 'false';
-              valueSpan.textContent = String(originalSize);
-            } else if (editingField === 'lh') {
-              lhSpan.contentEditable = 'false';
-              lhSpan.textContent = originalLh;
-            } else if (editingField === 'ls') {
-              lsSpan.contentEditable = 'false';
-              lsSpan.textContent = originalLs;
-            }
-            row.classList.remove('editing');
-            editingField = null;
-          }
-          
-          function startEdit(field, span, text) {
-            if (editingField) cancelEdit();
-            editingField = field;
-            row.classList.add('editing');
-            span.contentEditable = 'true';
-            span.textContent = text;
-            span.focus();
-            const range = document.createRange();
-            range.selectNodeContents(span);
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-          }
-          
-          valueSpan.onclick = (e) => {
-            e.stopPropagation();
-            if (editingField) return;
-            startEdit('size', valueSpan, String(originalSize));
-          };
-          lhSpan.onclick = (e) => {
-            e.stopPropagation();
-            if (editingField) return;
-            startEdit('lh', lhSpan, item.lineHeightPercent == null ? 'Auto' : String(item.lineHeightPercent));
-          };
-          lsSpan.onclick = (e) => {
-            e.stopPropagation();
-            if (editingField) return;
-            startEdit('ls', lsSpan, String(item.letterSpacingPercent));
-          };
-          
-          row.onclick = (e) => {
-            if (e.target.closest('.size-list-value') || e.target.closest('.size-list-lh') || e.target.closest('.size-list-ls')) return;
-            parent.postMessage({
-              pluginMessage: {
-                type: 'select-font-variant',
-                family: fontName,
-                fontSize,
-                lineHeightPercent: item.lineHeightPercent,
-                letterSpacingPercent: item.letterSpacingPercent,
-                scope: lastScanScope
-              }
-            }, '*');
-          };
-          
-          function applySize() {
-            const newValue = parseFloat(valueSpan.textContent.replace(/,/g, '.'));
-            if (isNaN(newValue) || newValue <= 0) {
-              valueSpan.textContent = String(originalSize);
-              cancelEdit();
-              return;
-            }
-            if (Math.abs(newValue - fontSize) < 0.01) {
-              cancelEdit();
-              return;
-            }
-            editingField = null;
-            row.classList.remove('editing');
-            row.classList.add('updating');
-            valueSpan.contentEditable = 'false';
-            const formatted = Number.isInteger(newValue) ? newValue : parseFloat(newValue.toFixed(2));
-            valueSpan.textContent = String(formatted);
-            originalSize = formatted;
-            showNotification(`Updating ${fontName} ${sizeDisplay}px → ${newValue}px...`, 0);
-            parent.postMessage({
-              pluginMessage: {
-                type: 'replace-font-size',
-                family: fontName,
-                oldSize: fontSize,
-                newSize: newValue,
-                scope: lastScanScope,
-                variant: { lineHeightPercent: item.lineHeightPercent, letterSpacingPercent: item.letterSpacingPercent }
-              }
-            }, '*');
-            setTimeout(() => row.classList.remove('updating'), 500);
-          }
-          
-          function applyLineHeight() {
-            const raw = (lhSpan.textContent || '').trim();
-            const isAuto = /^auto$/i.test(raw);
-            const newValue = isAuto ? null : parseFloat(raw.replace(/,/g, '.'));
-            if (!isAuto && (isNaN(newValue) || newValue < 0)) {
-              lhSpan.textContent = originalLh;
-              cancelEdit();
-              return;
-            }
-            const same = (item.lineHeightPercent == null && newValue === null) ||
-              (item.lineHeightPercent !== null && newValue !== null && Math.abs(item.lineHeightPercent - newValue) < 0.01);
-            if (same) {
-              cancelEdit();
-              return;
-            }
-            editingField = null;
-            row.classList.remove('editing');
-            row.classList.add('updating');
-            lhSpan.contentEditable = 'false';
-            originalLh = newValue == null ? 'Auto' : `${newValue}%`;
-            lhSpan.textContent = originalLh;
-            const oldStr = item.lineHeightPercent == null ? 'Auto' : `${item.lineHeightPercent}%`;
-            showNotification(`Updating line height ${oldStr} → ${originalLh}...`, 0);
-            parent.postMessage({
-              pluginMessage: {
-                type: 'replace-font-line-height',
-                family: fontName,
-                fontSize,
-                oldLineHeightPercent: item.lineHeightPercent,
-                newLineHeightPercent: newValue,
-                letterSpacingPercent: item.letterSpacingPercent,
-                scope: lastScanScope
-              }
-            }, '*');
-            setTimeout(() => row.classList.remove('updating'), 500);
-          }
-          
-          function applyLetterSpacing() {
-            const newValue = parseFloat(lsSpan.textContent.replace(/,/g, '.'));
-            if (isNaN(newValue)) {
-              lsSpan.textContent = originalLs;
-              cancelEdit();
-              return;
-            }
-            if (Math.abs(newValue - item.letterSpacingPercent) < 0.01) {
-              cancelEdit();
-              return;
-            }
-            editingField = null;
-            row.classList.remove('editing');
-            row.classList.add('updating');
-            lsSpan.contentEditable = 'false';
-            const formatted = Math.round(newValue * 10) / 10;
-            originalLs = `${formatted}%`;
-            lsSpan.textContent = originalLs;
-            showNotification(`Updating letter spacing ${item.letterSpacingPercent}% → ${formatted}%...`, 0);
-            parent.postMessage({
-              pluginMessage: {
-                type: 'replace-font-letter-spacing',
-                family: fontName,
-                fontSize,
-                lineHeightPercent: item.lineHeightPercent,
-                oldLetterSpacingPercent: item.letterSpacingPercent,
-                newLetterSpacingPercent: formatted,
-                scope: lastScanScope
-              }
-            }, '*');
-            setTimeout(() => row.classList.remove('updating'), 500);
-          }
-          
-          valueSpan.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); applySize(); }
-            else if (e.key === 'Escape') { e.preventDefault(); cancelEdit(); }
-          });
-          valueSpan.addEventListener('input', () => {
-            const text = valueSpan.textContent || '';
-            const cleaned = text.replace(/[^\d.,]/g, '').replace(',', '.');
-            if (text !== cleaned) valueSpan.textContent = cleaned;
-          });
-          
-          lhSpan.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); applyLineHeight(); }
-            else if (e.key === 'Escape') { e.preventDefault(); cancelEdit(); }
-          });
-          lsSpan.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); applyLetterSpacing(); }
-            else if (e.key === 'Escape') { e.preventDefault(); cancelEdit(); }
-          });
-          lsSpan.addEventListener('input', () => {
-            const text = lsSpan.textContent || '';
-            const cleaned = text.replace(/[^\d.,-]/g, '').replace(',', '.');
-            if (text !== cleaned) lsSpan.textContent = cleaned;
-          });
-          
-          function onBlur() {
-            setTimeout(() => { if (editingField) cancelEdit(); }, 150);
-          }
-          valueSpan.addEventListener('blur', onBlur);
-          lhSpan.addEventListener('blur', onBlur);
-          lsSpan.addEventListener('blur', onBlur);
-          
-          listContainer.appendChild(row);
-        });
-        
-        details.appendChild(listContainer);
-      }
-      
-      if (weights.length === 0 && sizeVariants.length === 0) {
-        details.innerHTML = '<div style="color: #999; font-size: 12px; padding: 8px 0;">No weights or sizes detected.</div>';
-      }
-      
-      details.classList.add('show');
+  };
+  onmessage = async (event) => {
+    var _a, _b, _c;
+    const msg = event.data.pluginMessage;
+    if (!msg) return;
+    if (msg.type === "selection-changed") {
+      setSelectedFrameCount((_a = msg.count) != null ? _a : 0);
+      updateScanButtonLabel();
+      return;
     }
-
-    function showLoader(message) {
-      const loader = document.getElementById('loader');
-      if (!loader) return;
-      loader.style.display = 'block';
-      loader.innerText = message || 'Processing...';
+    if (msg.type === "scan-progress") {
+      handleScanProgress((_b = msg.current) != null ? _b : 0, (_c = msg.total) != null ? _c : 0);
+      return;
     }
-
-    function openValueReplaceModal(options) {
-      const {
-        title,
-        currentLabel,
-        placeholder,
-        inputType = 'text',
-        loadingText = 'Updating...',
-        suggestions = null,
-        onSubmit
-      } = options;
-
-      const modal = document.getElementById('replaceModal');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalContent = document.getElementById('modalContent');
-      
-      modalTitle.textContent = title || 'Replace';
-      modalContent.innerHTML = '';
-      
-      // Create input row
-      const inputRow = document.createElement('div');
-      inputRow.className = 'replace-row';
-
-      // Create "Before" input group (read-only)
-      const beforeGroup = document.createElement('div');
-      beforeGroup.className = 'input-group';
-      
-      const beforeInput = document.createElement('input');
-      beforeInput.className = 'replace-input readonly';
-      beforeInput.value = currentLabel || '';
-      beforeInput.readOnly = true;
-      
-      const dividerLabel = document.createElement('span');
-      dividerLabel.className = 'replace-divider-label';
-      dividerLabel.textContent = 'Replace with';
-      
-      beforeGroup.appendChild(beforeInput);
-      beforeGroup.appendChild(dividerLabel);
-      
-      // Create "After" input group (editable)
-      const afterGroup = document.createElement('div');
-      afterGroup.className = 'input-group';
-      
-      const inputWrapper = document.createElement('div');
-      inputWrapper.className = 'input-wrapper';
-
-      const input = document.createElement('input');
-      input.className = 'replace-input';
-      input.placeholder = placeholder || 'Enter value...';
-      input.autocomplete = 'off';
-      input.type = inputType;
-
-      inputWrapper.appendChild(input);
-
-      const suggestionSource = typeof suggestions === 'function' ? suggestions() : suggestions;
-      if (Array.isArray(suggestionSource) && suggestionSource.length > 0) {
-        const suggestionsBox = document.createElement('div');
-        suggestionsBox.className = 'suggestions-list';
-
-        const renderSuggestions = (query) => {
-          suggestionsBox.innerHTML = '';
-          const val = (query || '').toLowerCase();
-
-          const matches = val
-            ? suggestionSource.filter(f => f.toLowerCase().includes(val))
-            : suggestionSource;
-
-          if (matches.length > 0) {
-            suggestionsBox.classList.add('show');
-            matches.forEach(match => {
-              const item = document.createElement('div');
-              item.className = 'suggestion-item';
-              item.textContent = match;
-              item.onclick = () => {
-                input.value = match;
-                suggestionsBox.classList.remove('show');
-              };
-              suggestionsBox.appendChild(item);
-            });
-          } else {
-            suggestionsBox.classList.remove('show');
-          }
-        };
-
-        input.addEventListener('focus', () => renderSuggestions(input.value));
-        input.addEventListener('input', () => renderSuggestions(input.value));
-
-        const closeSuggestions = (e) => {
-          if (!inputWrapper.contains(e.target)) {
-            suggestionsBox.classList.remove('show');
-            document.removeEventListener('click', closeSuggestions);
-          }
-        };
-        document.addEventListener('click', closeSuggestions);
-        inputWrapper.appendChild(suggestionsBox);
+    if (msg.type === "scan-result") {
+      if (msg.familyStyles) setFamilyStyles(msg.familyStyles);
+      const previouslySelectedFont = selectedFontName;
+      handleScanResult(msg);
+      if (previouslySelectedFont) {
+        restoreFontSelection(previouslySelectedFont);
       }
-      
-      afterGroup.appendChild(inputWrapper);
-
-      const applyBtn = document.createElement('button');
-      applyBtn.className = 'apply-btn';
-      applyBtn.textContent = 'Apply';
-      applyBtn.onclick = () => {
-        const value = input.value.trim();
-        if (!value) {
-          input.focus();
-          return;
-        }
-        const shouldClose = onSubmit ? onSubmit(value) : true;
-        if (shouldClose === false) {
-          return;
-        }
-        closeReplaceModal();
-        if (loadingText) {
-          showLoader(loadingText);
-        }
-      };
-
-      inputRow.appendChild(beforeGroup);
-      inputRow.appendChild(afterGroup);
-      inputRow.appendChild(applyBtn);
-      modalContent.appendChild(inputRow);
-      
-      // Show modal
-      modal.classList.add('show');
+      return;
     }
-
-    function showReplaceModal(fontName) {
-      openValueReplaceModal({
-        title: 'Replace Font',
-        currentLabel: fontName,
-        placeholder: 'Type font name...',
-        loadingText: 'Replacing...',
-        suggestions: () => systemFontsGlobal,
-        onSubmit: (value) => {
-          parent.postMessage({ pluginMessage: { type: 'replace-font', oldFont: fontName, newFont: value, scope: lastScanScope } }, '*');
-          return true;
-        }
-      });
+    if (msg.type === "system-fonts") {
+      setSystemFonts(msg.systemFonts || []);
+      return;
     }
-
-    function showReplaceWeightModal(fontName, weightValue) {
-      const availableStyles = familyStylesGlobal[fontName];
-      if (!availableStyles || availableStyles.length === 0) {
-        openValueReplaceModal({
-          title: `Replace "${fontName}" weight`,
-          currentLabel: weightValue,
-          placeholder: 'e.g. Regular, Medium, Bold',
-          loadingText: 'Updating weight...',
-          onSubmit: (value) => {
-            parent.postMessage({
-              pluginMessage: {
-                type: 'replace-font-weight',
-                family: fontName,
-                oldStyle: weightValue,
-                newStyle: value,
-                scope: lastScanScope
-              }
-            }, '*');
-            return true;
-          }
-        });
-        return;
-      }
-
-      const modal = document.getElementById('replaceModal');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalContent = document.getElementById('modalContent');
-
-      modalTitle.textContent = `Choose a weight for ${fontName}`;
-      modalContent.innerHTML = '';
-
-      const info = document.createElement('p');
-      info.style.fontSize = '13px';
-      info.style.color = '#555';
-      info.style.margin = '0 0 12px 0';
-      info.textContent = 'Select an available style to replace the current weight.';
-      modalContent.appendChild(info);
-
-      const groups = splitWeightGroups(availableStyles, value => value);
-      const currentLower = String(weightValue || '').toLowerCase();
-
-      const renderGroup = (title, entries) => {
-        if (entries.length === 0) return;
-        const groupWrapper = document.createElement('div');
-        groupWrapper.style.marginBottom = '16px';
-
-        const subtitle = document.createElement('div');
-        subtitle.className = 'detail-subtitle';
-        subtitle.textContent = title;
-        groupWrapper.appendChild(subtitle);
-
-        const buttonRow = document.createElement('div');
-        buttonRow.className = 'weight-picker';
-
-        entries.forEach(entry => {
-          const style = entry.value;
-          const btn = document.createElement('button');
-          btn.className = 'weight-picker-btn';
-          if (style.toLowerCase() === currentLower) {
-            btn.classList.add('current');
-            btn.disabled = true;
-          }
-          btn.textContent = style;
-          btn.onclick = () => {
-            if (btn.disabled) return;
-            closeReplaceModal();
-            showLoader('Updating weight...');
-            parent.postMessage({
-              pluginMessage: {
-                type: 'replace-font-weight',
-                family: fontName,
-                oldStyle: weightValue,
-                newStyle: style,
-                scope: lastScanScope
-              }
-            }, '*');
-          };
-          buttonRow.appendChild(btn);
-        });
-
-        groupWrapper.appendChild(buttonRow);
-        modalContent.appendChild(groupWrapper);
-      };
-
-      renderGroup('Normal', groups.normal);
-      renderGroup('Italic', groups.italic);
-
-      modal.classList.add('show');
+    if (msg.type === "notification") {
+      showNotification(msg.message, msg.count, msg.fontName);
+      return;
     }
-
-    function showReplaceSizeModal(fontName, sizeValue) {
-      const modal = document.getElementById('replaceModal');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalContent = document.getElementById('modalContent');
-      
-      // Format size for display
-      const formattedSize = typeof sizeValue === 'number' ? 
-        (Number.isInteger(sizeValue) ? sizeValue : parseFloat(sizeValue.toFixed(2))) : 
-        sizeValue;
-      
-      modalTitle.textContent = 'Change Font Size';
-      modalContent.innerHTML = '';
-      
-      // Create input row
-      const inputRow = document.createElement('div');
-      inputRow.className = 'replace-row';
-      
-      // Current size display
-      const beforeGroup = document.createElement('div');
-      beforeGroup.className = 'input-group';
-      
-      const beforeInput = document.createElement('input');
-      beforeInput.className = 'replace-input readonly';
-      beforeInput.value = `${formattedSize}px`;
-      beforeInput.readOnly = true;
-      
-      const dividerLabel = document.createElement('span');
-      dividerLabel.className = 'replace-divider-label';
-      dividerLabel.textContent = 'Change to';
-      
-      beforeGroup.appendChild(beforeInput);
-      beforeGroup.appendChild(dividerLabel);
-      
-      // New size input
-      const afterGroup = document.createElement('div');
-      afterGroup.className = 'input-group';
-      
-      const input = document.createElement('input');
-      input.className = 'replace-input';
-      input.type = 'number';
-      input.placeholder = 'Enter new size';
-      input.step = '0.01';
-      input.min = '1';
-      input.autocomplete = 'off';
-      
-      afterGroup.appendChild(input);
-      
-      // Apply button
-      const applyBtn = document.createElement('button');
-      applyBtn.className = 'apply-btn';
-      applyBtn.textContent = 'Apply';
-      applyBtn.onclick = () => {
-        const newSize = parseFloat(input.value);
-        if (isNaN(newSize) || newSize <= 0) {
-          alert('Please enter a size greater than 0.');
-          input.focus();
-          return;
-        }
-        if (newSize === sizeValue) {
-          alert('New size is the same as current size.');
-          input.focus();
-          return;
-        }
-        
-        closeReplaceModal();
-        showNotification(`Updating ${fontName} ${formattedSize}px → ${newSize}px...`, 0);
-        
-        parent.postMessage({
-          pluginMessage: {
-            type: 'replace-font-size',
-            family: fontName,
-            oldSize: sizeValue,
-            newSize: newSize,
-            scope: lastScanScope
-          }
-        }, '*');
-      };
-
-      // Allow Enter key to submit
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          applyBtn.click();
-        }
-      });
-      
-      inputRow.appendChild(beforeGroup);
-      inputRow.appendChild(afterGroup);
-      inputRow.appendChild(applyBtn);
-      modalContent.appendChild(inputRow);
-      
-      // Show modal and focus input
-      modal.classList.add('show');
-      setTimeout(() => input.focus(), 100);
+    if (msg.type === "replacement-progress") {
+      handleReplacementProgress(msg.current, msg.total, msg.fontName);
+      return;
     }
-    
-    function closeReplaceModal() {
-      const modal = document.getElementById('replaceModal');
-      modal.classList.remove('show');
+    if (msg.type === "deselect-font") {
+      clearSelectionUi();
     }
-    
-    // Close modal handlers
-    document.getElementById('modalClose').onclick = closeReplaceModal;
-    document.getElementById('replaceModal').onclick = (e) => {
-      // Close if clicking on overlay (not on modal container)
-      if (e.target.id === 'replaceModal') {
-        closeReplaceModal();
-      }
-    };
-  </script>
+  };
+  performScan();
+})();
+
+</script>
 </body>
 </html>

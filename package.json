@@ -1,13 +1,18 @@
 {
   "name": "Font Scanner",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Figma plugin to scan font usage, detect missing fonts, and replace or select text by font",
   "main": "code.js",
+  "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
-    "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix .",
-    "watch": "npm run build -- --watch"
+    "build": "npm run build:ui && npm run build:code",
+    "build:code": "tsc -p tsconfig.json",
+    "build:ui": "node scripts/build-ui.mjs",
+    "update:google-fonts": "node scripts/fetch-google-fonts.mjs",
+    "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules --ignore-pattern ui/src/data .",
+    "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --ignore-pattern ui/src/data --fix .",
+    "watch": "npm run build:ui -- --watch",
+    "watch:code": "npm run build:code -- --watch"
   },
   "author": "",
   "license": "",
@@ -16,6 +21,7 @@
     "@figma/plugin-typings": "^1.120.0",
     "@typescript-eslint/eslint-plugin": "^6.12.0",
     "@typescript-eslint/parser": "^6.12.0",
+    "esbuild": "^0.25.12",
     "eslint": "^8.54.0",
     "typescript": "^5.3.2"
   },

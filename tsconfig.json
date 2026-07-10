@@ -3,14 +3,15 @@
     "target": "es6",
     "lib": ["es6"],
     "module": "es6",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "skipLibCheck": true,
     "strict": true,
     "esModuleInterop": true,
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@figma"
-    ]
+    ],
+    "types": ["plugin-typings"]
   },
   "include": ["code.ts"]
 }

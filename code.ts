@@ -1,4 +1,5 @@
 // code.ts
+/// <reference types="@figma/plugin-typings" />
 
 figma.showUI(__html__, { width: 360, height: 600 });
 
@@ -14,6 +15,43 @@ const CONTAINER_TYPES = new Set<string>(['FRAME', 'GROUP', 'COMPONENT', 'INSTANC
 
 /** Container nodes from the last "Scan Selected Frames" — used until the next scan */
 let scannedContainers: SceneNode[] | null = null;
+
+/** Cached result of listAvailableFontsAsync for this plugin session */
+let availableFontsCache: Font[] | null = null;
+
+const SCAN_PROGRESS_BATCH = 50;
+const LARGE_PAGE_TEXT_NODE_THRESHOLD = 2000;
+
+/** Let the UI iframe process postMessage / paint between scan batches. */
+function yieldToUi(): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, 0));
+}
+
+async function getAvailableFonts(): Promise<Font[]> {
+  if (!availableFontsCache) {
+    availableFontsCache = await figma.listAvailableFontsAsync();
+  }
+  return availableFontsCache as Font[];
+}
+
+function getSystemFontFamilies(availableFonts: Font[]): string[] {
+  return Array.from(new Set(availableFonts.map(f => f.fontName.family))).sort((a, b) =>
+    a.localeCompare(b)
+  );
+}
+
+function buildFamilyStyleMap(availableFonts: Font[]): Map<string, Set<string>> {
+  const familyStyleMap = new Map<string, Set<string>>();
+  for (const f of availableFonts) {
+    const family = f.fontName.family;
+    const style = f.fontName.style;
+    if (!familyStyleMap.has(family)) {
+      familyStyleMap.set(family, new Set<string>());
+    }
+    familyStyleMap.get(family)!.add(style);
+  }
+  return familyStyleMap;
+}
 
 function normalizeLineHeight(lineHeight: LineHeight | undefined, fontSize: number): number | null {
   if (!lineHeight || lineHeight.unit === 'AUTO') return null;
@@ -87,21 +125,24 @@ async function getFontsFromTextNodes(textNodes: TextNode[]) {
   const fontFamilies = new Map<string, number>();
   const missingFontFamilies = new Set<string>();
   const fontDetails = new Map<string, FontUsageDetails>();
-  const familyStyleMap = new Map<string, Set<string>>();
 
-  const availableFontsList = await figma.listAvailableFontsAsync();
+  const total = textNodes.length;
+  let skippedCount = 0;
 
-  const systemFonts = Array.from(new Set(availableFontsList.map(f => {
-    const family = f.fontName.family;
-    const style = f.fontName.style;
-    if (!familyStyleMap.has(family)) {
-      familyStyleMap.set(family, new Set<string>());
-    }
-    familyStyleMap.get(family)!.add(style);
-    return family;
-  }))).sort();
+  // Emit progress before listAvailableFontsAsync so the UI can show 0/N
+  // instead of staying on "Preparing…".
+  figma.ui.postMessage({
+    type: 'scan-progress',
+    current: 0,
+    total
+  });
+  await yieldToUi();
 
-  const availableFamilies = new Set(systemFonts.map(f => f.toLowerCase()));
+  const availableFontsList = await getAvailableFonts();
+  const familyStyleMap = buildFamilyStyleMap(availableFontsList);
+  const availableFamilies = new Set(
+    Array.from(familyStyleMap.keys()).map(f => f.toLowerCase())
+  );
 
   const ensureFontDetail = (family: string): FontUsageDetails => {
     if (!fontDetails.has(family)) {
@@ -125,7 +166,8 @@ async function getFontsFromTextNodes(textNodes: TextNode[]) {
     }
   }
 
-  textNodes.forEach(node => {
+  for (let i = 0; i < textNodes.length; i++) {
+    const node = textNodes[i];
     try {
       if (node.fontName === figma.mixed || node.fontSize === figma.mixed) {
         const segments = node.getStyledTextSegments(['fontName', 'fontSize', 'lineHeight', 'letterSpacing']);
@@ -166,10 +208,19 @@ async function getFontsFromTextNodes(textNodes: TextNode[]) {
           missingFontFamilies.add(family);
         }
       }
-    } catch (error) {
-      // Ignore nodes we can't read
+    } catch (_error) {
+      skippedCount += 1;
     }
-  });
+
+    if (i === 0 || (i + 1) % SCAN_PROGRESS_BATCH === 0 || i === textNodes.length - 1) {
+      figma.ui.postMessage({
+        type: 'scan-progress',
+        current: i + 1,
+        total
+      });
+      await yieldToUi();
+    }
+  }
 
   const fontsWithCount = Array.from(fontFamilies.entries())
     .map(([name, count]) => ({ name, count }))
@@ -199,23 +250,44 @@ async function getFontsFromTextNodes(textNodes: TextNode[]) {
     };
   });
 
+  // Only include styles for families found in this scan (lighter payload)
   const familyStylesPayload: Record<string, string[]> = {};
-  familyStyleMap.forEach((styles, family) => {
-    familyStylesPayload[family] = Array.from(styles).sort((a, b) => a.localeCompare(b));
-  });
+  for (const family of fontFamilies.keys()) {
+    const styles = familyStyleMap.get(family);
+    if (styles) {
+      familyStylesPayload[family] = Array.from(styles).sort((a, b) => a.localeCompare(b));
+    } else {
+      // Case-insensitive fallback for installed family name mismatch
+      const lower = family.toLowerCase();
+      for (const [mapFamily, mapStyles] of familyStyleMap) {
+        if (mapFamily.toLowerCase() === lower) {
+          familyStylesPayload[family] = Array.from(mapStyles).sort((a, b) => a.localeCompare(b));
+          break;
+        }
+      }
+    }
+  }
 
   figma.ui.postMessage({
     type: 'scan-result',
     fonts: fontsWithCount.map(f => f.name),
     fontCounts: fontsWithCount,
     missingFonts: Array.from(missingFontFamilies).sort(),
-    systemFonts: systemFonts,
     fontDetails: fontDetailsPayload,
-    familyStyles: familyStylesPayload
+    familyStyles: familyStylesPayload,
+    textNodeCount: total,
+    skippedCount,
+    largePage: total >= LARGE_PAGE_TEXT_NODE_THRESHOLD
   });
 }
 
 async function getFontsFromPage() {
+  // Let the UI know we started collecting nodes (count unknown until findAll returns).
+  figma.ui.postMessage({
+    type: 'scan-progress',
+    current: 0,
+    total: -1
+  });
   const textNodes = figma.currentPage.findAllWithCriteria({ types: ['TEXT'] });
   await getFontsFromTextNodes(textNodes);
 }
@@ -242,7 +314,7 @@ async function replaceFontFamily(oldFamily: string, newFamily: string, scope: 'p
   const targetOld = oldFamily.toLowerCase();
 
   // Get all available styles for the new font family FIRST
-  const availableFonts = await figma.listAvailableFontsAsync();
+  const availableFonts = await getAvailableFonts();
   const newFontStyles = availableFonts
     .filter(f => f.fontName.family.toLowerCase() === newFamily.toLowerCase())
     .map(f => f.fontName);
@@ -1193,10 +1265,21 @@ figma.ui.onmessage = async msg => {
     scannedContainers = null;
     await getFontsFromPage();
   } else if (msg.type === 'scan-selection') {
+    figma.ui.postMessage({
+      type: 'scan-progress',
+      current: 0,
+      total: -1
+    });
     const containers = getCurrentSelectedContainers();
     scannedContainers = [...containers];
     const textNodes = collectTextNodesFromContainers(containers);
     await getFontsFromTextNodes(textNodes);
+  } else if (msg.type === 'get-system-fonts') {
+    const availableFonts = await getAvailableFonts();
+    figma.ui.postMessage({
+      type: 'system-fonts',
+      systemFonts: getSystemFontFamilies(availableFonts)
+    });
   } else if (msg.type === 'select-font') {
     lastSelectedFont = msg.font;
     const scope = (msg.scope === 'selection' ? 'selection' : 'page') as 'page' | 'selection';

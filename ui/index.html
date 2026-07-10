@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: https://fonts.google.com https://fonts.gstatic.com https://gwfh.mranftl.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com;">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!--INJECT_CSS-->
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <div class="loading-title">Replacing fonts...</div>
+      <div class="loading-progress" id="loadingProgress">0/0</div>
+    </div>
+  </div>
+
+  <div class="header-section">
+    <h2>Font Scanner</h2>
+    <p class="header-subtitle">Scan and manage fonts in your Figma designs</p>
+    <button id="scanBtn" class="primary-btn">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span id="scanBtnLabel">Scan This Page</span>
+    </button>
+  </div>
+
+  <div class="content-wrapper">
+    <div id="loader" class="loader">Scanning...</div>
+    <div id="resultsContainer"></div>
+  </div>
+
+  <div class="footer-section">
+    <div class="footer-content">
+      <span class="footer-version">v1.2.6</span>
+      <span class="footer-separator">•</span>
+      <span>Made with <span style="color: #ff6b6b;">♥</span> by</span>
+      <a href="https://slabpixel.com" target="_blank" class="footer-link">SlabPixel</a>
+    </div>
+  </div>
+  <div id="notificationToast" class="notification-toast"></div>
+
+  <!-- Replace Modal -->
+  <div id="replaceModal" class="modal-overlay">
+    <div class="modal-container" id="modalContainer">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Replace Font</h3>
+        <button class="modal-close" id="modalClose">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!--INJECT_JS-->
+</body>
+</html>
