@@ -100,8 +100,8 @@ Add a new entry at the top (below the heading), mark `(released)`:
    - ...
    ```
 3. **Full Timeline** — append without hash: `YYYY-MM-DD  release vNEW_VERSION`
-4. **Backfill previous release** — if the prior row shows `—`, set its commit from:
-   `git log --grep="release: vPREV_VERSION" -1 --format=%h`
+4. **Backfill previous release** — if the prior row shows `—`, set its commit from the commit that bumped `package.json`:
+   `git log -1 --format=%h -S '"version": "PREV_VERSION"' -- package.json`
 5. Remove stale "uncommitted" / "In progress" notes.
 
 ### Pre-commit verification
@@ -135,14 +135,33 @@ git add package.json package-lock.json README.md VERSION.md AGENTS.md code.ts ui
 
 Note: `code.js` is gitignored — run `npm run build` if `code.ts` changed, but do not force-add it.
 
-Commit message (HEREDOC):
-```
-release: vNEW_VERSION
+Commit message (HEREDOC) — **describe what changed, not the version number**:
 
-<1-2 sentence summary of why this release>
+```
+<type>: <what changed in this release>
+
+<1-2 sentence summary of why>
 
 - <change 1>
 - <change 2>
+```
+
+Use conventional types: `fix`, `feat`, `chore`, `docs`. The version lives in `package.json`, `ui.html`, `README.md`, and `VERSION.md` — **not** in the commit subject.
+
+**Do:**
+```
+fix: persist scanned frame references after select fonts
+
+Select/replace now reuse scanned containers until rescan instead of
+the current canvas selection.
+
+- Store SceneNode[] on scan-selection
+- Avoid getNodeById under dynamic-page
+```
+
+**Do not:**
+```
+release: v1.2.4
 ```
 
 If commit hooks fail, fix and create a **new** commit.
@@ -177,4 +196,5 @@ Only report success after push **and** a clean working tree.
 - NEVER update git config.
 - NEVER use `git commit --amend` to inject the release commit hash into `VERSION.md` — amend changes the hash.
 - NEVER leave uncommitted changes after `git push`.
+- NEVER use `release: vX.Y.Z` (or similar) as the commit subject — write what changed instead.
 - If there are no changes to release, tell the user — do not create an empty version bump.

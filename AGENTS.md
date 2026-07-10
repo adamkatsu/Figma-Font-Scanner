@@ -175,7 +175,7 @@ Full steps: [.cursor/rules/git-push-release.mdc](./.cursor/rules/git-push-releas
 6. Add entry to [README.md → Version history](./README.md#version-history).
 7. Update [VERSION.md](./VERSION.md): Version Summary (`—` for new release commit), version section, Full Timeline; backfill previous release hash from `git log`.
 8. Run `npm run build` if `code.ts` changed.
-9. `git commit` with `release: vX.Y.Z` message.
+9. `git commit` with a **descriptive message** (`fix:` / `feat:` / `chore:` + what changed — not `release: vX.Y.Z`).
 10. `git push -u origin HEAD` — **final step**.
 11. Verify `git status` is clean — no uncommitted changes.
 

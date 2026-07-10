@@ -21,13 +21,28 @@ This document tracks the evolution of the **Font Scanner** plugin from initial c
 | **1.2.1** | Jul 10, 2026 | `ae0cfe4` | Released |
 | **1.2.2** | Jul 10, 2026 | `41ac074` | Released |
 | **1.2.3** | Jul 10, 2026 | `b22bf26` | Released |
-| **1.2.4** | Jul 10, 2026 | — | Released |
+| **1.2.4** | Jul 10, 2026 | `e782d9f` | Released |
+| **1.2.5** | Jul 10, 2026 | — | Released |
+
+---
+
+## v1.2.5 — Released
+
+**Date:** Jul 10, 2026
+
+### Changes
+
+- **Commit message convention** – `git push` releases use descriptive subjects (`fix:` / `feat:` / `chore:` + what changed), not `release: vX.Y.Z`.
+- **Hash backfill** – Previous release commit resolved with `git log -S '"version": "X.Y.Z"' -- package.json`.
+- Updated `git-push-release.mdc`, `AGENTS.md`, and `VERSION.md` maintenance notes.
+
+**Files changed:** `package.json`, `package-lock.json`, `ui.html`, `README.md`, `VERSION.md`, `AGENTS.md`, `.cursor/rules/git-push-release.mdc`
 
 ---
 
 ## v1.2.4 — Released
 
-**Date:** Jul 10, 2026
+**Commit:** `e782d9f` — *release: v1.2.4* (Jul 10, 2026)
 
 ### Changes
 
@@ -46,7 +61,7 @@ This document tracks the evolution of the **Font Scanner** plugin from initial c
 ### Changes
 
 - **Release workflow fix** – Removed `git commit --amend` for commit hashes; a release commit cannot self-reference its own hash after amend.
-- **Backfill on next release** – Previous version's `—` commit column is filled via `git log --grep="release: vX.Y.Z"`.
+- **Backfill on next release** – Previous version's `—` commit column is filled via `git log` on the `package.json` version bump.
 - Updated `git-push-release.mdc` and `AGENTS.md` accordingly.
 
 **Files changed:** `.cursor/rules/git-push-release.mdc`, `AGENTS.md`, `VERSION.md`, `package.json`, `package-lock.json`, `README.md`
@@ -234,7 +249,8 @@ Base plugin structure:
 2026-07-10  ae0cfe4  release v1.2.1 — scan scope fix, docs  [kemonn98]
 2026-07-10  41ac074  release v1.2.2 — release workflow fix  [kemonn98]
 2026-07-10  b22bf26  release v1.2.3 — fix hash backfill workflow     [kemonn98]
-2026-07-10  release v1.2.4 — ui.html version in release workflow    [kemonn98]
+2026-07-10  e782d9f  release v1.2.4 — ui.html version in release workflow    [kemonn98]
+2026-07-10  release v1.2.5 — descriptive release commit messages         [kemonn98]
 ```
 
 ---
@@ -277,7 +293,7 @@ After each release or significant change:
 4. Sync version strings in `package.json`, `package-lock.json`, and `ui.html` (footer `.footer-version`)
 5. Sync with [README.md](./README.md) → **Version history** and [AGENTS.md](./AGENTS.md) release checklist
 
-On release (`git push` workflow): use `—` for the new release's commit hash in `VERSION.md`; backfill the previous release's hash from `git log`. Do not amend to inject hashes.
+On release (`git push` workflow): use `—` for the new release's commit hash in `VERSION.md`; backfill the previous release's hash with `git log -1 -S '"version": "X.Y.Z"' -- package.json`. Commit messages describe **what changed**, not `release: vX.Y.Z`.
 
 ```bash
 # View recent commits
