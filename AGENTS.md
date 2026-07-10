@@ -171,14 +171,13 @@ Full steps: [.cursor/rules/git-push-release.mdc](./.cursor/rules/git-push-releas
 3. **Bump version in `package.json`** (required).
 4. **Bump version in `package-lock.json`** — root and `packages[""]` (required).
 5. Add entry to [README.md → Version history](./README.md#version-history).
-6. Update [VERSION.md](./VERSION.md): Version Summary (`TBD` for commit), version section, Full Timeline (`TBD`).
+6. Update [VERSION.md](./VERSION.md): Version Summary (`—` for new release commit), version section, Full Timeline; backfill previous release hash from `git log`.
 7. Run `npm run build` if `code.ts` changed.
 8. `git commit` with `release: vX.Y.Z` message.
-9. Fill commit hash in `VERSION.md` → `git commit --amend --no-edit`.
-10. `git push -u origin HEAD` — **final step**.
-11. Verify `git status` is clean — no uncommitted changes.
+9. `git push -u origin HEAD` — **final step**.
+10. Verify `git status` is clean — no uncommitted changes.
 
-**One push, clean tree.** Never push with modified `VERSION.md` left behind; never fix hashes in a follow-up commit after push.
+**One push, clean tree.** Do not amend for commit hashes. Backfill the previous version's hash when cutting the next release.
 
 ### Mandatory files on every release
 

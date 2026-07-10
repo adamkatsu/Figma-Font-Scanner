@@ -50,6 +50,9 @@ A Figma plugin that scans your designs for font usage, surfaces missing fonts, a
 
 ## Version history
 
+- **1.2.3** (released)  
+  - **Release workflow fix** – Stop using amend for commit hashes in `VERSION.md`; backfill hashes on the next release instead. Guarantees a clean working tree after `git push`.
+
 - **1.2.2** (released)  
   - **Release workflow fix** – `git push` now amends `VERSION.md` with the commit hash before push, so the working tree is clean with no follow-up commits.
   - Corrected v1.2.1 commit hash in `VERSION.md` (`ae0cfe4`).
