@@ -18,7 +18,7 @@ This document tracks the evolution of the **Font Scanner** plugin from initial c
 | **1.0.0** | Dec 1, 2025 – Dec 16, 2025 | `05266a5` → `ee21e1a` | Released |
 | **1.1.0** | Feb 16, 2026 | `18a7c7b` | Released |
 | **1.2.0** | Feb 24, 2026 | `4a8938a` | Released |
-| **1.2.1** | Jul 10, 2026 | `1a83e7e` | Released |
+| **1.2.1** | Jul 10, 2026 | `ae0cfe4` | Released |
 
 ---
 
@@ -185,7 +185,7 @@ Base plugin structure:
 2026-02-11  eaa6035  showUI update                         [kemonn98]
 2026-02-16  18a7c7b  major features updates    → v1.1.0   [kemonn98]
 2026-02-24  4a8938a  v1.2.0 new features update            [kemonn98]
-2026-07-10  (pending)  release v1.2.1 — scan scope fix, docs [kemonn98]
+2026-07-10  1a83e7e  release v1.2.1 — scan scope fix, docs  [kemonn98]
 ```
 
 ---
