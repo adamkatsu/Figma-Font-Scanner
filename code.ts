@@ -12,6 +12,9 @@ type FontUsageDetails = {
 
 const CONTAINER_TYPES = new Set<string>(['FRAME', 'GROUP', 'COMPONENT', 'INSTANCE', 'SECTION']);
 
+/** Container nodes from the last "Scan Selected Frames" — used until the next scan */
+let scannedContainers: SceneNode[] | null = null;
+
 function normalizeLineHeight(lineHeight: LineHeight | undefined, fontSize: number): number | null {
   if (!lineHeight || lineHeight.unit === 'AUTO') return null;
   if (lineHeight.unit === 'PERCENT') return Math.round((lineHeight as { value: number }).value * 10) / 10;
@@ -36,9 +39,17 @@ function getSelectedContainerCount(): number {
   return selection.filter(node => CONTAINER_TYPES.has(node.type)).length;
 }
 
-function collectTextNodesFromSelection(): TextNode[] {
-  const selection = figma.currentPage.selection;
-  const containers = selection.filter(node => CONTAINER_TYPES.has(node.type));
+function getCurrentSelectedContainers(): SceneNode[] {
+  return figma.currentPage.selection.filter(node => CONTAINER_TYPES.has(node.type));
+}
+
+function getActiveScannedContainers(): SceneNode[] {
+  if (!scannedContainers || scannedContainers.length === 0) return [];
+  scannedContainers = scannedContainers.filter(node => !node.removed);
+  return scannedContainers;
+}
+
+function collectTextNodesFromContainers(containers: readonly SceneNode[]): TextNode[] {
   const textNodes: TextNode[] = [];
   const seen = new Set<string>();
   for (const node of containers) {
@@ -52,6 +63,17 @@ function collectTextNodesFromSelection(): TextNode[] {
     }
   }
   return textNodes;
+}
+
+function collectTextNodesFromSelection(): TextNode[] {
+  const containers = getActiveScannedContainers();
+  if (containers.length > 0) {
+    return collectTextNodesFromContainers(containers);
+  }
+  if (scannedContainers) {
+    scannedContainers = null;
+  }
+  return collectTextNodesFromContainers(getCurrentSelectedContainers());
 }
 
 function getTextNodesForScope(scope: 'page' | 'selection'): TextNode[] {
@@ -1168,9 +1190,12 @@ figma.on('selectionchange', () => {
 
 figma.ui.onmessage = async msg => {
   if (msg.type === 'scan-layers') {
+    scannedContainers = null;
     await getFontsFromPage();
   } else if (msg.type === 'scan-selection') {
-    const textNodes = collectTextNodesFromSelection();
+    const containers = getCurrentSelectedContainers();
+    scannedContainers = [...containers];
+    const textNodes = collectTextNodesFromContainers(containers);
     await getFontsFromTextNodes(textNodes);
   } else if (msg.type === 'select-font') {
     lastSelectedFont = msg.font;

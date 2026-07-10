@@ -1,0 +1,16 @@
+---
+description: All documentation and code must be written in English
+alwaysApply: true
+---
+
+# English Only
+
+All project output must be in **English**:
+
+- Documentation: `README.md`, `VERSION.md`, comments in rules, commit messages, PR descriptions
+- Code: variable/function names, inline comments, user-facing strings in the plugin UI and toasts
+- Changelogs and release notes
+
+Do not write documentation, comments, or user-facing plugin text in other languages unless the user explicitly requests a translation.
+
+When updating docs after a release, use English section headings (e.g. **Version Summary**, **Full Timeline**, **Changes** — not Indonesian equivalents).

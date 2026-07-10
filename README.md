@@ -50,6 +50,11 @@ A Figma plugin that scans your designs for font usage, surfaces missing fonts, a
 
 ## Version history
 
+- **1.2.1** (released)  
+  - **Fix scan selection scope** – After "Scan Selected Frames", Select Fonts, replace, and other operations now keep using the scanned frames until you rescan—not the current canvas selection (which changes after selecting text layers).
+  - **dynamic-page compatibility** – Uses direct node references instead of `getNodeById()` for scanned containers.
+  - **Project docs** – Added `VERSION.md`, `AGENTS.md`, and Cursor release rules.
+
 - **1.0.0** (released)  
   - Initial release: scan page, font list with counts and details, missing-font detection, replace font/style/size, select layers by font.
 
@@ -67,6 +72,8 @@ A Figma plugin that scans your designs for font usage, surfaces missing fonts, a
 ## Development
 
 This plugin uses TypeScript and npm.
+
+For agent guidelines, architecture, and release workflows, see **[AGENTS.md](./AGENTS.md)**. Full changelog and commit timeline: **[VERSION.md](./VERSION.md)**.
 
 ### Prerequisites
 

@@ -1,0 +1,147 @@
+---
+description: Release workflow when user says "git push" — bump version, update docs, commit, push
+alwaysApply: true
+---
+
+# Git Push Release Workflow
+
+When the user message is exactly or primarily **`git push`**, **`git push minor`**, or **`git push major`**, run the full release workflow below. Do NOT push without completing all steps.
+
+## Bump type
+
+| User command | Bump | Example (from 1.2.3) |
+|---|---|---|
+| `git push` | **patch** | → `1.2.4` |
+| `git push minor` | **minor** | → `1.3.0` |
+| `git push major` | **major** | → `2.0.0` |
+
+Patch = bug fix, small improvement, mini feature. Minor = new feature set. Major = breaking / large milestone.
+
+## Step 1 — Determine current & next version
+
+1. Read `VERSION.md` → table **Version Summary** for the latest semver (ignore "In progress" label; use the number).
+2. If no entry exists, start from `1.2.0` (last known release) or `package.json` `version`.
+3. Apply bump rules above to compute `NEW_VERSION`.
+4. Run `git status` and `git diff` to understand what changed since last release.
+
+## Step 2 — Write changelog from context
+
+Summarize changes from:
+- Uncommitted/staged diffs (`git diff`, `git diff --cached`)
+- Recent conversation context
+- Commits since last version tag/entry (if any)
+
+Group as **Added**, **Changed**, **Fixed** where applicable. Be specific (file/feature names, user-visible behavior).
+
+## Step 3 — Update docs & version files
+
+Update **every mandatory file** below with `NEW_VERSION`. Do not proceed to commit until all are done.
+
+### Mandatory version bump files
+
+| File | Field / section | Required |
+|------|-----------------|----------|
+| `package.json` | `"version": "NEW_VERSION"` | **Yes** — canonical semver for the project |
+| `package-lock.json` | root `"version"` and `packages[""].version` | **Yes** — keep in sync with `package.json` |
+| `README.md` | `## Version history` — new entry at top | **Yes** |
+| `VERSION.md` | Version Summary, version section, Full Timeline | **Yes** |
+| `AGENTS.md` | Current version references (if present) | Update if version is cited inline |
+
+### `package.json` (required)
+
+```json
+"version": "NEW_VERSION"
+```
+
+### `package-lock.json` (required)
+
+Update both occurrences of the version string at the root and under `packages[""]`:
+
+```json
+{
+  "version": "NEW_VERSION",
+  "packages": {
+    "": {
+      "version": "NEW_VERSION"
+    }
+  }
+}
+```
+
+### `README.md` — section `## Version history`
+Add a new entry at the top (below the heading), mark `(released)`:
+```markdown
+- **NEW_VERSION** (released)
+  - <bullet points from changelog>
+```
+
+### `VERSION.md` (English only)
+1. **Version Summary** — add row: `| **NEW_VERSION** | <today> | *(pending)* | Released |`; mark previous "In progress" row as Released with its commit if known.
+2. Replace any `## vX.Y.Z — In Progress` block with a released section:
+   ```markdown
+   ## vNEW_VERSION — Released
+   **Date:** <YYYY-MM-DD>
+   ### Changes
+   - ...
+   ```
+3. **Full Timeline** — append: `YYYY-MM-DD  (pending)  release vNEW_VERSION`
+4. Remove stale "uncommitted" / "In progress" notes for the version being released.
+
+### Pre-commit verification
+
+Before staging, confirm version strings match `NEW_VERSION` in:
+
+```bash
+grep '"version"' package.json package-lock.json
+grep 'NEW_VERSION' README.md VERSION.md
+```
+
+Also stage compiled output if `code.ts` changed:
+
+```bash
+# If code.ts was modified, ensure code.js is rebuilt
+npm run build
+```
+
+## Step 4 — Git commit
+
+```bash
+git status
+git diff
+git log -3 --oneline
+```
+
+Stage relevant files only (never `.DS_Store`, secrets):
+```bash
+git add package.json package-lock.json README.md VERSION.md AGENTS.md code.ts code.js ui.html manifest.json <other changed source files>
+```
+
+Commit message (HEREDOC):
+```
+release: vNEW_VERSION
+
+<1-2 sentence summary of why this release>
+
+- <change 1>
+- <change 2>
+```
+
+If commit hooks fail, fix and create a **new** commit (never `--amend` unless hook auto-fixed files from your commit).
+
+## Step 5 — Git push
+
+```bash
+git push -u origin HEAD
+```
+
+Only push after commit succeeds. Report the new version and push result to the user.
+
+## Constraints
+
+- All docs and commit messages must be in **English**.
+- **NEVER skip `package.json` or `package-lock.json` version bumps** — they are mandatory on every release.
+- NEVER skip README or VERSION.md updates.
+- NEVER bump version without documenting what changed.
+- NEVER `git push --force` to main/master unless user explicitly requests it.
+- NEVER update git config.
+- If there are no changes to release, tell the user — do not create an empty version bump.
